@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS distributor_user_orders(
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  distributor_user_id BIGINT UNSIGNED NOT NULL REFERENCES distributor_users(id) ON DELETE CASCADE,
+  distributor_user_address_id BIGINT UNSIGNED NOT NULL REFERENCES distributor_user_addresses(id) ON DELETE CASCADE,
+  ref VARCHAR(8) NOT NULL UNIQUE,
+  status ENUM("pending", "delivered") DEFAULT "pending" NOT NULL,
+  amount NUMERIC(8, 2) NOT NULL,
+  discount_amount NUMERIC(8, 2) NOT NULL DEFAULT 0,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY(id)
+);
