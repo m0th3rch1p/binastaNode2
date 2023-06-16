@@ -5,11 +5,10 @@ export const idSchema = Joi.object({
 });
 
 export const storeSchema = Joi.object({
-    blogCategoryId: Joi.number().min(1).required(),
+    blog_category_id: Joi.number().min(1).required(),
     title: Joi.string().required(),
     description: Joi.string().required(),
     post: Joi.string().required(),
-    type: Joi.string().required()
 });
 
 export const updateSchema = Joi.object({
@@ -17,5 +16,4 @@ export const updateSchema = Joi.object({
     title: Joi.string().required(),
     description: Joi.string().required(),
     post: Joi.string().required(),
-    type: Joi.string().required()
 });

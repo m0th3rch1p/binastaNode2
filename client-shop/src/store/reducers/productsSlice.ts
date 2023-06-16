@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react"
 import { createSlice } from "@reduxjs/toolkit";
-import { BASE_URL } from "@/constants/apiStatus";
 import { ProductVariation } from "@/types/ProductVariation.type";
 
 export type Product = {
@@ -11,7 +10,8 @@ export type Product = {
     slug?: string,
     description?: string,
     variations?: ProductVariation[],
-    images?: {url: string}[]
+    images?: {url: string}[],
+    related?: Product[]
 }
 
 const initialState = {
@@ -21,19 +21,19 @@ const initialState = {
 export const productApiSlice = createApi({
     reducerPath: "productApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: `${BASE_URL}/products`
+        baseUrl: `/products`
     }),
     tagTypes: ['products', 'product'],
     endpoints: (builder) => ({
-        fetchProducts: builder.query<Product[], void>({
-            query: () => "/",
+        fetchProducts: builder.query<Product[], { per_page?:number, offset: number }>({
+            query: ({per_page = 10, offset = 0}: { per_page?: number, offset: number}) => `/?per_page=${per_page}&offset=${offset}`,
             transformResponse: (response: { products: Product[] }) => response.products,
             providesTags: ['products'],
         }),
         fetchSingleProduct: builder.query<Product, { slug: string }>({
-            query: (slug) => `/${slug}`,
-            transformResponse: (response: { product: Product }) => response.product,
-            providesTags: ['product']
+            query: ({ slug }) => `/${slug}`,
+            transformResponse: (response: { product: Product[] }) => response.product[0],
+            providesTags: ['products']
         })
     })
 });
@@ -45,7 +45,9 @@ export const productSlice = createSlice({
     name: 'addresses',
     initialState: initialState.products,
     reducers: {
-        resetAddressSlice: () => initialState.products
+        resetAddressSlice: (state) => {
+            state = initialState.products
+        },
     }
 });
 

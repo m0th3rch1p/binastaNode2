@@ -1,9 +1,14 @@
 import { useFetchProductsQuery, useFetchSingleProductQuery } from "@/store/reducers/productsSlice";
+import { useState } from "react";
 
 export const useFetchProducts = () => {
-    const { data: products, isLoading, isSuccess, isError } = useFetchProductsQuery();
+    const [ currentOffset, setCurrentOffset ] = useState(0);
+    
+    const { data: products, isLoading, isSuccess, isError } = useFetchProductsQuery({ offset: currentOffset });
 
     return {
+        currentOffset,
+        setCurrentOffset,
         products,
         isLoading,
         isSuccess,

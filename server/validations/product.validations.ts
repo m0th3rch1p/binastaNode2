@@ -1,5 +1,10 @@
 import Joi from "joi";
 
+export const fetchSchema = Joi.object({
+    per_page: Joi.number().min(1),
+    offset: Joi.number().min(0),
+})
+
 export const fetchByIdSchema = Joi.object({
     id: Joi.number().min(1).required()
 });

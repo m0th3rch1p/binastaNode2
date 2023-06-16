@@ -1,4 +1,3 @@
-import { BASE_URL } from '@/constants/apiStatus';
 import { createSlice } from "@reduxjs/toolkit";
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react';
 
@@ -11,7 +10,6 @@ export type Address = {
 
 const initialState: Address = {
     id: 0,
-    user_id: 0,
     address: '',
     phone_number: ''
 };
@@ -19,7 +17,7 @@ const initialState: Address = {
 export const addressApiSlice = createApi({
     reducerPath: 'addressApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: `${BASE_URL}/addresses`,
+        baseUrl: `/addresses`,
     }),
     tagTypes: ["addresses"],
     endpoints: (builder) => ({
@@ -30,12 +28,15 @@ export const addressApiSlice = createApi({
             },
             providesTags: ["addresses"]
         }),
-        storeAddress: builder.mutation<{ address: Address }, Address>({
+        storeAddress: builder.mutation<{ id: Address["id"] | undefined }, Address>({
             query: (address) => ({
                 url: "/",
                 method: "POST",
-                body: address
+                body: { address: address.address, phone_number: address.phone_number }
             }),
+            transformResponse: (response: { id: number | undefined  }) => {
+                return response;
+            },
             invalidatesTags: ["addresses"]
         })
     })
@@ -47,7 +48,9 @@ export const addressSlice = createSlice({
     name: 'addresses',
     initialState: initialState.address,
     reducers: {
-        resetAddressSlice: () => initialState.address
+        resetAddressSlice: (state) => {
+            state = initialState.address;
+        }
     }
 });
 

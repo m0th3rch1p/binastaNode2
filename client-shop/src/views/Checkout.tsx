@@ -5,97 +5,115 @@ import RegisterForm from "@/components/checkout/RegisterForm"
 
 import { useState } from "react"
 
-import { useRegisterUserMutation, useAuthenticateUserMutation } from "@/store/reducers/userSlice"
+import { useRegisterUserMutation, useAuthenticateUserMutation, setAuthenticated } from "@/store/reducers/userSlice"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
-import { usePlaceOrderMutation } from "@/store/reducers/ordersSlice"
+import { Order, usePlaceOrderMutation } from "@/store/reducers/ordersSlice"
 import { useStoreAddressMutation } from "@/store/reducers/addressSlice"
+import { resetCart } from "@/store/reducers/cartSlice"
+import { redirect } from "react-router-dom"
 
 function Checkout() {
     const dispatch = useAppDispatch();
-    const [addOrder , { isLoading: isAddOrderLoading, isSuccess: isAddOrderSuccess } ] = usePlaceOrderMutation();
-    const [ registerUser, { isLoading: isRegisterUserLoading, isSuccess: isRegisterUserSuccess } ] = useRegisterUserMutation();
-    const [ addAddress, { isLoading: isAddAddressLoading, isSuccess: isAddAddressSuccess } ] = useStoreAddressMutation();
+    // const [addOrder , { isLoading: isAddOrderLoading, isSuccess: isAddOrderSuccess } ] = usePlaceOrderMutation();
+    const [registerUser] = useRegisterUserMutation();
+    const [storeAddress] = useStoreAddressMutation();
+    const [storeOrder] = usePlaceOrderMutation();
 
-    const userState = useAppSelector((state) => state.user);
-    
+    const user = useAppSelector((state) => state.user);
+    const cart = useAppSelector((state) => state.cart);
+
     const [addressForm, setAddressForm] = useState({
         id: 0,
         user_id: 0,
         address: '',
         phone_number: '',
-      })
-    
-    const [ userForm, setUserForm ] = useState({
+    })
+
+    const [userForm, setUserForm] = useState({
         email: '',
         password: '',
-    })
-      const onAddressFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setAddressForm((state) => ({
-          ...state,
-          [e.target.name]: e.target.value,
-        }))
-      }
+    });
 
-      const onUserFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const [ showLoginForm, setShowLoginForm ] = useState(false);
+
+    const onAddressFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setAddressForm((state) => ({
+            ...state,
+            [e.target.name]: e.target.value,
+        }))
+    }
+
+    const onUserFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUserForm((state) => ({
             ...state,
             [e.target.name]: e.target.value,
         }))
-      }
+    }
 
     const placeOrder = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        // Register User
-        if (!userForm.email || !userForm.password || !addressForm.address || !addressForm.phone_number) return;
+        if (!user.authenticated) {
+            // Register User
+            if (!userForm.email || !userForm.password || !addressForm.address || !addressForm.phone_number) return;
 
-        // await dispatch(registerUser(userForm));
-        const response = await registerUser(userForm);
-        console.log(response);
-        addressForm.user_id = userState.id as number;
+            // await dispatch(registerUser(userForm));
+            const response = await registerUser(userForm).unwrap();
+            console.log(response);
+            dispatch(setAuthenticated(response.status))
+        }
 
-        const addressResponse = await addAddress(addressForm);
+        const addressResponse = await storeAddress(addressForm).unwrap();
+        
         console.log(addressResponse);
-        // await dispatch(storeAddress(addressForm));
+        const productVariations: [number, number][] = [];
+        cart.products.forEach(product => {
+            productVariations.push([product.selectedVariation.id as number, product.quantity]);
+        });
+        
+        const orderResponse = await storeOrder({user_address_id: addressResponse.id as number, product_variations: productVariations}).unwrap();
 
-        alert("Order To be placed");
+        dispatch(resetCart());
+
+        redirect(`/invoice/${orderResponse.id}`);
     }
-  return (
-    <div className="container mb-80 mt-50">
+    return (
+        <div className="container mb-80 mt-50">
             <div className="row">
                 <div className="col-lg-8 mb-40">
                     <h1 className="heading-2 mb-10">Checkout</h1>
                     <div className="d-flex justify-content-between">
-                        <h6 className="text-body">There are <span className="text-brand">3</span> products in your cart</h6>
+                        <h6 className="text-body">There are <span className="text-brand">{ cart.products.length }</span> products in your cart</h6>
                     </div>
                 </div>
             </div>
             <div className="row">
                 <div className="col-lg-7">
-                    <div className="row mb-50">
-                        <div className="col-lg-6 mb-sm-15 mb-lg-0 mb-md-3">
-                            <div className="toggle_info">
-                                <span><i className="fi-rs-user mr-10"></i><span className="text-muted font-lg">Already have an account?</span> <a href="#loginform" data-bs-toggle="collapse" className="collapsed font-lg" aria-expanded="false">Click here to login</a></span>
-                            </div>
-                            <div className="panel-collapse collapse login_form" id="loginform">
-                                <div className="panel-body">
-                                    <p className="mb-30 font-sm">If you have shopped with us before, please enter your details below. If you are a new customer, please proceed to the Billing &amp; Shipping section.</p>
-                                    <LoginForm />
+                    {
+                        !user.authenticated ? (
+                            <>
+                                <div className="row mb-50">
+                                    <div className="col-lg-6 mb-sm-15 mb-lg-0 mb-md-3">
+                                        <div className="toggle_info">
+                                            <span><i className="fi-rs-user mr-10"></i><span className="text-muted font-lg">Already have an account?</span> <a href="#0" onClick={() => setShowLoginForm((showForm) => !showForm)} data-bs-toggle="collapse" className="collapsed font-lg" aria-expanded="false">Click here to login</a></span>
+                                        </div>
+                                        <div className={`panel-collapse collapse login_form ${showLoginForm ?? 'show'}`} id="loginform">
+                                            <div className="panel-body">
+                                                <p className="mb-30 font-sm">If you have shopped with us before, please enter your details below. If you are a new customer, please proceed to the Billing &amp; Shipping section.</p>
+                                                <LoginForm />
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div className="col-lg-6">
-                            <form method="post" className="apply-coupon">
-                                <input type="text" placeholder="Enter Coupon Code..." />
-                                <button className="btn  btn-md" name="login">Apply Coupon</button>
-                            </form>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <h4 className="mb-30">Account Details</h4>
-                        <RegisterForm form={ userForm } onChangeFn={ onUserFormChange }/>
-                    </div>
+
+                                <div className="row">
+                                    <h4 className="mb-30">Account Details</h4>
+                                    <RegisterForm form={userForm} onChangeFn={onUserFormChange} />
+                                </div>
+                            </>
+                        ) : <></>
+                    }
                     <div className="row">
                         <h4 className="mb-30">Delivery Details</h4>
-                        <Billing form={ addressForm } onChangeFn={ onAddressFormChange } />
+                        <Billing form={addressForm} onChangeFn={onAddressFormChange} />
                     </div>
                 </div>
                 <div className="col-lg-5">
@@ -110,13 +128,12 @@ function Checkout() {
                         </div>
                     </div>
                     <div className="payment ml-30">
-                        <h4 className="mb-30">Place Order</h4>
                         <button onClick={placeOrder} className="btn btn-fill-out btn-block mt-30">Place an Order<i className="fi-rs-sign-out ml-15"></i></button>
                     </div>
                 </div>
             </div>
         </div>
-  )
+    )
 }
 
 export default Checkout

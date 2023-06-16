@@ -1,6 +1,15 @@
 import { Request, Response, NextFunction } from "express";
 import * as productValidations from "@/validations/product.validations";
 
+export const fetchPolicy = (req: Request, res: Response, next: NextFunction) => {
+    const { error, value } = productValidations.fetchSchema.validate(req.query);
+    if (error) {
+        res.status(422).json({
+            errors: error
+        });
+    } else next();
+};
+
 export const storePolicy = (req: Request, res: Response, next: NextFunction) => {
     const { error, value } = productValidations.storeSchema.validate(req.body);
     if (error) {

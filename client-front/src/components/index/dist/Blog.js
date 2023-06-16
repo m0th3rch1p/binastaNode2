@@ -1,0 +1,50 @@
+"use strict";
+exports.__esModule = true;
+var productsSlice_1 = require("@/store/reducers/productsSlice");
+function Blog() {
+    var products = productsSlice_1.useFetchProductsQuery().data;
+    return (React.createElement("section", { className: "blog-area" },
+        React.createElement("div", { className: "container" },
+            React.createElement("div", { className: "row" },
+                React.createElement("div", { className: "col-lg-8 offset-lg-2 section-wrapper text-center" },
+                    React.createElement("h3", { className: "section-title" }, "Some Of Our Products"),
+                    React.createElement("p", null, "Lorem ipsum dolor sit amet,sed diam voluptua. sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, consetetur sadipscing elitr, Stet clita kasd gubergren"))),
+            React.createElement("div", { className: "row grid" }, products === null || products === void 0 ? void 0 :
+                products.map(function (product) { return (React.createElement("div", { className: "col-md-6 grid-item animation", "data-animation": "fadeInUp", "data-animation-delay": "0.1s" },
+                    React.createElement("div", { className: "single-blog" },
+                        React.createElement("div", { className: "blog-thumb" },
+                            React.createElement("img", { className: "", src: "https://binasta.co.ke/storage/blogs/2GdTmcu4Tl5g3OxMi2FoIHW7DKOm56WpqLw4lysn.jpg", "data-src": "/storage/blogs/2GdTmcu4Tl5g3OxMi2FoIHW7DKOm56WpqLw4lysn.jpg", alt: "" })),
+                        React.createElement("div", { className: "blog-text" },
+                            React.createElement("ul", { className: "post-meta d-flex justify-content-between" },
+                                React.createElement("li", null,
+                                    React.createElement("a", { href: "#" },
+                                        React.createElement("i", { className: "icofont" }, "ui_calendar"),
+                                        "Sat Jan 21 2023")),
+                                React.createElement("li", null,
+                                    React.createElement("a", { href: "#" },
+                                        React.createElement("i", { className: "icofont" }, "user_alt_4"),
+                                        " Tonmoy Khan"))),
+                            React.createElement("h4", null,
+                                React.createElement("a", { href: "/blog/live-a-healthy-life" }, "Live A Healthy Life")),
+                            React.createElement("p", null, "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has su [...]"),
+                            React.createElement("a", { className: "blog-link", href: "/blog/live-a-healthy-life" }, "Reads More"))))); }),
+                React.createElement("div", { className: "col-md-6 grid-item animation", "data-animation": "fadeInUp", "data-animation-delay": "0.1s" },
+                    React.createElement("div", { className: "single-blog" },
+                        React.createElement("div", { className: "blog-thumb" },
+                            React.createElement("img", { className: "", src: "https://binasta.co.ke/storage/blogs/EY0f8lMmV1mwpu6dAHdlXREEVJxbvcPxiHhqnN4m.jpg", "data-src": "/storage/blogs/EY0f8lMmV1mwpu6dAHdlXREEVJxbvcPxiHhqnN4m.jpg", alt: "" })),
+                        React.createElement("div", { className: "blog-text" },
+                            React.createElement("ul", { className: "post-meta d-flex justify-content-between" },
+                                React.createElement("li", null,
+                                    React.createElement("a", { href: "#" },
+                                        React.createElement("i", { className: "icofont" }, "ui_calendar"),
+                                        "Sat Jan 21 2023")),
+                                React.createElement("li", null,
+                                    React.createElement("a", { href: "#" },
+                                        React.createElement("i", { className: "icofont" }, "user_alt_4"),
+                                        " Tonmoy Khan"))),
+                            React.createElement("h4", null,
+                                React.createElement("a", { href: "/blog/simple-morning-workouts" }, "Simple Morning Workouts")),
+                            React.createElement("p", null, "orem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has sur [...]"),
+                            React.createElement("a", { className: "blog-link", href: "/blog/simple-morning-workouts" }, "Reads More"))))))));
+}
+exports["default"] = Blog;

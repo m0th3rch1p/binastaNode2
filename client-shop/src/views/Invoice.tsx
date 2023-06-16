@@ -1,12 +1,14 @@
 import { Link, useLocation } from "react-router-dom"
 import Logo from "@/components/common/Logo"
+import mpesaImg from "@/assets/images/mpesa.jpg";
 
 import { useFetchSingleOrderQuery } from "@/store/reducers/ordersSlice"
+import Loader from "@/components/common/Loader";
 function Invoice() {
     const { state } = useLocation();
     const { data: order, isLoading, isSuccess } = useFetchSingleOrderQuery(state);
     return (
-        <>
+        !isLoading && order ? <>
             <div className="invoice-header">
                 <div className="row">
                     <div className="col-sm-6">
@@ -51,6 +53,7 @@ function Invoice() {
                     <div className="col-lg-3 col-md-6">
                         <h4 className="invoice-title-1 mb-10">Payment Method</h4>
                         <p className="invoice-from-1">Via Paypal</p>
+                        <p><img src={mpesaImg} alt="" /></p>
                     </div>
                 </div>
             </div>
@@ -155,7 +158,7 @@ function Invoice() {
                     </div>
                 </div>
             </div>
-        </>
+        </> : <Loader />
     )
 }
 

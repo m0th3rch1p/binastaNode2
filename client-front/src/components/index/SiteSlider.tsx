@@ -12,11 +12,11 @@ function SiteSlider() {
   return (
     <section className="site-slider bg-1">
     <div className="single-slide">
-            <div className="container">
+            {/* <div className="container"> */}
                 <div className="row bn_height align-items-center">
                     <div className="col-lg-7">
                         <div className="slide-content" style={bgShader}>
-                            <h1>Time to balance your life<span>& Nourish your Soul!</span></h1>
+                            <h1> Binasta Company Affiliate Program<span>Empowering Independent Business Owners</span></h1>
                                                        <Link to="/contact" className="btn-mr th-gradient2 pill">Contact Us</Link>
                                                        <Link to="/how-it-works" className="btn-mr th-gradient pill">Read more</Link>
 
@@ -24,7 +24,7 @@ function SiteSlider() {
                     </div>
                 </div>
             </div>
-        </div>
+        {/* </div> */}
 </section>
 
   )

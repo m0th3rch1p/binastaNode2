@@ -8,8 +8,8 @@ function ShoppingCartComponent() {
     const dispatch = useAppDispatch();
     const cart: Cart = useAppSelector((state) => state.cart);
     
-    const onRemoveCartProduct = (e: React.MouseEvent<HTMLButtonElement>, slug: string) => {
-        dispatch(removeCart(slug));
+    const onRemoveCartProduct = (e: React.MouseEvent<HTMLButtonElement>, id: number) => {
+        dispatch(removeCart({product_id: id}));
     };
     return (
         <>
@@ -31,7 +31,7 @@ function ShoppingCartComponent() {
                                         <h3><span>{ quantity } × </span>ksh.{ selectedVariation.buy_price }</h3>
                                     </div>
                                     <div className="shopping-cart-delete">
-                                        <button onClick={(event) => onRemoveCartProduct(event, product.slug as string) }><i className="fi-rs-cross-small"></i></button>
+                                        <button onClick={(event) => onRemoveCartProduct(event, product.id as number) }><i className="fi-rs-cross-small"></i></button>
                                     </div>
                                 </li>
                             ))
@@ -42,8 +42,7 @@ function ShoppingCartComponent() {
                             <h4>Total <span>ksh.{ cart.total }</span></h4>
                         </div>
                         <div className="shopping-cart-button">
-                            <a href="shop-cart.html">View cart</a>
-                            <a href="shop-checkout.html">Checkout</a>
+                            <Link to="/checkout">Checkout</Link>
                         </div>
                     </div>
                 </div>

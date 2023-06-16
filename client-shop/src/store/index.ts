@@ -36,8 +36,6 @@ const rootReducer = combineReducers({
     [ productApiSlice.reducerPath ]: productApiSlice.reducer
 })
 
-console.log(userApiSlice.reducerPath, orderApiSlice.reducerPath);
-
 const appReducer: typeof rootReducer = (state, action) => {
     if (action.type === resetStore.type) {
         return rootReducer(undefined, action);

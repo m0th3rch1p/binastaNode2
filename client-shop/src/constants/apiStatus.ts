@@ -21,4 +21,4 @@ export const apiStatus: ApiStatuses = {
     ERROR
 };
 
-export const BASE_URL: string = process.env.NODE_ENV !== 'production' ? "http://shop.binasta.test" : "https://shop.binasta.co.ke";
+export const BASE_URL: string = process.env.NODE_ENV !== 'production' ? "" : "";

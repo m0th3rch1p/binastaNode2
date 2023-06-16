@@ -7,7 +7,7 @@ import { slugify } from "@/helpers/StrHelper";
 const TABLE_NAME = "blog_categories";
 
 export const index: RequestHandler = async (req: Request, res: Response) => {
-    const { response, error } = await execQuery<IBlogCategory[][]>(TABLE_NAME, "SELECT", ['name', 'slug', 'created_at']);
+    const { response, error } = await execQuery<IBlogCategory[][]>(TABLE_NAME, "SELECT", ['id', 'name', 'slug', 'created_at']);
     if (error) {
         res.status(500).json({ message: 'Error fetching blog categories' });
     } else if (response) {

@@ -6,6 +6,7 @@ export interface IProductImage {
     id?: number,
     productId?: number,
     pathUrl?: string,
+    ext?: string,
     created_at?: string,
     updated_at?: string
 };

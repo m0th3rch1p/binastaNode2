@@ -26,10 +26,15 @@ export const store: RequestHandler = async (req: IAddUserAddressReq, res: Respon
     const userAddress: IUserAddress = req.body;
 
     userAddress.userId = req.session.user_id;
-    const { response, error } = await execQuery<{affectedRows: number, insertId: number}>(TABLE_NAME, "INSERT", ['user_id', 'address', 'phone_number'], [userAddress.userId, userAddress.address, userAddress.phoneNumber]);
-    if (error) res.status(500).json({ message: 'Error saving user address' });
+    userAddress.phoneNumber = req.body.phone_number;
+    const { response, error } = await execQuery<[{affectedRows: number, insertId: number}]>(TABLE_NAME, "INSERT", ['user_id', 'address', 'phone_number'], [userAddress.userId, userAddress.address, userAddress.phoneNumber]);
+    if (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error saving user address' });
+    }
     else if (response) {
-        const { affectedRows, insertId } = response;
+        const { affectedRows, insertId } = response[0];
+        console.log(response);
         res.status(200).json({ status: affectedRows, id: insertId });
     }
 };  

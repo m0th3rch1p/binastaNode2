@@ -1,31 +1,31 @@
-import { BASE_URL } from '@/constants/apiStatus';
 import { createSlice } from '@reduxjs/toolkit';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 export type User = {
-    id?: number,
+    id?: number | null,
     email?: string,
-    password?: string
+    password?: string,
+    authenticated?: boolean
 }
 
 const initialUser: User = {
-    id: 0,
-    email: ''
+    authenticated: false
 };
 
 export const userApiSlice = createApi({
     reducerPath: "userApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: `${BASE_URL}/auth`,
+        baseUrl: `/auth`,
     }),
     tagTypes: ['user'],
     endpoints: (builder) => ({
-        registerUser: builder.mutation<any, User>({
+        registerUser: builder.mutation<{ status: boolean }, User>({
             query: (user) => ({
                 url: "/register",
                 method: "POST",
                 body: user
             }),
+            transformResponse: (response: { status: boolean }) => response as { status: boolean }  
         }),
         authenticateUser: builder.mutation<{user: User}, User>({
           query: (user) => ({
@@ -43,12 +43,17 @@ export const userSlice = createSlice({
     name: 'user',
     initialState: initialUser,
     reducers: {
-        resetUserSlice: () => initialUser
+        resetUserSlice: (state) => {
+            state = initialUser
+        },
+        setAuthenticated: (state, action) => {
+            state.authenticated = action.payload
+        }
     }
 });
 
 export const resetUsersApiSlice = () => userApiSlice.util.resetApiState();
 
-export const { resetUserSlice } = userSlice.actions;
+export const { resetUserSlice, setAuthenticated } = userSlice.actions;
 
 export default userSlice.reducer;

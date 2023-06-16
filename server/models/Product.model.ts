@@ -4,6 +4,7 @@ import * as core from 'express-serve-static-core';
 
 export interface IProduct {
     id?: number,
+    category_id?: number,
     categoryId?: number,
     category_name?: string,
     category_slug?: string,

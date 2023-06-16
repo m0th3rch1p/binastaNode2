@@ -41,9 +41,10 @@ export const fetchUserUserOrderById: RequestHandler = async (req: Request, res: 
 export const store: RequestHandler = async (req: IAddOrderReq, res: Response) => {
     const order: IOrder = req.body;
     order.ref = makeRef(8);
-
+    order.userId = req.session.user_id;
+    order.userAddressId = req.body.user_address_id;
     const { response, error } = await execQuery<{ affectedRows: number, insertId: number }>(TABLE_NAME, "INSERT", [
-        "user_Id",
+        "user_id",
         "user_address_id",
         "ref",
     ], [
@@ -53,6 +54,7 @@ export const store: RequestHandler = async (req: IAddOrderReq, res: Response) =>
     ]);
 
     if (error) {
+        console.log(error);
         res.status(500).json({ message: "Error storing order" });
     } else if (response) {
         const productVariations = req.body.productVariations;
@@ -61,13 +63,13 @@ export const store: RequestHandler = async (req: IAddOrderReq, res: Response) =>
             orderProductVariations.push([ response.insertId, variation[0], variation[1] ]);
         });
     
-        const { response:variationResponse, error } = await execQuery<{affectedRows: number}>(TABLE_NAME, "BATCHINSERT", [
+        const { response:variationResponse, error } = await execQuery<{affectedRows: number, insertId: number}>(TABLE_NAME, "BATCHINSERT", [
             "order_id",
             "product_variation_id",
             "quantity"   
         ], orderProductVariations);
-
-        res.status(200).json({ status: variationResponse?.affectedRows });
+        console.log(error);
+        res.status(200).json({ status: variationResponse?.affectedRows, id: variationResponse?.insertId });
     }
 };
 

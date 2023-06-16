@@ -1,4 +1,3 @@
-import { BASE_URL } from "@/constants/apiStatus";
 import { createSlice } from "@reduxjs/toolkit";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 
@@ -6,6 +5,7 @@ export type ProductCategory = {
     id?: number,
     name?: string,
     slug?: string,
+    image_path?: string,
 };
 
 const initialState: ProductCategory[] = [] as ProductCategory[];
@@ -13,14 +13,14 @@ const initialState: ProductCategory[] = [] as ProductCategory[];
 export const productCategoryApiSlice = createApi({
     reducerPath: 'productCategoryApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: `${BASE_URL}/product_categories`
+        baseUrl: `/product_categories`
     }),
     tagTypes: ['productCategories'],
     endpoints: (builder) => ({
         fetchProductCategories: builder.query<ProductCategory[], void>({
             query: () => "/",
-            transformResponse: (response: { productCategories: ProductCategory[] }) => {
-                return response.productCategories
+            transformResponse: (response: { categories: ProductCategory[] }) => {
+                return response.categories;
             },
             providesTags: ["productCategories"]
         })
@@ -33,7 +33,9 @@ export const productCategorySlice = createSlice({
     name: 'product_categories',
     initialState,
     reducers: {
-        resetProductCategorySlice: () => initialState
+        resetProductCategorySlice: (state) => {
+            state = initialState;
+        }
     }
 });
 

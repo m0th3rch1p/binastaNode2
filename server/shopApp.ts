@@ -1,5 +1,4 @@
 import express from 'express';
-import cors from 'cors';
 
 import productRoutes from "@/routes/shop/products.routes";
 import productCategoryRoutes from "@/routes/shop/productCategories.routes";

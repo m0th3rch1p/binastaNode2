@@ -20,7 +20,7 @@ const initialState: Order = {
 export const orderApiSlice = createApi({
     reducerPath: 'orderApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: `${BASE_URL}/orders`
+        baseUrl: `/orders`
     }),
     tagTypes: ["orders"],
     endpoints: (builder) => ({
@@ -32,18 +32,21 @@ export const orderApiSlice = createApi({
             providesTags: ["orders"]
         }),
         fetchSingleOrder: builder.query<Order, number>({
-            query: (id) => `${BASE_URL}/orders/${id}`,
+            query: (id) => `/${id}`,
             transformResponse: (response: { order: Order }) => {
                 return response.order;
             },
             providesTags: ["orders"]
         }),
-        placeOrder: builder.mutation<Order["id"], Order["id"]>({
+        placeOrder: builder.mutation<{ status: number, id: number }, { user_address_id: number, product_variations: [number, number][] }>({
             query: (order) => ({
                 url: "/",
                 method: "POST",
-                body: order
-            })
+                body: { user_address_id: order.user_address_id, product_variations: order.product_variations }
+            }),
+            transformResponse: (response: { status: number, id: number }) => {
+                return response
+            },
         })   
     })
 });

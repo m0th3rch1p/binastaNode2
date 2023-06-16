@@ -23,7 +23,7 @@ const COMMON_QUERY_STRINGS: QueryStrBuilder = (table: string, tableKeys: string[
         "SELECTBYCOL": `SELECT * FROM ${table} ${tableKeys?.map((key: string) => `WHERE ${key}=?`)}`,
         "INSERT": `INSERT INTO ${table}(${tableKeys}) VALUES (${',?'.repeat(tableKeys ? tableKeys.length : 1).slice(1)})`,
         "BATCHINSERT": `INSERT INTO ${table} VALUES ?`,
-        "AUTH": `SELECT (id, password) FROM ${table} WHERE email = ? LIMIT 1`,
+        "AUTH": `SELECT id, password FROM ${table} WHERE email = ? LIMIT 1`,
         "UPDATEBYID": `UPDATE ${table} SET ${
             tableKeys?.map((key: string) => `${key}=?`).join(",")
         } WHERE id = ?`,

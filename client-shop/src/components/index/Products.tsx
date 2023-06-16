@@ -5,6 +5,8 @@ import { addCart } from "@/store/reducers/cartSlice";
 import { Product } from "@/store/reducers/productsSlice";
 import { Link } from "react-router-dom";
 
+import Loader from "../common/Loader";
+
 function Products() {
     const dispatch  = useAppDispatch();
     const { products, isLoading, isError, isSuccess } = useFetchProducts();
@@ -42,8 +44,8 @@ function Products() {
                                     <div className="product-img-action-wrap">
                                         <div className="product-img product-img-zoom">
                                             <Link to={ `/product/${product?.slug}` }>
-                                                <img className="default-img" src={product?.images?.[0].url} alt="" />
-                                                <img className="hover-img" src={product?.images?.[1]?.url} alt="" />
+                                                <img className="default-img" src={product?.images?.[0].url} alt="" loading="lazy" />
+                                                <img className="hover-img" src={product?.images?.[1]?.url} alt="" loading="lazy" />
                                             </Link>
                                         </div>
                                         <div className="product-badges product-badges-position product-badges-mrg">
@@ -67,7 +69,7 @@ function Products() {
                                     </div>
                                 </div>
                             </div>    
-                                )) : (<>Fething Products....</>)
+                                )) : <Loader />
                             }                        
                         </div>
                     </div>

@@ -26,7 +26,7 @@ export const store: RequestHandler = async (req: IAddUserReq, res: Response) => 
         req.session.role = 'user';
 
         console.log(response);
-        res.status(200).json({ message: `${response[0].insertId} gui` });
+        res.status(200).json({ status: true });
     }
     
 };

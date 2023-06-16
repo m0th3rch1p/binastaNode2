@@ -6,6 +6,8 @@ export interface IProductCategory {
     id?: number,
     name?: string,
     slug?: string,
+    image_path?: string,
+    ext?: string,
     created_at?: string,
     updated_at?: string
 };

@@ -34,11 +34,12 @@ export const authenticate: RequestHandler = async (req: IAddAdminReq, res: Respo
     const admin: IAdmin = req.body;
 
     const { response, error } = await execQuery<IAdmin[][]>(TABLE_NAME, "AUTH", null, [admin.email]);
+    console.log(error);
     if(error) res.status(500).json({ message: 'Error authenticating admin. Please try again' });
     else if (response) {
         const [ adminArr ] = response;
         if (adminArr.length) {
-            const match = await bcrypt.compare(<string>admin.password, <string>adminArr[0].password);
+            const match = await bcrypt.compare(admin.password as string, adminArr[0].password as string);
             if (match) {
                 req.session.user_id = adminArr[0].id;
                 req.session.role = 'admin';

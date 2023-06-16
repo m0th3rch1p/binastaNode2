@@ -1,5 +1,7 @@
 import Slider from "react-slick";
 import useFetchProductCategories from "@/hooks/useFetchProductCategories";
+import Loader from "../common/Loader";
+import { Link } from "react-router-dom";
 
 function ProductCategories() {
     const { categories, isLoading, isSuccess, isError } = useFetchProductCategories();
@@ -48,7 +50,7 @@ function ProductCategories() {
                         <ul className="list-inline nav nav-tabs links">
                             <li className="list-inline-item nav-item">
                                 {
-                                    categories?.map(category => (<a className="nav-link" href="shop-grid-right.html" key={category.slug}>{ category.name }</a>))
+                                    isLoading ? <Loader /> : categories?.map(category => (<Link className="nav-link" to={`/products?cat=${category.slug}`} key={category.slug}>{ category.name }</Link>))
                                 }
                             </li>
                         </ul>
@@ -62,7 +64,7 @@ function ProductCategories() {
                                 categories?.map(category => (
                                     <div className="card-2 bg-9 wow animate__animated animate__fadeInUp" data-wow-delay=".1s">
                                         <figure className="img-hover-scale overflow-hidden">
-                                            <a href="shop-grid-right.html"><img src="assets/imgs/shop/cat-13.png" alt="" /></a>
+                                            <Link to={`/shop?cat=${category.slug}`}><img src="assets/imgs/shop/cat-13.png" alt="" /></Link>
                                         </figure>
                                         <h6><a href="shop-grid-right.html">{ category.name }</a></h6>
                                     <span>26 items</span>

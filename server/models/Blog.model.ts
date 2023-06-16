@@ -10,6 +10,7 @@ export interface IBlog {
     description?: string,
     post?: string,
     imagePath?: string,
+    ext?: string,
     linkPath?: string,
     created_at?: string,
     updated_at?: string

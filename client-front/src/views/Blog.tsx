@@ -24,112 +24,70 @@ function Blog() {
           </div>
         </div>
       </section>
-      <section className='page-content'>
-        <div className='container'>
-          <div className='row'>
-            <div className='col-lg-4'>
-              <div className='single-contact-innfo d-flex flex-column justify-content-center align-items-center'>
-                <div className='boxicon mr-3'>
-                  <i className='icofont icofont-location'></i>
+      <div className="blog-area page-blog">
+        <div className="container">
+          <div className="row grid" style={{ position: 'relative', height: '877px' }}>
+            <div className="col-lg-4 col-md-6 col-12 grid-item" style={{ position: 'absolute', left: '0%', top: '0px' }}>
+              <article className="single-blog sticky">
+                <div className="blog-thumb">
+                  <img className="" src="https://binasta.co.ke/storage/blogs/2GdTmcu4Tl5g3OxMi2FoIHW7DKOm56WpqLw4lysn.jpg" data-src="/storage/blogs/2GdTmcu4Tl5g3OxMi2FoIHW7DKOm56WpqLw4lysn.jpg" alt="" />
+                  <ul className="post-meta d-flex justify-content-between">
+                    <li><a href="#"><i className="icofont">ui_calendar</i> Sat Jan 21 2023</a></li>
+                  </ul>
                 </div>
-                <h3>Our Location</h3>
-                <p>A26BT5 Building, SilverC Street, London England</p>
-              </div>
-            </div>
-            <div className='col-lg-4'>
-              <div className='single-contact-innfo d-flex flex-column justify-content-center align-items-center'>
-                <div className='boxicon mr-3'>
-                  <i className='icofont icofont-telephone'></i>
+                <div className="blog-text">
+                  <h4><a href="/blog/live-a-healthy-life">Live A Healthy Life</a></h4>
+                  <p>
+                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has su <a href="/blog/live-a-healthy-life">[...]</a>
+                  </p>
                 </div>
-                <h3>Call Us Now</h3>
-                <p>
-                  +123 65487954 <br /> +123 98765426
-                </p>
-              </div>
+              </article>
             </div>
-            <div className='col-lg-4'>
-              <div className='single-contact-innfo d-flex flex-column justify-content-center align-items-center'>
-                <div className='boxicon mr-3'>
-                  <i className='icofont icofont-email'></i>
+            <div className="col-lg-4 col-md-6 col-12 grid-item" style={{ position: 'absolute', left: '33.3333%', top: '0px' }}>
+              <article className="single-blog audio">
+                <iframe width="100%" height="360" scrolling="no" frameBorder="no" allow="autoplay" src="https://www.youtube.com/embed/MilYefF9DjI"></iframe>
+                <div className="blog-text">
+                  <ul className="post-meta d-flex justify-content-between">
+                    <li><a href="#"><i className="icofont">ui_calendar</i> Sat Jan 21 2023</a></li>
+                  </ul>
                 </div>
-                <h3>Write Us Now</h3>
-                <p>
-                  <a href='mailto:inforations@.com'>
-                    inforations@.com Supportrations@.com
-                  </a>{' '}
-                  <br />
-                  <a href='mailto:inforations@.com'>
-                    inforations@.com Supportrations@.com
-                  </a>
-                </p>
-              </div>
+              </article>
             </div>
-          </div>
-          <div className='spacer-extra2'></div>
-          <div className='row'>
-            <div className='col-lg-6'>
-              <form className='site-contactform'>
-                <h3 className='section-title xs2'>Contact Us</h3>
-                <div className='form-row'>
-                  <div className='col-12'>
-                    <input
-                      type='text'
-                      className='form-control'
-                      placeholder='Type Your Name'
-                    />
+            <div className="col-lg-4 col-md-6 col-12 grid-item" style={{ position: 'absolute', left: '66.6667%', top: '0px' }}>
+              <article className="single-blog sticky">
+                <div className="blog-thumb">
+                  <img className="" src="https://binasta.co.ke/storage/blogs/EY0f8lMmV1mwpu6dAHdlXREEVJxbvcPxiHhqnN4m.jpg" data-src="/storage/blogs/EY0f8lMmV1mwpu6dAHdlXREEVJxbvcPxiHhqnN4m.jpg" alt="" />
+                  <ul className="post-meta d-flex justify-content-between">
+                    <li><a href="#"><i className="icofont">ui_calendar</i> Sat Jan 21 2023</a></li>
+                  </ul>
+                </div>
+                <div className="blog-text">
+                  <h4><a href="/blog/simple-morning-workouts">Simple Morning Workouts</a></h4>
+                  <p>
+                    orem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has sur <a href="/blog/simple-morning-workouts">[...]</a>
+                  </p>
+                </div>
+              </article>
+            </div>
+            <div className="col-lg-4 col-md-6 col-12 grid-item" style={{ position: 'absolute', left: '33.3333%', top: '457px' }}>
+              <article className="single-blog qute">
+                <div className="blog-text">
+                  <div className="quation">
+                    <i className="icofont">quote_right</i>
                   </div>
-                  <div className='col-12'>
-                    <input
-                      type='email'
-                      className='form-control'
-                      placeholder='Email'
-                    />
-                  </div>
-                  <div className='col-12'>
-                    <input
-                      type='text'
-                      className='form-control'
-                      placeholder='Phone Number (Optional)'
-                    />
-                  </div>
-                  <div className='col-12'>
-                    <textarea
-                      className='form-control'
-                      placeholder='write your message'
-                    ></textarea>
-                  </div>
+                  <h4>
+                    <p>“Strength does not come from physical capacity. It comes from an indomitable will.”</p>
+                    <p>-Mahatma Gandhi</p>
+                  </h4>
+                  <ul className="post-meta d-flex justify-content-between">
+                    <li><a href="#"><i className="icofont">ui_calendar</i> Sat Jan 21 2023</a></li>
+                  </ul>
                 </div>
-                <button
-                  id='submitBtn'
-                  type='submit'
-                  className='btn-mr th-primary pill'
-                >
-                  SEND
-                </button>
-              </form>
+              </article>
             </div>
-            <div className='col-lg-6'>
-              <div className='promo-add'>
-                <img
-                  className=''
-                  src='https://binasta.co.ke/main/images/all-img/conimg.jpg'
-                  data-src='/main/images/all-img/conimg.jpg'
-                  alt=''
-                />
-                <div className='promo-text'>
-                  <span>Need Help For Any</span>
-                  <h4>Health Information </h4>
-                  <h3>+123 6547896</h3>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className='spacer-extra2'></div>
-          <div className='row'>
-            <div className='col-12'></div>
           </div>
         </div>
-      </section>
+      </div>
     </>
   )
 }

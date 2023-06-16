@@ -9,6 +9,7 @@ import { db_init } from "@/database";
 import { session_init } from "@/session";
 
 import { shopApp } from "./shopApp";
+import { adminApp } from "./adminApp";
 import { distributorApp } from "./distributorApp";
 
 
@@ -29,8 +30,9 @@ mainApp.use(morgan("combined"));
 mainApp.use(express.urlencoded({ extended: true }));
 mainApp.use(express.json());
 mainApp.use(helmet());
-mainApp.use(helmet.crossOriginResourcePolicy({policy: "cross-origin"}));
-mainApp.use(cors({ origin: "http://localhost:3001", credentials: true }));
+mainApp.use(cors());
+// mainApp.use(helmet.crossOriginResourcePolicy({policy: "cross-origin"}));
+// mainApp.use(cors({ origin: "http://localhost:3001", credentials: true }));
 
 // Initialize DB
 db_init();
@@ -48,6 +50,7 @@ mainApp.use(session);
 // Subdomain Routing
 mainApp.use(vhost(`shop.${config.platform === 'development' ? config.dev_domain : config.prod_domain}`, shopApp));
 mainApp.use(vhost(`distributor.${config.platform === 'development' ? config.dev_domain : config.prod_domain}`, distributorApp));
+mainApp.use(vhost(`management.${config.platform === 'development' ? config.dev_domain : config.prod_domain}`, adminApp));
 
 mainApp.listen(config.serverPort, config.serverHost, () => {
     console.log("[+] Server configured & started successfully...");
