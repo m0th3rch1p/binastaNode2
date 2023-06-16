@@ -1,6 +1,7 @@
 import React from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import store from "@/store";
+
 import FrontLayout from "./layout/FrontLayout";
 
 import Index from "./views/Index";
@@ -10,12 +11,12 @@ import Blog from "./views/Blog"
 
 import "@/assets/css/plugins.css";
 import "@/assets/css/app.css";
-
-const queryClient = new QueryClient();
+import { Provider } from "react-redux";
 
 function App() {
   return (
     <React.StrictMode>
+      <Provider store={store}>
       <BrowserRouter>
       <Routes>
             <Route element={<FrontLayout />}>
@@ -26,7 +27,7 @@ function App() {
             </Route>
           </Routes>
       </BrowserRouter>
-  
+      </Provider>
     </React.StrictMode>    
   );
 }

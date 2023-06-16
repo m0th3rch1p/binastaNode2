@@ -31,10 +31,10 @@ export const orderApiSlice = createApi({
             },
             providesTags: ["orders"]
         }),
-        fetchSingleOrder: builder.query<Order, number>({
+        fetchSingleOrder: builder.query<{ order: Order, product_variations: {id: number, variation: string, buy_price: number, product_name: string, quantity: {quantity:string}[]}[]}, number>({
             query: (id) => `/${id}`,
-            transformResponse: (response: { order: Order }) => {
-                return response.order;
+            transformResponse: (response: { order: Order, product_variations: {id: number, variation: string, buy_price: number, product_name: string, quantity: {quantity:string}[]}[] }) => {
+                return {order: response.order, product_variations: response.product_variations};
             },
             providesTags: ["orders"]
         }),

@@ -11,9 +11,9 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 exports.__esModule = true;
+var react_1 = require("react");
 var blogCategoriesSlice_1 = require("@/store/reducers/blogCategoriesSlice");
 var blogsSlice_1 = require("@/store/reducers/blogsSlice");
-var react_1 = require("react");
 function Blog() {
     var _a = blogsSlice_1.useStoreBlogMutation(), storeBlog = _a[0], _b = _a[1], isLoading = _b.isLoading, isSuccess = _b.isSuccess;
     var categories = blogCategoriesSlice_1.useFetchBlogCategoriesQuery().data;

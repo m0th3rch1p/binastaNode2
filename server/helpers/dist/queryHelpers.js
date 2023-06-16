@@ -46,7 +46,7 @@ var COMMON_QUERY_STRINGS = function (table, tableKeys) {
         "SELECTBYID": "SELECT * FROM " + table + " WHERE id = ? LIMIT 1",
         "SELECTBYCOL": "SELECT * FROM " + table + " " + (tableKeys === null || tableKeys === void 0 ? void 0 : tableKeys.map(function (key) { return "WHERE " + key + "=?"; })),
         "INSERT": "INSERT INTO " + table + "(" + tableKeys + ") VALUES (" + ',?'.repeat(tableKeys ? tableKeys.length : 1).slice(1) + ")",
-        "BATCHINSERT": "INSERT INTO " + table + " VALUES ?",
+        "BATCHINSERT": "INSERT INTO " + table + "(" + tableKeys + ") VALUES ?",
         "AUTH": "SELECT id, password FROM " + table + " WHERE email = ? LIMIT 1",
         "UPDATEBYID": "UPDATE " + table + " SET " + (tableKeys === null || tableKeys === void 0 ? void 0 : tableKeys.map(function (key) { return key + "=?"; }).join(",")) + " WHERE id = ?",
         "DELETEBYID": "DELETE FROM " + table + " WHERE id = ?"
@@ -76,7 +76,7 @@ exports.execQuery = function (table, query, tableKeys, params) {
                             queryStr = COMMON_QUERY_STRINGS(table, tableKeys).INSERT;
                             break;
                         case "BATCHINSERT":
-                            queryStr = COMMON_QUERY_STRINGS(table).BATCHINSERT;
+                            queryStr = COMMON_QUERY_STRINGS(table, tableKeys).BATCHINSERT;
                             break;
                         case "AUTH":
                             queryStr = COMMON_QUERY_STRINGS(table).AUTH;

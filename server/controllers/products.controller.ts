@@ -57,8 +57,9 @@ export const index: RequestHandler = async (req: Request, res: Response) => {
 
 export const fetchAllUserProducts: RequestHandler = async (req: Request, res: Response) => {
     const { response: productsArr, error } = await execQuery<IProduct[][]>(TABLE_NAME, `
-    SELECT p.id, p.name as name, p.slug as slug FROM products p 
+    SELECT p.id, p.name as name, p.slug as slug, p.description FROM products p 
     INNER JOIN (SELECT p.id FROM products p LIMIT ${req.query.per_page} OFFSET ${req.query.offset}) AS tmp USING (id)
+    ORDER BY id DESC
     `);
     
     if (error) {
@@ -70,7 +71,7 @@ export const fetchAllUserProducts: RequestHandler = async (req: Request, res: Re
     } else if (productsArr) {
         const productIds = _.map(productsArr[0], (product) => product.id); 
         const { response: variationsArr, error } = await execQuery<IProductVariation[][]>("product_variations", `SELECT pv.id, pv.product_id, pv.variation, pv.buy_price FROM product_variations pv WHERE pv.product_id IN (${',?'.repeat(productIds.length).slice(1)})`, null, productIds);
-        const { response: imagesArr, error: imagesError } = await execQuery<IProductImage[][]>("producty_images", `SELECT pi.product_id, pi.path_url as url FROM product_images pi WHERE pi.product_id IN (${',?'.repeat(productIds.length).slice(1)})`, null, productIds); 
+        const { response: imagesArr, error: imagesError } = await execQuery<IProductImage[][]>("producty_images", `SELECT pi.product_id, pi.path_url as url, pi.ext FROM product_images pi WHERE pi.product_id IN (${',?'.repeat(productIds.length).slice(1)})`, null, productIds); 
 
         const groupedVariations = _.groupBy(variationsArr?.[0], 'product_id');
         const groupImages =  _.groupBy(imagesArr?.[0], 'product_id');

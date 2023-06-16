@@ -46,5 +46,6 @@
     "@types/mysql": "^2.15.21",
     "@types/vhost": "^3.0.4",
     "ts-node": "^10.9.1"
-  }
+  },
+  "proxy": "http://binasta.test"
 }

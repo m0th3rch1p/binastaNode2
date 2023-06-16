@@ -13,6 +13,9 @@ import { adminApp } from "./adminApp";
 import { distributorApp } from "./distributorApp";
 
 
+import productRoutes from "@/routes/products.routes";
+import blogRoutes from "@/routes/blog.routes";
+
 // import { init_pp } from "@/services/paymentGateways/paypal.gateway";
 // import { init_mpesa } from "@/services/paymentGateways/mpesa.gateway";
 
@@ -47,10 +50,18 @@ const session = session_init();
 if (!session) process.exit();
 mainApp.use(session);
 
+mainApp.use(express.static("productImages"));
+mainApp.use(express.static("productCategories"));
+mainApp.use(express.static("blogPosts"));
+
+
 // Subdomain Routing
 mainApp.use(vhost(`shop.${config.platform === 'development' ? config.dev_domain : config.prod_domain}`, shopApp));
 mainApp.use(vhost(`distributor.${config.platform === 'development' ? config.dev_domain : config.prod_domain}`, distributorApp));
 mainApp.use(vhost(`management.${config.platform === 'development' ? config.dev_domain : config.prod_domain}`, adminApp));
+
+mainApp.use("/products", productRoutes);
+mainApp.use("/blogs", blogRoutes);
 
 mainApp.listen(config.serverPort, config.serverHost, () => {
     console.log("[+] Server configured & started successfully...");

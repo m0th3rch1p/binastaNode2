@@ -106,7 +106,7 @@ exports.fetchAllUserProducts = function (req, res) { return __awaiter(void 0, vo
     var _a, productsArr, error, productIds, _b, variationsArr, error_1, _c, imagesArr, imagesError, groupedVariations_1, groupImages_1, productsEmbedded;
     return __generator(this, function (_d) {
         switch (_d.label) {
-            case 0: return [4 /*yield*/, queryHelpers_1.execQuery(TABLE_NAME, "\n    SELECT p.id, p.name as name, p.slug as slug FROM products p \n    INNER JOIN (SELECT p.id FROM products p LIMIT " + req.query.per_page + " OFFSET " + req.query.offset + ") AS tmp USING (id)\n    ")];
+            case 0: return [4 /*yield*/, queryHelpers_1.execQuery(TABLE_NAME, "\n    SELECT p.id, p.name as name, p.slug as slug, p.description FROM products p \n    INNER JOIN (SELECT p.id FROM products p LIMIT " + req.query.per_page + " OFFSET " + req.query.offset + ") AS tmp USING (id)\n    ORDER BY id DESC\n    ")];
             case 1:
                 _a = _d.sent(), productsArr = _a.response, error = _a.error;
                 if (!error) return [3 /*break*/, 2];
@@ -121,7 +121,7 @@ exports.fetchAllUserProducts = function (req, res) { return __awaiter(void 0, vo
                 return [4 /*yield*/, queryHelpers_1.execQuery("product_variations", "SELECT pv.id, pv.product_id, pv.variation, pv.buy_price FROM product_variations pv WHERE pv.product_id IN (" + ',?'.repeat(productIds.length).slice(1) + ")", null, productIds)];
             case 3:
                 _b = _d.sent(), variationsArr = _b.response, error_1 = _b.error;
-                return [4 /*yield*/, queryHelpers_1.execQuery("producty_images", "SELECT pi.product_id, pi.path_url as url FROM product_images pi WHERE pi.product_id IN (" + ',?'.repeat(productIds.length).slice(1) + ")", null, productIds)];
+                return [4 /*yield*/, queryHelpers_1.execQuery("producty_images", "SELECT pi.product_id, pi.path_url as url, pi.ext FROM product_images pi WHERE pi.product_id IN (" + ',?'.repeat(productIds.length).slice(1) + ")", null, productIds)];
             case 4:
                 _c = _d.sent(), imagesArr = _c.response, imagesError = _c.error;
                 groupedVariations_1 = lodash_1["default"].groupBy(variationsArr === null || variationsArr === void 0 ? void 0 : variationsArr[0], 'product_id');

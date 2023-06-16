@@ -1,6 +1,8 @@
-import React from 'react'
+import { useFetchBlogsQuery } from "@/store/reducers/blogsSlice"
+import { Link } from "react-router-dom";
 
 function Blog() {
+  const { data: blogs } = useFetchBlogsQuery();
   return (
     <>
       <section className='page-banner'>
@@ -11,9 +13,9 @@ function Blog() {
               <nav aria-label='breadcrumb'>
                 <ol className='breadcrumb site-breadcumb-1 justify-content-center'>
                   <li className='breadcrumb-item'>
-                    <a className='' href='/'>
+                    <Link className='' to='/'>
                       Home
-                    </a>
+                    </Link>
                   </li>
                   <li className='breadcrumb-item active' aria-current='page'>
                     Blog
@@ -27,64 +29,26 @@ function Blog() {
       <div className="blog-area page-blog">
         <div className="container">
           <div className="row grid" style={{ position: 'relative', height: '877px' }}>
-            <div className="col-lg-4 col-md-6 col-12 grid-item" style={{ position: 'absolute', left: '0%', top: '0px' }}>
-              <article className="single-blog sticky">
-                <div className="blog-thumb">
-                  <img className="" src="https://binasta.co.ke/storage/blogs/2GdTmcu4Tl5g3OxMi2FoIHW7DKOm56WpqLw4lysn.jpg" data-src="/storage/blogs/2GdTmcu4Tl5g3OxMi2FoIHW7DKOm56WpqLw4lysn.jpg" alt="" />
-                  <ul className="post-meta d-flex justify-content-between">
-                    <li><a href="#"><i className="icofont">ui_calendar</i> Sat Jan 21 2023</a></li>
-                  </ul>
+            {
+              blogs?.map((blog) => (
+                <div className="col-lg-4 col-md-6 col-12 grid-item">
+                  <article className="single-blog sticky">
+                    <div className="blog-thumb">
+                      <img className="" src={`${blog.image_path}.${blog.ext?.split("/")[1]}`} alt="" />
+                      <ul className="post-meta d-flex justify-content-between">
+                        <li><i className="icofont">ui_calendar</i>{ new Date(blog.created_at as string).toLocaleDateString() }</li>
+                      </ul>
+                    </div>
+                    <div className="blog-text">
+                      <h4><Link to={`/blog/${blog.slug}`}>{ blog.title }</Link></h4>
+                      <p>
+                        { blog.description }<Link to={`/blog/${blog.slug}`}>[...]</Link>
+                      </p>
+                    </div>
+                  </article>
                 </div>
-                <div className="blog-text">
-                  <h4><a href="/blog/live-a-healthy-life">Live A Healthy Life</a></h4>
-                  <p>
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has su <a href="/blog/live-a-healthy-life">[...]</a>
-                  </p>
-                </div>
-              </article>
-            </div>
-            <div className="col-lg-4 col-md-6 col-12 grid-item" style={{ position: 'absolute', left: '33.3333%', top: '0px' }}>
-              <article className="single-blog audio">
-                <iframe width="100%" height="360" scrolling="no" frameBorder="no" allow="autoplay" src="https://www.youtube.com/embed/MilYefF9DjI"></iframe>
-                <div className="blog-text">
-                  <ul className="post-meta d-flex justify-content-between">
-                    <li><a href="#"><i className="icofont">ui_calendar</i> Sat Jan 21 2023</a></li>
-                  </ul>
-                </div>
-              </article>
-            </div>
-            <div className="col-lg-4 col-md-6 col-12 grid-item" style={{ position: 'absolute', left: '66.6667%', top: '0px' }}>
-              <article className="single-blog sticky">
-                <div className="blog-thumb">
-                  <img className="" src="https://binasta.co.ke/storage/blogs/EY0f8lMmV1mwpu6dAHdlXREEVJxbvcPxiHhqnN4m.jpg" data-src="/storage/blogs/EY0f8lMmV1mwpu6dAHdlXREEVJxbvcPxiHhqnN4m.jpg" alt="" />
-                  <ul className="post-meta d-flex justify-content-between">
-                    <li><a href="#"><i className="icofont">ui_calendar</i> Sat Jan 21 2023</a></li>
-                  </ul>
-                </div>
-                <div className="blog-text">
-                  <h4><a href="/blog/simple-morning-workouts">Simple Morning Workouts</a></h4>
-                  <p>
-                    orem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has sur <a href="/blog/simple-morning-workouts">[...]</a>
-                  </p>
-                </div>
-              </article>
-            </div>
-            <div className="col-lg-4 col-md-6 col-12 grid-item" style={{ position: 'absolute', left: '33.3333%', top: '457px' }}>
-              <article className="single-blog qute">
-                <div className="blog-text">
-                  <div className="quation">
-                    <i className="icofont">quote_right</i>
-                  </div>
-                  <h4>
-                    <p>“Strength does not come from physical capacity. It comes from an indomitable will.”</p>
-                    <p>-Mahatma Gandhi</p>
-                  </h4>
-                  <ul className="post-meta d-flex justify-content-between">
-                    <li><a href="#"><i className="icofont">ui_calendar</i> Sat Jan 21 2023</a></li>
-                  </ul>
-                </div>
-              </article>
-            </div>
+              ))
+            }
           </div>
         </div>
       </div>

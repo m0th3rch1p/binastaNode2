@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
 
+
 function Header() {
     const [isVisible, setIsVisible] = useState<boolean>(false);
 
@@ -32,7 +33,7 @@ function Header() {
             <nav className="navbar">
       <div className="container">
         <Link to="/" className="navbar-brand logo" >
-          <img src="../assets/images/logo/logo.png" width="0" alt="" style={{ width: '165px !important' }} />
+          <img src="../../assets/images/logo.png"alt="" style={{ width: '165px !important' }} />
         </Link>
         <div className="ml-auto main-menu">
           <ul>

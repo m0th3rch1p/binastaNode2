@@ -24,14 +24,14 @@ function ShoppingCartComponent() {
                             cart.products.map(({product, selectedVariation, quantity}) => (
                                 <li key={ product.slug }>
                                     <div className="shopping-cart-img">
-                                        <a href="shop-product-right.html"><img alt="Nest" src="assets/imgs/shop/thumbnail-3.jpg" /></a>
+                                        <Link to={`/product/${product.slug}`}><img alt={product.name} src={`/${product?.images?.[0].url}`} /></Link>
                                     </div>
                                     <div className="shopping-cart-title">
                                         <h4><Link to={`/products/${product.slug}`}>{ product.name }</Link></h4>
                                         <h3><span>{ quantity } × </span>ksh.{ selectedVariation.buy_price }</h3>
                                     </div>
                                     <div className="shopping-cart-delete">
-                                        <button onClick={(event) => onRemoveCartProduct(event, product.id as number) }><i className="fi-rs-cross-small"></i></button>
+                                        <button style={{ background: "white", border: 0}} onClick={(event) => onRemoveCartProduct(event, product.id as number) }><i className="fi-rs-cross-small"></i></button>
                                     </div>
                                 </li>
                             ))

@@ -26,7 +26,7 @@ function App() {
               <Route path="/checkout" element={<Checkout />} />
             </Route>
             <Route element={<InvoiceLayout />}>
-              <Route path="/invoice" element={<Invoice />} />
+              <Route path="/invoice/:orderId" element={<Invoice />} />
             </Route>
           </Routes>
         </BrowserRouter>

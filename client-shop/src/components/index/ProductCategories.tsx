@@ -47,13 +47,6 @@ function ProductCategories() {
                 <div className="section-title">
                     <div className="title">
                         <h3>Featured Categories</h3>
-                        <ul className="list-inline nav nav-tabs links">
-                            <li className="list-inline-item nav-item">
-                                {
-                                    isLoading ? <Loader /> : categories?.map(category => (<Link className="nav-link" to={`/products?cat=${category.slug}`} key={category.slug}>{ category.name }</Link>))
-                                }
-                            </li>
-                        </ul>
                     </div>
                     <div className="slider-arrow slider-arrow-2 flex-right carausel-10-columns-arrow" id="carausel-10-columns-arrows"></div>
                 </div>
@@ -64,7 +57,7 @@ function ProductCategories() {
                                 categories?.map(category => (
                                     <div className="card-2 bg-9 wow animate__animated animate__fadeInUp" data-wow-delay=".1s">
                                         <figure className="img-hover-scale overflow-hidden">
-                                            <Link to={`/shop?cat=${category.slug}`}><img src="assets/imgs/shop/cat-13.png" alt="" /></Link>
+                                            <Link to={`/shop?cat=${category.slug}`}><img src={category.image_path} alt="" /></Link>
                                         </figure>
                                         <h6><a href="shop-grid-right.html">{ category.name }</a></h6>
                                     <span>26 items</span>

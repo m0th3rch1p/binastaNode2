@@ -1,4 +1,5 @@
 import useFetchProductCategories from "@/hooks/useFetchProductCategories"
+import mpesaImg from "@/assets/images/mpesa.jpg";
 
 function Categories() {
     const { categories, isLoading, isError } = useFetchProductCategories();
@@ -22,7 +23,7 @@ function Categories() {
                             {
                                 categories?.map(category => (
                                     <li>
-                                        <a href="shop-grid-right.html"> <img src="assets/imgs/theme/icons/category-1.svg" alt="" />{ category.name }</a><span className="count">11</span>
+                                        <a href="shop-grid-right.html"> <img src={`/${category.image_path}`} alt="" />{ category.name }</a><span className="count">11</span>
                                     </li>
                                 ))
                             }
@@ -31,15 +32,7 @@ function Categories() {
                     <div className="banner-img wow fadeIn mb-lg-0 animated d-lg-block d-none animated" style={{
                         visibility: "visible"
                     }}>
-                        <img src="assets/imgs/banner/banner-11.png" alt="" />
-                        <div className="banner-text">
-                            <span>Oganic</span>
-                            <h4>
-                                Save 17% <br />
-                                on <span className="text-brand">Oganic</span><br />
-                                Juice
-                            </h4>
-                        </div>
+                        <img src={mpesaImg} alt="" />
                     </div></div></div>
         </>
     )

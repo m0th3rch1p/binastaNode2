@@ -22,7 +22,7 @@ const COMMON_QUERY_STRINGS: QueryStrBuilder = (table: string, tableKeys: string[
         "SELECTBYID": `SELECT * FROM ${table} WHERE id = ? LIMIT 1`,
         "SELECTBYCOL": `SELECT * FROM ${table} ${tableKeys?.map((key: string) => `WHERE ${key}=?`)}`,
         "INSERT": `INSERT INTO ${table}(${tableKeys}) VALUES (${',?'.repeat(tableKeys ? tableKeys.length : 1).slice(1)})`,
-        "BATCHINSERT": `INSERT INTO ${table} VALUES ?`,
+        "BATCHINSERT": `INSERT INTO ${table}(${tableKeys}) VALUES ?`,
         "AUTH": `SELECT id, password FROM ${table} WHERE email = ? LIMIT 1`,
         "UPDATEBYID": `UPDATE ${table} SET ${
             tableKeys?.map((key: string) => `${key}=?`).join(",")
@@ -48,7 +48,7 @@ export const execQuery = async <TData = unknown, TError = unknown>(table: string
                 queryStr = COMMON_QUERY_STRINGS(table, tableKeys).INSERT;
                 break;
             case "BATCHINSERT":
-                queryStr = COMMON_QUERY_STRINGS(table).BATCHINSERT;
+                queryStr = COMMON_QUERY_STRINGS(table, tableKeys).BATCHINSERT;
                 break;
             case "AUTH":
                 queryStr = COMMON_QUERY_STRINGS(table).AUTH;

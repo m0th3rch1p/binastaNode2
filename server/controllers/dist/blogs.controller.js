@@ -36,13 +36,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.destroyById = exports.updateById = exports.store = exports.index = void 0;
+exports.destroyById = exports.updateById = exports.fetchBySlug = exports.store = exports.index = void 0;
 var queryHelpers_1 = require("@/helpers/queryHelpers");
 var StrHelper_1 = require("@/helpers/StrHelper");
 var multer_1 = require("multer");
 var multerStorage = multer_1["default"].diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'blogPosts');
+        cb(null, "blogPosts");
     }
 });
 var multerFilter = function (req, file, cb) {
@@ -65,7 +65,7 @@ var multerFilter = function (req, file, cb) {
 var upload = multer_1["default"]({
     storage: multerStorage,
     fileFilter: multerFilter
-}).single('img');
+}).single("img");
 exports.index = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, blogs, error;
     return __generator(this, function (_b) {
@@ -77,7 +77,7 @@ exports.index = function (req, res) { return __awaiter(void 0, void 0, void 0, f
                     res.status(500).json({ message: "error fetching blogs" });
                 }
                 else if (blogs) {
-                    res.status(200).json({ blogs: blogs });
+                    res.status(200).json({ blogs: blogs[0] });
                 }
                 return [2 /*return*/];
         }
@@ -91,9 +91,13 @@ exports.store = function (req, res) { return __awaiter(void 0, void 0, void 0, f
                 switch (_b.label) {
                     case 0:
                         if (!(err instanceof multer_1["default"].MulterError)) return [3 /*break*/, 1];
-                        res.status(422).json({ errors: [{
+                        res.status(422).json({
+                            errors: [
+                                {
                                     img: err.message
-                                }] });
+                                }
+                            ]
+                        });
                         return [3 /*break*/, 5];
                     case 1:
                         if (!err) return [3 /*break*/, 2];
@@ -104,9 +108,11 @@ exports.store = function (req, res) { return __awaiter(void 0, void 0, void 0, f
                         console.log(req.file);
                         if (!!req.file) return [3 /*break*/, 3];
                         res.status(422).json({
-                            errors: [{
+                            errors: [
+                                {
                                     img: "Please include product images"
-                                }]
+                                }
+                            ]
                         });
                         return [3 /*break*/, 5];
                     case 3:
@@ -115,10 +121,25 @@ exports.store = function (req, res) { return __awaiter(void 0, void 0, void 0, f
                         blog.blogCategoryId = req.body.blog_category_id;
                         blog.imagePath = req.file.filename;
                         blog.ext = req.file.mimetype;
-                        return [4 /*yield*/, queryHelpers_1.execQuery("blogs", "INSERT", ["blog_category_id", "title", "slug", "post", "description", "image_path", "ext"], [blog.blogCategoryId, blog.title, blog.slug, blog.post, blog.description, blog.imagePath, blog.ext])];
+                        return [4 /*yield*/, queryHelpers_1.execQuery("blogs", "INSERT", [
+                                "blog_category_id",
+                                "title",
+                                "slug",
+                                "post",
+                                "description",
+                                "image_path",
+                                "ext"
+                            ], [
+                                blog.blogCategoryId,
+                                blog.title,
+                                blog.slug,
+                                blog.post,
+                                blog.description,
+                                blog.imagePath,
+                                blog.ext
+                            ])];
                     case 4:
                         _a = _b.sent(), response = _a.response, error = _a.error;
-                        console.log(error);
                         if (error) {
                             res.status(500).json({ message: "error fetching blogs" });
                         }
@@ -131,6 +152,23 @@ exports.store = function (req, res) { return __awaiter(void 0, void 0, void 0, f
             });
         }); });
         return [2 /*return*/];
+    });
+}); };
+exports.fetchBySlug = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, blogArr, error;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0: return [4 /*yield*/, queryHelpers_1.execQuery("blogs", "SELECT title, slug, post, image_path, ext, created_at FROM blogs WHERE slug=?", [], [req.params.slug])];
+            case 1:
+                _a = _b.sent(), blogArr = _a.response, error = _a.error;
+                if (error) {
+                    res.status(500).json({ message: "error fetching blog by slug" });
+                }
+                else if (blogArr) {
+                    res.status(200).json({ blog: blogArr[0] });
+                }
+                return [2 /*return*/];
+        }
     });
 }); };
 //@ts-expect-error

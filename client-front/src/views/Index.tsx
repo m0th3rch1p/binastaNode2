@@ -1,6 +1,7 @@
 import SiteSlider from "@/components/index/SiteSlider";
 import QueryForm from "@/components/index/QueryForm";
-import Blog from "@/components/index/Blog";
+import Products from "@/components/index/Products";
+import Blogs from "@/components/index/Blogs";
 
 function Index() {
     return (
@@ -44,47 +45,21 @@ function Index() {
                                 <p>We understand that your success is our success. That's why we provide comprehensive training and support to all our affiliates. Our dedicated team will equip you with the knowledge and tools you need to excel in promoting Binasta products and generating sales. From product training to marketing strategies, we've got you covered.</p>
                             </div>
                         </div>
-                        <div className="col-lg-4 col-md-6 text-center grid-item animation" data-animation="fadeInLeft" data-animation-delay="0.2s">
-                            <div className="single-health-block  d-flex flex-column align-items-center justify-content-center">
-                                <div className="icon-box">
-                                    <i className="icofont icofont-sale-discount"></i>
-                                </div>
-                                <h4>High-Quality Products</h4>
-                                <p>Binasta takes pride in offering high-quality products that customers love. As an affiliate, you can confidently promote our diverse range of innovative and in-demand products. Whether it's cutting-edge technology, health and wellness, home essentials, or fashion accessories, Binasta has something for everyone.</p>
-                            </div>
-                        </div>
-                        <div className="col-lg-4 col-md-6 text-center grid-item animation" data-animation="fadeInRight" data-animation-delay="0.0.4s">
-                            <div className="single-health-block  d-flex flex-column align-items-center justify-content-center">
-                                <div className="icon-box">
-                                    <i className="icofont icofont-chart"></i>
-                                </div>
-                                <h4>Flexible Business Model:</h4>
-                                <p>Our affiliate program allows you to be your own boss and work at your own pace. You have the flexibility to choose your sales strategies, target audience, and preferred marketing channels. Whether you run a brick-and-mortar store, an online shop, or a social media platform, the Binasta affiliate program seamlessly integrates with your existing business model.</p>
-                            </div>
-                        </div>
-                        <div className="col-lg-4 col-md-6 text-center grid-item animation" data-animation="fadeInUp" data-animation-delay="0.6s">
-                            <div className="single-health-block  d-flex flex-column align-items-center justify-content-center">
-                                <div className="icon-box">
-                                    <i className="icofont icofont-eye"></i>
-                                </div>
-                                <h4>Access to a Thriving Community</h4>
-                                <p>By joining the Binasta affiliate program, you become part of a vibrant community of like-minded individuals. Collaborate with fellow affiliates, share best practices, and learn from each other's experiences. This supportive network fosters personal and professional growth, providing a strong foundation for your entrepreneurial journey.</p>
-                            </div>
-                        </div>
+                        <Blogs />
                     </div>
                 </div>
             </section>
 
             <QueryForm />
-            <Blog />
+            <Products />
 
             {/* Call to action */}
             <section className="call-to-action">
                 <div className="container">
                     <div className="row align-items-center">
                         <div className="col-md-7 text-center text-md-left">
-                            <h3>The fastest way to loss weight in natural way!</h3>
-                            <p>Lorem ipsum dolor sit amet, Lorem ipsum dolor sit amet  accusam</p>
+                            <h3>Swizenta Ashwagandha Candy, the delicious way to enhance your health and vitality!</h3>
+                            <p>Packed with the power of nature's finest herb, ashwagandha, our candy offers a tantalizing blend of taste and benefits that will leave you craving for more.</p>
                         </div>
                         <div className="col-md-5 text-md-right text-center">
                             <a href="#">GET A FREE CONSULTATION!</a>

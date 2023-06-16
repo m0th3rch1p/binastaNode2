@@ -44,7 +44,7 @@ function Discounts() {
                                 products?.map((product) => (
                                     <article key={product.slug} className="row align-items-center hover-up">
                                         <figure className="col-md-4 mb-0">
-                                            <a href="shop-product-right.html"><img src="assets/imgs/shop/thumbnail-4.jpg" alt="" /></a>
+                                            <a href="shop-product-right.html"><img src={product?.images?.[0].url} alt="" /></a>
                                         </figure>
                                         <div className="col-md-8 mb-0">
                                             <h6>
@@ -74,7 +74,7 @@ function Discounts() {
                                 products?.map((product) => (
                                     <article key={product.slug} className="row align-items-center hover-up">
                                         <figure className="col-md-4 mb-0">
-                                            <a href="shop-product-right.html"><img src="assets/imgs/shop/thumbnail-4.jpg" alt="" /></a>
+                                            <a href="shop-product-right.html"><img src={product?.images?.[0].url} alt="" /></a>
                                         </figure>
                                         <div className="col-md-8 mb-0">
                                             <h6>
@@ -104,7 +104,7 @@ function Discounts() {
                                 products?.map((product) => (
                                     <article key={product.slug} className="row align-items-center hover-up">
                                         <figure className="col-md-4 mb-0">
-                                            <a href="shop-product-right.html"><img src="assets/imgs/shop/thumbnail-4.jpg" alt="" /></a>
+                                            <a href="shop-product-right.html"><img src={product?.images?.[0].url} alt="" /></a>
                                         </figure>
                                         <div className="col-md-8 mb-0">
                                             <h6>

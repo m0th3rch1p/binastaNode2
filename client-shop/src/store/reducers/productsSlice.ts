@@ -10,7 +10,7 @@ export type Product = {
     slug?: string,
     description?: string,
     variations?: ProductVariation[],
-    images?: {url: string}[],
+    images?: {url: string, ext: string}[],
     related?: Product[]
 }
 

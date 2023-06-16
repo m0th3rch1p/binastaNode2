@@ -6,6 +6,7 @@ export interface IOrderProductVariation {
     id?: number,
     orderId?: number,
     productVariationId?: number,
+    product_variation_id?: number,
     quantity?: number,
     created_at?: string,
     updated_at?: string

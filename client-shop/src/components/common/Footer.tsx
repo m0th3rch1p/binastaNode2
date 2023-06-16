@@ -99,7 +99,7 @@ function Footer() {
                         <div className="col">
                             <div className="widget-about font-md mb-md-3 mb-lg-3 mb-xl-0 wow animate__animated animate__fadeInUp" data-wow-delay="0">
                                 <div className="logo mb-30">
-                                    <Link to="/"><Logo /></Link>
+                                    <Link to="/"><Logo width={200}/></Link>
                                     <p className="font-lg text-heading">Binasta Limited</p>
                                 </div>
                                 <ul className="contact-infor">

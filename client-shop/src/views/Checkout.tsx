@@ -3,21 +3,22 @@ import CartItems from "@/components/checkout/CartItems"
 import LoginForm from "@/components/checkout/LoginForm"
 import RegisterForm from "@/components/checkout/RegisterForm"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 import { useRegisterUserMutation, useAuthenticateUserMutation, setAuthenticated } from "@/store/reducers/userSlice"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { Order, usePlaceOrderMutation } from "@/store/reducers/ordersSlice"
 import { useStoreAddressMutation } from "@/store/reducers/addressSlice"
 import { resetCart } from "@/store/reducers/cartSlice"
-import { redirect } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 function Checkout() {
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     // const [addOrder , { isLoading: isAddOrderLoading, isSuccess: isAddOrderSuccess } ] = usePlaceOrderMutation();
-    const [registerUser] = useRegisterUserMutation();
-    const [storeAddress] = useStoreAddressMutation();
-    const [storeOrder] = usePlaceOrderMutation();
+    const [registerUser, {isLoading: isRegisterUserLoading,  isSuccess: isRegisterUserSuccess }] = useRegisterUserMutation();
+    const [storeAddress, {isLoading: isStoreAddressLoading,  isSuccess: isStoreAddressSuccess}] = useStoreAddressMutation();
+    const [storeOrder, { isLoading: isStoreOrderLoading, isSuccess: storeOrderSuccess }] = usePlaceOrderMutation();
 
     const user = useAppSelector((state) => state.user);
     const cart = useAppSelector((state) => state.cart);
@@ -35,6 +36,10 @@ function Checkout() {
     });
 
     const [ showLoginForm, setShowLoginForm ] = useState(false);
+
+    useEffect(() => {
+        
+    }, [storeOrderSuccess]);
 
     const onAddressFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setAddressForm((state) => ({
@@ -57,13 +62,11 @@ function Checkout() {
 
             // await dispatch(registerUser(userForm));
             const response = await registerUser(userForm).unwrap();
-            console.log(response);
             dispatch(setAuthenticated(response.status))
         }
 
         const addressResponse = await storeAddress(addressForm).unwrap();
         
-        console.log(addressResponse);
         const productVariations: [number, number][] = [];
         cart.products.forEach(product => {
             productVariations.push([product.selectedVariation.id as number, product.quantity]);
@@ -73,7 +76,7 @@ function Checkout() {
 
         dispatch(resetCart());
 
-        redirect(`/invoice/${orderResponse.id}`);
+        navigate(`/invoice/${orderResponse.id}`);
     }
     return (
         <div className="container mb-80 mt-50">
@@ -128,7 +131,9 @@ function Checkout() {
                         </div>
                     </div>
                     <div className="payment ml-30">
-                        <button onClick={placeOrder} className="btn btn-fill-out btn-block mt-30">Place an Order<i className="fi-rs-sign-out ml-15"></i></button>
+                        <button onClick={placeOrder} className="btn btn-fill-out btn-block mt-30" disabled={isRegisterUserLoading || isStoreAddressLoading || isStoreOrderLoading}>
+                          { isRegisterUserLoading || isStoreAddressLoading || isStoreOrderLoading ? 'Placing Order...' : 'Place an Order'}<i className="fi-rs-sign-out ml-15"></i>
+                        </button>
                     </div>
                 </div>
             </div>

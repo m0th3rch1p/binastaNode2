@@ -44,7 +44,11 @@ function Products() {
                                     <div className="product-img-action-wrap">
                                         <div className="product-img product-img-zoom">
                                             <Link to={ `/product/${product?.slug}` }>
-                                                <img className="default-img" src={product?.images?.[0].url} alt="" loading="lazy" />
+                                                <img className="default-img" style={
+                                                    {
+                                                        maxHeight: window.innerWidth > 750 ? 240 : "100%`"
+                                                    }
+                                                } src={product?.images?.[0].url} alt="" loading="lazy" />
                                                 <img className="hover-img" src={product?.images?.[1]?.url} alt="" loading="lazy" />
                                             </Link>
                                         </div>

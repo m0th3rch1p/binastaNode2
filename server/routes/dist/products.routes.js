@@ -1,0 +1,12 @@
+"use strict";
+exports.__esModule = true;
+var express_1 = require("express");
+var productsController = require("@/controllers/products.controller");
+var productCategory_policies_1 = require("@/policies/productCategory.policies");
+var product_policies_1 = require("@/policies/product.policies");
+var router = express_1.Router();
+router.get("/", [product_policies_1.fetchPolicy], productsController.fetchAllUserProducts);
+router.get("/search/:query", [productCategory_policies_1.slugPolicy], productsController.searchUserProducts);
+router.get("/cat/:slug", [productCategory_policies_1.slugPolicy], productsController.fetchUserProductsByCategorySlug);
+router.get("/:slug", [productCategory_policies_1.slugPolicy], productsController.fetchUserProductBySlug);
+exports["default"] = router;

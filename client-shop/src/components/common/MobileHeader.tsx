@@ -8,7 +8,7 @@ function MobileHeader() {
         <div className="mobile-header-wrapper-inner">
             <div className="mobile-header-top">
                 <div className="mobile-header-logo">
-                    <Link to="/"><Logo /></Link>
+                    <Link to="/"><Logo width={100} height={window.innerWidth <= 750 ? 50 : 100}/></Link>
                 </div>
                 <div className="mobile-menu-close close-style-wrap close-style-position-inherit">
                     <button className="close-style search-close">

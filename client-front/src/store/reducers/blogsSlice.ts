@@ -4,9 +4,12 @@ export type Blog = {
     blog_category_id?: number,
     blog_category_name?: string,
     title?: string,
+    slug?: string,
     description?: string,
     post?: string,
-    created_at?: string
+    image_path?: string,
+    ext?: string,
+    created_at?: string,
 };
 
 export const blogsApiSlice = createApi({
@@ -15,9 +18,13 @@ export const blogsApiSlice = createApi({
     }),
     tagTypes: ['blogs'],
     endpoints: (builder) => ({
-        fetchBlogs: builder.query<Blog[], null>({
+        fetchBlogs: builder.query<Blog[], void>({
             query: () => "/",
             transformResponse: (response: { blogs: Blog[] }) => response.blogs
+        }),
+        fetchBlogBySlug: builder.query<Blog, string>({ 
+            query: (slug: string) => `/${slug}`,
+            transformResponse: (response: { blog: Blog }) => response.blog
         }),
         storeBlog: builder.mutation<null, FormData>({
             query: (blog: FormData) => ({
@@ -32,4 +39,4 @@ export const blogsApiSlice = createApi({
     })
 });
 
-export const { useFetchBlogsQuery, useStoreBlogMutation } = blogsApiSlice;
+export const { useFetchBlogsQuery, useFetchBlogBySlugQuery, useStoreBlogMutation } = blogsApiSlice;

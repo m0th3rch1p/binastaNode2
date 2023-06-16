@@ -1,10 +1,14 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 
 export type Product = {
-    category_id?: number,
     category_name?: string,
-    product_name?: string,
-    product_slug?: string,
+    name?: string,
+    slug?: string,
+    description?: string,
+    images?: {
+        url?: string,
+        ext?: string    
+    }[]
 };
 
 export const productApiSlice = createApi({
@@ -14,23 +18,12 @@ export const productApiSlice = createApi({
     }),
     tagTypes: ['products'],
     endpoints: (builder) => ({
-        fetchProducts: builder.query<Product[], void>({
-            query: () => "/",
+        fetchProducts: builder.query<Product[], {per_page: number, offset: number} | void>({
+            query: ({per_page = 0, offset = 3}: {per_page: number, offset: number}) => `/?per_page=${per_page}&offset=${offset}`,
             providesTags: ['products'],
             transformResponse: (response: { products: Product[] }) => response.products
-        }),
-        storeProduct: builder.mutation<null, FormData>({
-            query: (product: FormData) => ({
-                url: "/",
-                method: "POST",
-                body: product,
-                headers: {
-                    contentType: "multipart/form-data"
-                }
-            }),
-            invalidatesTags: ['products']
         })
     })
 });
 
-export const { useFetchProductsQuery, useStoreProductMutation  } = productApiSlice;
+export const { useFetchProductsQuery  } = productApiSlice;

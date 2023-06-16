@@ -109,8 +109,8 @@ function Product() {
                                         <div className="col-md-6 col-sm-12 col-xs-12 mb-md-0 mb-sm-5">
                                             <div className="detail-gallery">
                                                 <span className="zoom-icon"><i className="fi-rs-search"></i></span>
-                                                <div className="product-image-slider slick-initialized slick-slider">
-                                                    <img src={product?.images?.[0].url} alt={product?.name} />
+                                                <div className="product-image-slider">
+                                                    <img src={`/${product?.images?.[0].url}`} alt={product?.name} />
                                                 </div>
                                             </div>
                                         </div>

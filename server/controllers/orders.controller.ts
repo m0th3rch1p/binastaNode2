@@ -1,9 +1,11 @@
+import _ from 'lodash';
 import { IAddOrderReq, IGetOrderReq, IOrder, IUpdateOrderReq } from "@/models/Order.model";
 import { Request, Response, RequestHandler } from "express";
 
 import { execQuery } from "@/helpers/queryHelpers";
 import { makeRef } from "@/helpers/StrHelper";
 import { IOrderProductVariation } from "@/models/OrderProductVariation.model";
+import { IProductVariation } from "@/models/ProductVariation.model";
 
 const TABLE_NAME = "orders";
 
@@ -28,13 +30,27 @@ export const fetchUserOrders: RequestHandler = async (req: Request, res: Respons
 };
 
 export const fetchUserUserOrderById: RequestHandler = async (req: Request, res: Response) => {
-    const { response, error } = await execQuery<IOrder[][]>(TABLE_NAME, "SELECT ref, status, amount, created_at FROM orders WHERE id =? AND user_id = ?", null, [ req.params.id, req.session.user_id ])
+    const { response, error } = await execQuery<IOrder[][]>(TABLE_NAME, "SELECT ref, status, amount, created_at FROM orders WHERE id =? AND user_id = ?", null, [ req.params.id, req.session.user_id ]);
     
     if (error) {
         res.status(500).json({ message: "Error fetching order by id" });
     } else if (response) {
         const [ orders ] = response;
-        res.status(200).json({ order: orders[0] });
+
+        const { response: orderProductVariationResponse } = await execQuery<IOrderProductVariation[][]>("order_product_variations", "SELECT product_variation_id, quantity FROM order_product_variations WHERE order_id = ?", null, [req.params.id]);
+        const groupedVariations = _.groupBy(orderProductVariationResponse?.[0], 'product_variation_id');
+        const opvIds = orderProductVariationResponse?.[0].map(opv => opv.product_variation_id);
+
+        const { response: productVariationsResponse } = await execQuery<IProductVariation[][]>("product_variations", 
+        "SELECT pv.id, pv.variation, pv.buy_price, p.name as product_name FROM product_variations pv INNER JOIN products p ON p.id = pv.product_id WHERE pv.id IN (?)", null, opvIds);
+        const productVariationsEmbedded = _.map(productVariationsResponse?.[0], (pv) => {
+            return { 
+                ...pv,
+                quantity: groupedVariations?.[pv.id as number]
+            }
+        })
+        
+        res.status(200).json({ order: orders[0], product_variations: productVariationsEmbedded });
     }
 };
 
@@ -43,7 +59,7 @@ export const store: RequestHandler = async (req: IAddOrderReq, res: Response) =>
     order.ref = makeRef(8);
     order.userId = req.session.user_id;
     order.userAddressId = req.body.user_address_id;
-    const { response, error } = await execQuery<{ affectedRows: number, insertId: number }>(TABLE_NAME, "INSERT", [
+    const { response, error } = await execQuery<[{ affectedRows: number, insertId: number }]>(TABLE_NAME, "INSERT", [
         "user_id",
         "user_address_id",
         "ref",
@@ -57,19 +73,19 @@ export const store: RequestHandler = async (req: IAddOrderReq, res: Response) =>
         console.log(error);
         res.status(500).json({ message: "Error storing order" });
     } else if (response) {
-        const productVariations = req.body.productVariations;
+        const productVariations = req.body.product_variations;
         const orderProductVariations: any[] = [];
         productVariations.forEach((variation: [number, number]) => {
-            orderProductVariations.push([ response.insertId, variation[0], variation[1] ]);
+            orderProductVariations.push([ response[0].insertId, variation[0], variation[1] ]);
         });
     
-        const { response:variationResponse, error } = await execQuery<{affectedRows: number, insertId: number}>(TABLE_NAME, "BATCHINSERT", [
+        const { response:variationResponse, error } = await execQuery<[{affectedRows: number, insertId: number}]>("order_product_variations", "BATCHINSERT", [
             "order_id",
             "product_variation_id",
             "quantity"   
-        ], orderProductVariations);
-        console.log(error);
-        res.status(200).json({ status: variationResponse?.affectedRows, id: variationResponse?.insertId });
+        ], [orderProductVariations]);
+
+        res.status(200).json({ status: variationResponse?.[0].affectedRows, id: variationResponse?.[0].insertId });
     }
 };
 

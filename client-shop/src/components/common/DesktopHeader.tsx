@@ -15,7 +15,7 @@ function DesktopHeader() {
             <div className="container">
                 <div className="header-wrap">
                     <div className="logo logo-width-1">
-                    <Link to="/"><Logo /></Link>
+                    <Link to="/"><Logo width={100} height={window.innerWidth <= 750 ? 50 : 100} /></Link>
                     </div>
                     <div className="header-right">
                         <div className="search-style-2">
