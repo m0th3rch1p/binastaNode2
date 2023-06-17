@@ -3,6 +3,7 @@ import morgan from "morgan";
 import cors from 'cors';
 import helmet from 'helmet';
 import vhost from "vhost";
+import path from 'path'
 
 import config from "@/config";
 import { db_init } from "@/database";
@@ -60,9 +61,17 @@ mainApp.use(vhost(`shop.${config.platform === 'development' ? config.dev_domain 
 mainApp.use(vhost(`distributor.${config.platform === 'development' ? config.dev_domain : config.prod_domain}`, distributorApp));
 mainApp.use(vhost(`management.${config.platform === 'development' ? config.dev_domain : config.prod_domain}`, adminApp));
 
+
 mainApp.use("/products", productRoutes);
 mainApp.use("/blogs", blogRoutes);
 
-mainApp.listen(config.serverPort, config.serverHost, () => {
+mainApp.use(express.static(path.join(__dirname, 'builds', 'front', 'build')));
+
+mainApp.get('*', function (req, res) {
+    res.sendFile(path.join(__dirname, 'builds', 'front', 'build', 'index.html'))
+})
+
+mainApp.listen(config.serverPort, () => {
     console.log("[+] Server configured & started successfully...");
 });
+

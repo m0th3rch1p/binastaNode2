@@ -103,10 +103,12 @@ exports.index = function (req, res) { return __awaiter(void 0, void 0, void 0, f
     });
 }); };
 exports.fetchAllUserProducts = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, productsArr, error, productIds, _b, variationsArr, error_1, _c, imagesArr, imagesError, groupedVariations_1, groupImages_1, productsEmbedded;
+    var product_query, _a, productsArr, error, productIds, _b, variationsArr, error_1, _c, imagesArr, imagesError, groupedVariations_1, groupImages_1, productsEmbedded;
     return __generator(this, function (_d) {
         switch (_d.label) {
-            case 0: return [4 /*yield*/, queryHelpers_1.execQuery(TABLE_NAME, "\n    SELECT p.id, p.name as name, p.slug as slug, p.description FROM products p \n    INNER JOIN (SELECT p.id FROM products p LIMIT " + req.query.per_page + " OFFSET " + req.query.offset + ") AS tmp USING (id)\n    ORDER BY id DESC\n    ")];
+            case 0:
+                product_query = "\n    SELECT p.id, p.name as name, p.slug as slug, pc.name as category_name, pc.slug as category_slug, p.description FROM products p\n    INNER JOIN (SELECT p.id FROM products p LIMIT " + req.query.per_page + " OFFSET " + req.query.offset + ") AS tmp USING (id)\n    INNER JOIN product_categories pc ON pc.id = p.category_id\n    " + (req.query.cat ? 'WHERE pc.slug = ?' : '') + " ORDER BY id DESC";
+                return [4 /*yield*/, queryHelpers_1.execQuery(TABLE_NAME, product_query, null, (req.query.cat ? [req.query.cat] : null))];
             case 1:
                 _a = _d.sent(), productsArr = _a.response, error = _a.error;
                 if (!error) return [3 /*break*/, 2];
@@ -180,22 +182,35 @@ exports.fetchUserProductBySlug = function (req, res) { return __awaiter(void 0, 
     });
 }); };
 exports.fetchUserProductsByCategorySlug = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, response, error;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0: return [4 /*yield*/, queryHelpers_1.execQuery(TABLE_NAME, "SELECT pc.name as category_name, pc.slug as category_slug, p.name, p.slug FROM products p INNER JOIN product_categories pc ON p.category_id = pc.id WHERE pc.slug = ?", null, [req.params.slug])];
+    var _a, productsResponse, productsError, productIds, _b, productVariationsResponse, productVariationsError, _c, productImagesResponse, productImagesError, groupedProductVariations, groupProductImages, products;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
+            case 0: return [4 /*yield*/, queryHelpers_1.execQuery(TABLE_NAME, "SELECT pc.name as category_name, pc.slug as category_slug, p.id p.name, p.slug FROM products p \n         INNER JOIN product_categories pc ON p.category_id = pc.id WHERE pc.slug = ?", null, [req.params.slug])];
             case 1:
-                _a = _b.sent(), response = _a.response, error = _a.error;
-                if (error) {
-                    res.status(500).json({
-                        message: "Error fetching products"
-                    });
+                _a = _d.sent(), productsResponse = _a.response, productsError = _a.error;
+                if (!productsError) {
+                    res.status(500).json({ message: "Error fetching products" });
+                    return [2 /*return*/];
                 }
-                else if (response) {
-                    res.status(200).json({
-                        products: response[0]
-                    });
+                productIds = productsResponse[0].map(function (product) { return product.id; });
+                return [4 /*yield*/, queryHelpers_1.execQuery(TABLE_NAME, "\n        SELECT pv.variation, pv.buyPrice FROM product_variations pv WHERE product_id IN (?)\n    ", null, productIds)];
+            case 2:
+                _b = _d.sent(), productVariationsResponse = _b.response, productVariationsError = _b.error;
+                if (productVariationsError) {
+                    res.status(500).json({ message: "Error fetching products" });
+                    return [2 /*return*/];
                 }
+                return [4 /*yield*/, queryHelpers_1.execQuery(TABLE_NAME, "SELECT path_url FROM product_images WHERE product_id IN (?)", null, productIds)];
+            case 3:
+                _c = _d.sent(), productImagesResponse = _c.response, productImagesError = _c.error;
+                if (productImagesError) {
+                    res.status(500).json({ message: "Error fetching products" });
+                    return [2 /*return*/];
+                }
+                groupedProductVariations = lodash_1["default"].groupBy(productVariationsResponse[0], 'product_id');
+                groupProductImages = lodash_1["default"].groupBy(productImagesResponse[0], 'product_id');
+                products = productsResponse[0].map(function (product) { return (__assign(__assign({}, product), { images: groupProductImages[product.id], variations: groupedProductVariations[product.id] })); });
+                res.status(200).json({ products: products });
                 return [2 /*return*/];
         }
     });

@@ -55,12 +55,12 @@ function ProductCategories() {
                         <Slider { ...settings }>
                             {
                                 categories?.map(category => (
-                                    <div className="card-2 bg-9 wow animate__animated animate__fadeInUp" data-wow-delay=".1s">
+                                    <div className="card-2 bg-9 wow animate__animated animate__fadeInUp" key={category.slug} data-wow-delay=".1s">
                                         <figure className="img-hover-scale overflow-hidden">
                                             <Link to={`/shop?cat=${category.slug}`}><img src={category.image_path} alt="" /></Link>
                                         </figure>
                                         <h6><a href="shop-grid-right.html">{ category.name }</a></h6>
-                                    <span>26 items</span>
+                                    <span>{category.products_count} items</span>
                         </div>
                                 ))
                             }

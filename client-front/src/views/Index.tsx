@@ -45,14 +45,13 @@ function Index() {
                                 <p>We understand that your success is our success. That's why we provide comprehensive training and support to all our affiliates. Our dedicated team will equip you with the knowledge and tools you need to excel in promoting Binasta products and generating sales. From product training to marketing strategies, we've got you covered.</p>
                             </div>
                         </div>
-                        <Blogs />
+                        <Products />
                     </div>
                 </div>
             </section>
 
             <QueryForm />
-            <Products />
-
+            <Blogs />
             {/* Call to action */}
             <section className="call-to-action">
                 <div className="container">

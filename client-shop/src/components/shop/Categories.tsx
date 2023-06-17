@@ -1,8 +1,8 @@
-import useFetchProductCategories from "@/hooks/useFetchProductCategories"
 import mpesaImg from "@/assets/images/mpesa.jpg";
+import { ProductCategory } from "@/store/reducers/productCategorySlice";
 
-function Categories() {
-    const { categories, isLoading, isError } = useFetchProductCategories();
+function Categories({ categories, selectCategory }: { categories: ProductCategory[], selectCategory: (category: string) => void }) {
+
     return (
         <>
             <div className="col-lg-1-5 primary-sidebar sticky-sidebar" style={{
@@ -23,7 +23,7 @@ function Categories() {
                             {
                                 categories?.map(category => (
                                     <li>
-                                        <a href="shop-grid-right.html"> <img src={`/${category.image_path}`} alt="" />{ category.name }</a><span className="count">11</span>
+                                        <a href="#0" onClick={() => selectCategory(category.slug as string)}> <img src={`/${category.image_path}`} alt="" />{ category.name }</a><span className="count">{ category.products_count }</span>
                                     </li>
                                 ))
                             }

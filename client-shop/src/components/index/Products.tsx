@@ -1,15 +1,14 @@
-import useFetchProducts from "@/hooks/useFetchProducts";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { ProductVariation } from "@/types/ProductVariation.type";
 import { addCart } from "@/store/reducers/cartSlice";
-import { Product } from "@/store/reducers/productsSlice";
+import { Product, useFetchProductsQuery } from "@/store/reducers/productsSlice";
 import { Link } from "react-router-dom";
 
 import Loader from "../common/Loader";
 
 function Products() {
     const dispatch  = useAppDispatch();
-    const { products, isLoading, isError, isSuccess } = useFetchProducts();
+    const { data: products, isLoading, isError, isSuccess } = useFetchProductsQuery();
     const cart = useAppSelector(state => state.cart);
     
     const onAddCartProduct = (e: React.MouseEvent<HTMLButtonElement>, product: Product, selectedVariation: ProductVariation | undefined) => {

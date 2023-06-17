@@ -16,19 +16,41 @@ import Login from "./views/Login";
 import ProductCategories from "./views/ProductCategories";
 import Products from "./views/Products";
 import Blog from "./views/Blog";
+import ProtectedRoute from "./helpers/ProtectedRoute";
 
 function App() {
+  const user = store.getState().user;
+  
   return (
     <React.StrictMode>
       <Provider store={store}>
       <BrowserRouter>
         <Routes>
           <Route element={<AuthenticatedLayout />}>
-            <Route path="/" element={ <Index /> } />
-            <Route path="/blog_categories" element={<BlogCategories />} />
-            <Route path="/product_categories" element={ <ProductCategories /> } />
-            <Route path="/products" element={ <Products /> }/>
-            <Route path="/blogs" element={ <Blog />}/>
+            <Route path="/" element={
+            <ProtectedRoute isLoggedIn={user.authenticated as boolean}>
+              <Index />
+            </ProtectedRoute>  } />
+            <Route path="/blog_categories" element={
+              <ProtectedRoute isLoggedIn={user.authenticated as boolean}>
+                <BlogCategories />
+              </ProtectedRoute>
+            } />
+            <Route path="/product_categories" element={ 
+              <ProtectedRoute isLoggedIn={user.authenticated as boolean}>
+                <ProductCategories />
+              </ProtectedRoute>
+            } />
+            <Route path="/products" element={
+              <ProtectedRoute isLoggedIn={user.authenticated as boolean}>
+                <Products />
+              </ProtectedRoute>
+              }/>
+            <Route path="/blogs" element={
+              <ProtectedRoute isLoggedIn={user.authenticated as boolean}>
+                <Blog />
+              </ProtectedRoute>
+            }/>
           </Route>
           <Route element={<GuestLayout />}>
             <Route path="/login" element={<Login />} />

@@ -33,10 +33,10 @@ export const { useAuthenticateUserMutation  } = userApiSlice;
 
 export const userSlice = createSlice({
     name: 'user',
-    initialState: initialUser,
+    initialState: { authenticated: false },
     reducers: {
         resetUserSlice: (state) => {
-            state = initialUser
+            state = { authenticated: false };
         },
         setAuthenticated: (state, action) => {
             state.authenticated = action.payload

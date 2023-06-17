@@ -58,12 +58,14 @@ function ProductCategories() {
                 React.createElement("div", { className: "slider-arrow slider-arrow-2 flex-right carausel-10-columns-arrow", id: "carausel-10-columns-arrows" })),
             React.createElement("div", { className: "carausel-10-columns-cover position-relative" },
                 React.createElement("div", { className: "carausel-10-columns", id: "carausel-10-columns" },
-                    React.createElement(react_slick_1["default"], __assign({}, settings), categories === null || categories === void 0 ? void 0 : categories.map(function (category) { return (React.createElement("div", { className: "card-2 bg-9 wow animate__animated animate__fadeInUp", "data-wow-delay": ".1s" },
+                    React.createElement(react_slick_1["default"], __assign({}, settings), categories === null || categories === void 0 ? void 0 : categories.map(function (category) { return (React.createElement("div", { className: "card-2 bg-9 wow animate__animated animate__fadeInUp", key: category.slug, "data-wow-delay": ".1s" },
                         React.createElement("figure", { className: "img-hover-scale overflow-hidden" },
                             React.createElement(react_router_dom_1.Link, { to: "/shop?cat=" + category.slug },
                                 React.createElement("img", { src: category.image_path, alt: "" }))),
                         React.createElement("h6", null,
                             React.createElement("a", { href: "shop-grid-right.html" }, category.name)),
-                        React.createElement("span", null, "26 items"))); })))))));
+                        React.createElement("span", null,
+                            category.products_count,
+                            " items"))); })))))));
 }
 exports["default"] = ProductCategories;

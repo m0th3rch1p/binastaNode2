@@ -10,7 +10,7 @@ function SingleBlog () {
         <div className='row'>
           <div className='col-lg-12'>
             <article className='single-blog-detials'>
-              <img src='assets/images/all-img/blogd.jpg' alt='' />
+              <img src={`/${blog?.image_path}`} alt='' />
               <ul className='post-meta  d-flex justify-content-between'>
                 <li>
                   <a href='#0'>
@@ -19,9 +19,8 @@ function SingleBlog () {
                 </li>
               </ul>
               <h2>{ blog?.title }</h2>
-              {
-                blog?.post
-              }
+              
+              <div dangerouslySetInnerHTML={{ __html: blog?.post as string }}></div>
             </article>
             <hr />
           </div>

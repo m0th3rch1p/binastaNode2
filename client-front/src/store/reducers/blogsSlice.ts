@@ -24,7 +24,7 @@ export const blogsApiSlice = createApi({
         }),
         fetchBlogBySlug: builder.query<Blog, string>({ 
             query: (slug: string) => `/${slug}`,
-            transformResponse: (response: { blog: Blog }) => response.blog
+            transformResponse: (response: { blog: Blog[] }) => response.blog[0]
         }),
         storeBlog: builder.mutation<null, FormData>({
             query: (blog: FormData) => ({

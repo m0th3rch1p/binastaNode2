@@ -28,7 +28,7 @@ function Products() {
                       <a href={`https://shop.binasta.co.ke/products/${product.slug}`}>{ product.name }</a>
                     </h4>
                     <p>
-                      { product.description }
+                      { product.description?.slice(0, 150) }...
                     </p>
                     <a className="blog-link" href={`https://shop.binasta.co.ke/products/${product.slug}`}>
                       Purchase

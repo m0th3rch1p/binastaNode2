@@ -56,11 +56,12 @@ export const index: RequestHandler = async (req: Request, res: Response) => {
 };
 
 export const fetchAllUserProducts: RequestHandler = async (req: Request, res: Response) => {
-    const { response: productsArr, error } = await execQuery<IProduct[][]>(TABLE_NAME, `
-    SELECT p.id, p.name as name, p.slug as slug, p.description FROM products p 
+    const product_query = `
+    SELECT p.id, p.name as name, p.slug as slug, pc.name as category_name, pc.slug as category_slug, p.description FROM products p
     INNER JOIN (SELECT p.id FROM products p LIMIT ${req.query.per_page} OFFSET ${req.query.offset}) AS tmp USING (id)
-    ORDER BY id DESC
-    `);
+    INNER JOIN product_categories pc ON pc.id = p.category_id
+    ${req.query.cat ? 'WHERE pc.slug = ?' : ''} ORDER BY id DESC`
+    const { response: productsArr, error } = await execQuery<IProduct[][]>(TABLE_NAME, product_query, null, (req.query.cat ? [req.query.cat] : null));
     
     if (error) {
         console.error(error);
@@ -146,16 +147,43 @@ export const fetchUserProductBySlug: RequestHandler = async (req: Request, res: 
 };
 
 export const fetchUserProductsByCategorySlug: RequestHandler = async (req: Request, res: Response) => {
-    const { response, error } = await execQuery<IProduct[][]>(TABLE_NAME, "SELECT pc.name as category_name, pc.slug as category_slug, p.name, p.slug FROM products p INNER JOIN product_categories pc ON p.category_id = pc.id WHERE pc.slug = ?", null, [req.params.slug]);
-    if (error) {
-        res.status(500).json({
-            message: "Error fetching products"
-        });
-    } else if (response) {
-        res.status(200).json({
-            products: response[0]
-        });
+    const { response: productsResponse, error: productsError } = await execQuery<IProduct[][]>(TABLE_NAME, 
+        `SELECT pc.name as category_name, pc.slug as category_slug, p.id p.name, p.slug FROM products p 
+         INNER JOIN product_categories pc ON p.category_id = pc.id WHERE pc.slug = ?`, null, [req.params.slug]);
+        
+    if (!productsError) {
+        res.status(500).json({message: "Error fetching products"});
+        return;
+    }   
+    
+    const productIds =  (productsResponse as IProduct[][])[0].map((product) => product.id);
+    
+    const { response: productVariationsResponse, error:  productVariationsError} = await execQuery<IProductVariation[][]>(TABLE_NAME, `
+        SELECT pv.variation, pv.buyPrice FROM product_variations pv WHERE product_id IN (?)
+    `, null, productIds);
+
+
+    if (productVariationsError) {
+        res.status(500).json({message: "Error fetching products"});
+        return;
     }
+    
+    const { response: productImagesResponse, error: productImagesError } = await execQuery<IProductImage>(TABLE_NAME, `SELECT path_url FROM product_images WHERE product_id IN (?)`, null, productIds);
+    if (productImagesError) {
+        res.status(500).json({message: "Error fetching products"});
+        return;
+    }
+
+    const groupedProductVariations = _.groupBy((productVariationsResponse as IProductVariation[][])[0] , 'product_id');
+    const groupProductImages = _.groupBy((productImagesResponse as IProductImage[][])[0], 'product_id');
+    
+    const products = (productsResponse as IProduct[][])[0].map(product => ({
+        ...product,
+        images: groupProductImages[product.id as number],
+        variations: groupedProductVariations[product.id as number]
+    })); 
+
+    res.status(200).json({ products })
 };
 
 export const searchUserProducts: RequestHandler = async (req:Request, res:Response) => {

@@ -67,6 +67,9 @@ function Blog() {
                 </div>
                 <div className="form-group">
                     <label>Blog Post</label>
+                    <CKEditor editor={ ClassicEditor } onChange={(event, editor) => {
+                        blogForm.post = editor.getData();
+                    }} />
                     <input type="text" name="post" value={blogForm.post} onChange={onHandleChange} className="form-control" required={true} />
                 </div>
                 <div className="form-group">

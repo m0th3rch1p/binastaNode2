@@ -12,6 +12,7 @@ import Blog from "./views/Blog"
 import "@/assets/css/plugins.css";
 import "@/assets/css/app.css";
 import { Provider } from "react-redux";
+import SingleBlog from "./views/SingleBlog";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
               <Route path="/how-it-works" element={<HowItWorks />}/>
               <Route path="/contact" element={<Contact />}/>
               <Route path="/blog" element={<Blog />}/>
+              <Route path="/blog/:slug" element={<SingleBlog />}/>
             </Route>
           </Routes>
       </BrowserRouter>

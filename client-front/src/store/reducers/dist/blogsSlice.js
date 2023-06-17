@@ -14,7 +14,7 @@ exports.blogsApiSlice = react_1.createApi({
         }),
         fetchBlogBySlug: builder.query({
             query: function (slug) { return "/" + slug; },
-            transformResponse: function (response) { return response.blog; }
+            transformResponse: function (response) { return response.blog[0]; }
         }),
         storeBlog: builder.mutation({
             query: function (blog) { return ({

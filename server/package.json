@@ -1,9 +1,9 @@
 {
   "name": "binasta_node",
   "version": "1.0.0",
-  "description": "",
-  "main": "./server.ts",
+  "main": "./server.js",
   "scripts": {
+    "tsc": "tsc --project tsconfig.json && tscpaths -p tsconfig.json -s ./ -o ./dist",
     "start": "ts-node --require tsconfig-paths/register server.ts",
     "start:watch": "nodemon --exec ts-node --require tsconfig-paths/register server.ts",
     "create-migration": "ts-node --require tsconfig-paths/register ./database/mysql/generate_migrations.ts",
@@ -21,13 +21,16 @@
     "connect-redis": "^7.0.1",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
+    "dotenv": "^16.3.0",
     "express": "^4.18.2",
+    "express-mysql-session": "^3.0.0",
     "google-maps-react": "^2.0.6",
     "helmet": "^6.0.1",
     "joi": "^17.9.2",
     "lodash": "^4.17.21",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
+    "mysql-express-session": "^0.5.2",
     "mysql2": "^3.2.0",
     "redis": "^4.6.5",
     "tsconfig-paths": "^4.2.0",
@@ -45,7 +48,16 @@
     "@types/multer": "^1.4.7",
     "@types/mysql": "^2.15.21",
     "@types/vhost": "^3.0.4",
-    "ts-node": "^10.9.1"
+    "babel-cli": "^6.26.0",
+    "ts-node": "^10.9.1",
+    "tscpaths": "^0.0.9"
   },
-  "proxy": "http://binasta.test"
+  "compilerOptions": {
+    "outDir": "server_build",
+    "declaration": true
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "description": ""
 }

@@ -12,6 +12,8 @@ var __assign = (this && this.__assign) || function () {
 };
 exports.__esModule = true;
 var react_1 = require("react");
+var ckeditor5_react_1 = require("@ckeditor/ckeditor5-react");
+var ckeditor5_build_classic_1 = require("@ckeditor/ckeditor5-build-classic");
 var blogCategoriesSlice_1 = require("@/store/reducers/blogCategoriesSlice");
 var blogsSlice_1 = require("@/store/reducers/blogsSlice");
 function Blog() {
@@ -63,6 +65,9 @@ function Blog() {
                     react_1["default"].createElement("input", { type: "text", name: "description", value: blogForm.description, onChange: onHandleChange, className: "form-control", required: true })),
                 react_1["default"].createElement("div", { className: "form-group" },
                     react_1["default"].createElement("label", null, "Blog Post"),
+                    react_1["default"].createElement(ckeditor5_react_1.CKEditor, { editor: ckeditor5_build_classic_1["default"], onChange: function (event, editor) {
+                            blogForm.post = editor.getData();
+                        } }),
                     react_1["default"].createElement("input", { type: "text", name: "post", value: blogForm.post, onChange: onHandleChange, className: "form-control", required: true })),
                 react_1["default"].createElement("div", { className: "form-group" },
                     react_1["default"].createElement("label", null, "Blog Images"),

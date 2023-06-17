@@ -6,6 +6,7 @@ export type ProductCategory = {
     name?: string,
     slug?: string,
     image_path?: string,
+    products_count?: number
 };
 
 const initialState: ProductCategory[] = [] as ProductCategory[];

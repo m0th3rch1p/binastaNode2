@@ -34,7 +34,7 @@ function Blog() {
                 <div className="col-lg-4 col-md-6 col-12 grid-item">
                   <article className="single-blog sticky">
                     <div className="blog-thumb">
-                      <img className="" src={`${blog.image_path}.${blog.ext?.split("/")[1]}`} alt="" />
+                      <img className="" src={`/${blog.image_path}`} alt="" />
                       <ul className="post-meta d-flex justify-content-between">
                         <li><i className="icofont">ui_calendar</i>{ new Date(blog.created_at as string).toLocaleDateString() }</li>
                       </ul>

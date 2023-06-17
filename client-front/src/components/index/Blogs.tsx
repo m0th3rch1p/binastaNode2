@@ -27,7 +27,7 @@ function Blogs() {
                       <a href={`blogs/${blog.slug}`}>{ blog.title }</a>
                     </h4>
                     <p>
-                      { blog.description }
+                      { blog.description?.slice(0, 150) }...
                     </p>
                     <a className="blog-link" href={`blogs/${blog.slug}`}>
                       Purchase

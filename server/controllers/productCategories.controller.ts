@@ -37,7 +37,7 @@ const upload = multer({
 }).single('img');
 
 export const index: RequestHandler = async (req: Request, res: Response) => {
-    const { response, error } = await execQuery<IProductCategory[][]>(TABLE_NAME, "SELECT", ['id', 'name', 'slug', 'image_path', 'created_at']);
+    const { response, error } = await execQuery<IProductCategory[][]>(TABLE_NAME, "SELECT pc.id, pc.name, pc.slug, pc.image_path, COUNT(p.id) as products_count FROM product_categories pc INNER JOIN products p ON p.category_id = pc.id GROUP BY pc.id", ['id', 'name', 'slug', 'image_path', 'created_at']);
     if (error) {
         console.error("Error fetching product categories", error);
         res.status(500).json({ message: 'Error fetching product categories' });

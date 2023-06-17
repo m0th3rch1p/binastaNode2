@@ -1,4 +1,4 @@
-import React from 'react'
+import { Link } from "react-router-dom"
 
 function PageHeader() {
     return (
@@ -10,40 +10,13 @@ function PageHeader() {
                             <div className='col-xl-3'>
                                 <h1 className='mb-15'>Snack</h1>
                                 <div className='breadcrumb'>
-                                    <a href='index.html' rel='nofollow'>
+                                    <Link to='/' rel='nofollow'>
                                         <i className='fi-rs-home mr-5'></i>Home
-                                    </a>
-                                    <span></span> Shop <span></span> Snack
+                                    </Link>
+                                    <span></span> Shop
                                 </div>
                             </div>
                             <div className='col-xl-9 text-end d-none d-xl-block'>
-                                <ul className='tags-list'>
-                                    <li className='hover-up'>
-                                        <a href='blog-category-grid.html'>
-                                            <i className='fi-rs-cross mr-10'></i>Cabbage
-                                        </a>
-                                    </li>
-                                    <li className='hover-up active'>
-                                        <a href='blog-category-grid.html'>
-                                            <i className='fi-rs-cross mr-10'></i>Broccoli
-                                        </a>
-                                    </li>
-                                    <li className='hover-up'>
-                                        <a href='blog-category-grid.html'>
-                                            <i className='fi-rs-cross mr-10'></i>Artichoke
-                                        </a>
-                                    </li>
-                                    <li className='hover-up'>
-                                        <a href='blog-category-grid.html'>
-                                            <i className='fi-rs-cross mr-10'></i>Celery
-                                        </a>
-                                    </li>
-                                    <li className='hover-up mr-0'>
-                                        <a href='blog-category-grid.html'>
-                                            <i className='fi-rs-cross mr-10'></i>Spinach
-                                        </a>
-                                    </li>
-                                </ul>
                             </div>
                         </div>
                     </div>

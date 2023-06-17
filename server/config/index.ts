@@ -1,4 +1,4 @@
-import * as dotenv from "dotenv";
+import dotenv from "dotenv";
 
 import { RedisConfigOptions } from '@/types/redis.types';
 import { MysqlConfig } from '@/types/mysqlConn.types';

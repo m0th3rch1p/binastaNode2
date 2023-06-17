@@ -1,13 +1,13 @@
 "use strict";
 exports.__esModule = true;
-var useFetchProducts_1 = require("@/hooks/useFetchProducts");
 var hooks_1 = require("@/store/hooks");
 var cartSlice_1 = require("@/store/reducers/cartSlice");
+var productsSlice_1 = require("@/store/reducers/productsSlice");
 var react_router_dom_1 = require("react-router-dom");
 var Loader_1 = require("../common/Loader");
 function Products() {
     var dispatch = hooks_1.useAppDispatch();
-    var _a = useFetchProducts_1["default"](), products = _a.products, isLoading = _a.isLoading, isError = _a.isError, isSuccess = _a.isSuccess;
+    var _a = productsSlice_1.useFetchProductsQuery(), products = _a.data, isLoading = _a.isLoading, isError = _a.isError, isSuccess = _a.isSuccess;
     var cart = hooks_1.useAppSelector(function (state) { return state.cart; });
     var onAddCartProduct = function (e, product, selectedVariation) {
         dispatch(cartSlice_1.addCart({

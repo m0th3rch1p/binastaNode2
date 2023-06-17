@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react"
-import { useFetchSingleProduct } from "@/hooks/useFetchProducts";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { ProductVariation } from "@/types/ProductVariation.type";
 import { Link, useParams } from "react-router-dom";
 import { Cart, CartProduct } from "@/store/reducers/cartSlice";
 import { addCart, changeQuantity, changeSelectedVariation } from "@/store/reducers/cartSlice";
 import Loader from "@/components/common/Loader";
+import { useFetchSingleProductQuery } from "@/store/reducers/productsSlice";
 
 function Product() {
     const cart: Cart = useAppSelector((state) => state.cart);
@@ -16,7 +16,7 @@ function Product() {
         return product.slug === params.slug;
     });
 
-    const { product, isLoading, isSuccess } = useFetchSingleProduct(params.slug as string);
+    const { data: product, isLoading, isSuccess } = useFetchSingleProductQuery({ slug: params.slug as string });
     const [selected, setSelected] = useState<{ variation: ProductVariation | undefined, quantity: number, inCart: boolean }>({
         variation: itemInCart?.selectedVariation,
         quantity: itemInCart ? itemInCart.quantity : 1,

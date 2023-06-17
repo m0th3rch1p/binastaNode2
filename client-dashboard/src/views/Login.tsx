@@ -1,10 +1,11 @@
 import { setAuthenticated, useAuthenticateUserMutation } from "@/store/reducers/userSlice";
 import { useAppDispatch } from "@/hooks/hooks";
 import { useEffect, useState } from "react";
-import { redirect } from "react-router";
+import { useNavigate } from "react-router";
 
 function Login() {
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const [ loginForm, setLoginForm ] = useState({
         email: '',
         password: ''
@@ -13,9 +14,11 @@ function Login() {
 
     useEffect(() => {
         console.log(isSuccess);
-        dispatch(setAuthenticated(true));
-        redirect("/");
-    }, [isSuccess, dispatch]);
+        if (isSuccess) {
+            dispatch(setAuthenticated(true));
+            navigate("/");
+        }        
+    }, [isSuccess]);
 
     const onHandleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setLoginForm((state) => ({
@@ -34,7 +37,7 @@ function Login() {
         <div className="container">
             <div className="card">
                 <div className="row g-0">
-                    <div className="col">
+                    <div className="col-md-6">
                         <div className="row">
                             <div className="col-md-10 offset-md-1">
                                 <div className="d-block d-lg-none text-center text-lg-start">

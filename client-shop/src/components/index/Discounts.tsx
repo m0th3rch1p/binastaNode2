@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import useFetchProducts from "@/hooks/useFetchProducts";
+import { useFetchProductsQuery } from "@/store/reducers/productsSlice";
 
 function Discounts() {
-    const { products, isLoading, isError, isSuccess } = useFetchProducts();
+    const { data: products, isLoading, isError, isSuccess } = useFetchProductsQuery();
     return (
         <section className="section-padding mb-30">
             <div className="container">

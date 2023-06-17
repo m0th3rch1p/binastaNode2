@@ -17,22 +17,19 @@ function Blog() {
                                 React.createElement("li", { className: 'breadcrumb-item active', "aria-current": 'page' }, "Blog"))))))),
         React.createElement("div", { className: "blog-area page-blog" },
             React.createElement("div", { className: "container" },
-                React.createElement("div", { className: "row grid", style: { position: 'relative', height: '877px' } }, blogs === null || blogs === void 0 ? void 0 : blogs.map(function (blog) {
-                    var _a;
-                    return (React.createElement("div", { className: "col-lg-4 col-md-6 col-12 grid-item" },
-                        React.createElement("article", { className: "single-blog sticky" },
-                            React.createElement("div", { className: "blog-thumb" },
-                                React.createElement("img", { className: "", src: blog.image_path + "." + ((_a = blog.ext) === null || _a === void 0 ? void 0 : _a.split("/")[1]), alt: "" }),
-                                React.createElement("ul", { className: "post-meta d-flex justify-content-between" },
-                                    React.createElement("li", null,
-                                        React.createElement("i", { className: "icofont" }, "ui_calendar"),
-                                        new Date(blog.created_at).toLocaleDateString()))),
-                            React.createElement("div", { className: "blog-text" },
-                                React.createElement("h4", null,
-                                    React.createElement(react_router_dom_1.Link, { to: "/blog/" + blog.slug }, blog.title)),
-                                React.createElement("p", null,
-                                    blog.description,
-                                    React.createElement(react_router_dom_1.Link, { to: "/blog/" + blog.slug }, "[...]"))))));
-                }))))));
+                React.createElement("div", { className: "row grid", style: { position: 'relative', height: '877px' } }, blogs === null || blogs === void 0 ? void 0 : blogs.map(function (blog) { return (React.createElement("div", { className: "col-lg-4 col-md-6 col-12 grid-item" },
+                    React.createElement("article", { className: "single-blog sticky" },
+                        React.createElement("div", { className: "blog-thumb" },
+                            React.createElement("img", { className: "", src: "/" + blog.image_path, alt: "" }),
+                            React.createElement("ul", { className: "post-meta d-flex justify-content-between" },
+                                React.createElement("li", null,
+                                    React.createElement("i", { className: "icofont" }, "ui_calendar"),
+                                    new Date(blog.created_at).toLocaleDateString()))),
+                        React.createElement("div", { className: "blog-text" },
+                            React.createElement("h4", null,
+                                React.createElement(react_router_dom_1.Link, { to: "/blog/" + blog.slug }, blog.title)),
+                            React.createElement("p", null,
+                                blog.description,
+                                React.createElement(react_router_dom_1.Link, { to: "/blog/" + blog.slug }, "[...]")))))); }))))));
 }
 exports["default"] = Blog;

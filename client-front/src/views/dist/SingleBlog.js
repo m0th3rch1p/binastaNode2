@@ -10,15 +10,15 @@ function SingleBlog() {
             React.createElement("div", { className: 'row' },
                 React.createElement("div", { className: 'col-lg-12' },
                     React.createElement("article", { className: 'single-blog-detials' },
-                        React.createElement("img", { src: 'assets/images/all-img/blogd.jpg', alt: '' }),
+                        React.createElement("img", { src: "/" + (blog === null || blog === void 0 ? void 0 : blog.image_path), alt: '' }),
                         React.createElement("ul", { className: 'post-meta  d-flex justify-content-between' },
                             React.createElement("li", null,
                                 React.createElement("a", { href: '#0' },
                                     React.createElement("i", { className: 'icofont' }, "ui_calendar"),
                                     " ",
                                     new Date(blog === null || blog === void 0 ? void 0 : blog.created_at).toLocaleDateString()))),
-                        React.createElement("h2", null, blog === null || blog === void 0 ? void 0 : blog.title), blog === null || blog === void 0 ? void 0 :
-                        blog.post),
+                        React.createElement("h2", null, blog === null || blog === void 0 ? void 0 : blog.title),
+                        React.createElement("div", { dangerouslySetInnerHTML: { __html: blog === null || blog === void 0 ? void 0 : blog.post } })),
                     React.createElement("hr", null))))));
 }
 exports["default"] = SingleBlog;

@@ -11,6 +11,7 @@ var Blog_1 = require("./views/Blog");
 require("@/assets/css/plugins.css");
 require("@/assets/css/app.css");
 var react_redux_1 = require("react-redux");
+var SingleBlog_1 = require("./views/SingleBlog");
 function App() {
     return (react_1["default"].createElement(react_1["default"].StrictMode, null,
         react_1["default"].createElement(react_redux_1.Provider, { store: store_1["default"] },
@@ -20,6 +21,7 @@ function App() {
                         react_1["default"].createElement(react_router_dom_1.Route, { path: "/", element: react_1["default"].createElement(Index_1["default"], null) }),
                         react_1["default"].createElement(react_router_dom_1.Route, { path: "/how-it-works", element: react_1["default"].createElement(HowItWorks_1["default"], null) }),
                         react_1["default"].createElement(react_router_dom_1.Route, { path: "/contact", element: react_1["default"].createElement(Contact_1["default"], null) }),
-                        react_1["default"].createElement(react_router_dom_1.Route, { path: "/blog", element: react_1["default"].createElement(Blog_1["default"], null) })))))));
+                        react_1["default"].createElement(react_router_dom_1.Route, { path: "/blog", element: react_1["default"].createElement(Blog_1["default"], null) }),
+                        react_1["default"].createElement(react_router_dom_1.Route, { path: "/blog/:slug", element: react_1["default"].createElement(SingleBlog_1["default"], null) })))))));
 }
 exports["default"] = App;
