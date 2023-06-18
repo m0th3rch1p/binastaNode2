@@ -13,9 +13,9 @@ export interface IProduct {
     category_slug?: string,
     name?: string,
     slug?: string,
-    variations?: string | string[] | Dictionary<IProductVariation[]>,
-    images?: string | string[] | Dictionary<IProductImage[]>,
-    related?: Dictionary<IProduct>,
+    variations?: string | string[] | Dictionary<IProductVariation[]> | IProductVariation[],
+    images?: string | string[] | Dictionary<IProductImage[]> | IProductImage[],
+    related?: Dictionary<IProduct[]> | IProduct[],
     description?: string,
     created_at?: string,
     updated_at?: string

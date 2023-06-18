@@ -30,6 +30,5 @@ const product_policies_1 = require("../policies/product.policies");
 const router = (0, express_1.Router)();
 router.get("/", [product_policies_1.fetchPolicy], productsController.fetchAllUserProducts);
 router.get("/search/:query", [productCategory_policies_1.slugPolicy], productsController.searchUserProducts);
-router.get("/cat/:slug", [productCategory_policies_1.slugPolicy], productsController.fetchUserProductsByCategorySlug);
 router.get("/:slug", [productCategory_policies_1.slugPolicy], productsController.fetchUserProductBySlug);
 exports.default = router;

@@ -74,8 +74,8 @@ mainApp.get('*', function (req, res) {
 })
 
 const httpsServer = https.createServer({
-  key: config.certificate.privateKeyPath,
-  cert: config.certificate.fullChainPath  
+  key: fs.readFileSync(config.certificate.privateKeyPath),
+  cert: fs.readFileSync(config.certificate.fullChainPath)  
 }, mainApp);
 
 httpsServer.listen(config.serverPort, () => {

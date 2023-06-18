@@ -6,6 +6,5 @@ import { fetchPolicy } from "@/policies/product.policies";
 const router = Router();
 router.get("/", [ fetchPolicy ], productsController.fetchAllUserProducts);
 router.get("/search/:query", [ slugPolicy ], productsController.searchUserProducts);
-router.get("/cat/:slug", [ slugPolicy ], productsController.fetchUserProductsByCategorySlug);
 router.get("/:slug", [ slugPolicy ], productsController.fetchUserProductBySlug);
 export default router;

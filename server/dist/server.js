@@ -10,6 +10,7 @@ const helmet_1 = __importDefault(require("helmet"));
 const vhost_1 = __importDefault(require("vhost"));
 const path_1 = __importDefault(require("path"));
 const https_1 = __importDefault(require("https"));
+const fs_1 = __importDefault(require("fs"));
 const config_1 = __importDefault(require("./config"));
 const database_1 = require("./database");
 const session_1 = require("./session");
@@ -52,8 +53,8 @@ mainApp.get('*', function (req, res) {
     res.sendFile(path_1.default.join(__dirname, 'builds', 'front', 'build', 'index.html'));
 });
 const httpsServer = https_1.default.createServer({
-    key: config_1.default.certificate.privateKeyPath,
-    cert: config_1.default.certificate.fullChainPath
+    key: fs_1.default.readFileSync(config_1.default.certificate.privateKeyPath),
+    cert: fs_1.default.readFileSync(config_1.default.certificate.fullChainPath)
 }, mainApp);
 httpsServer.listen(config_1.default.serverPort, () => {
     console.log("Https server running successfully");
