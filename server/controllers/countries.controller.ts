@@ -34,7 +34,7 @@ export const fetchDistributorCountryBySlug: RequestHandler = async (req: Request
 
 export const store: RequestHandler = async (req: IAddCountryReq, res: Response) => {
     const country: ICountry = req.body;
-    country.slug = slugify(<string>country.name);
+    country.slug = slugify(country.name as string);
     const { response, error } = await execQuery<{ affectedRows: number, insertId: number }>("countries", "INSERT", ['name', 'slug', 'country_code'], [country.name, country.slug, country.countryCode]); 
     if (error) {
         res.status(500).json({ message: "Error fetching countries" });

@@ -9,6 +9,7 @@ const cors_1 = __importDefault(require("cors"));
 const helmet_1 = __importDefault(require("helmet"));
 const vhost_1 = __importDefault(require("vhost"));
 const path_1 = __importDefault(require("path"));
+const https_1 = __importDefault(require("https"));
 const config_1 = __importDefault(require("./config"));
 const database_1 = require("./database");
 const session_1 = require("./session");
@@ -44,12 +45,16 @@ mainApp.use(express_1.default.static("blogPosts"));
 mainApp.use((0, vhost_1.default)(`shop.${config_1.default.platform === 'development' ? config_1.default.dev_domain : config_1.default.prod_domain}`, shopApp_1.shopApp));
 mainApp.use((0, vhost_1.default)(`distributor.${config_1.default.platform === 'development' ? config_1.default.dev_domain : config_1.default.prod_domain}`, distributorApp_1.distributorApp));
 mainApp.use((0, vhost_1.default)(`management.${config_1.default.platform === 'development' ? config_1.default.dev_domain : config_1.default.prod_domain}`, adminApp_1.adminApp));
+mainApp.use(express_1.default.static(path_1.default.join(__dirname, 'builds', 'front', 'build')));
 mainApp.use("/products", products_routes_1.default);
 mainApp.use("/blogs", blog_routes_1.default);
-mainApp.use(express_1.default.static(path_1.default.join(__dirname, 'builds', 'front', 'build')));
 mainApp.get('*', function (req, res) {
     res.sendFile(path_1.default.join(__dirname, 'builds', 'front', 'build', 'index.html'));
 });
-mainApp.listen(config_1.default.serverPort, () => {
-    console.log("[+] Server configured & started successfully...");
+const httpsServer = https_1.default.createServer({
+    key: config_1.default.certificate.privateKeyPath,
+    cert: config_1.default.certificate.fullChainPath
+}, mainApp);
+httpsServer.listen(config_1.default.serverPort, () => {
+    console.log("Https server running successfully");
 });

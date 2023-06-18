@@ -1,13 +1,37 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.destroyById = exports.updateById = exports.store = exports.searchUserProducts = exports.fetchUserProductsByCategorySlug = exports.fetchUserProductBySlug = exports.fetchAllUserProducts = exports.index = void 0;
+exports.destroyById = exports.updateById = exports.store = exports.fetchDistributorProducts = exports.searchUserProducts = exports.fetchUserProductsByCategorySlug = exports.fetchUserProductBySlug = exports.fetchAllUserProducts = exports.index = void 0;
 const multer_1 = __importDefault(require("multer"));
 const queryHelpers_1 = require("../helpers/queryHelpers");
 const lodash_1 = __importDefault(require("lodash"));
 const StrHelper_1 = require("../helpers/StrHelper");
+const productServices = __importStar(require("../services/products.services"));
 const TABLE_NAME = "products";
 const multerStorage = multer_1.default.diskStorage({
     destination: (req, file, cb) => {
@@ -52,26 +76,23 @@ const index = async (req, res) => {
 };
 exports.index = index;
 const fetchAllUserProducts = async (req, res) => {
-    const product_query = `
-    SELECT p.id, p.name as name, p.slug as slug, pc.name as category_name, pc.slug as category_slug, p.description FROM products p
-    INNER JOIN (SELECT p.id FROM products p LIMIT ${req.query.per_page} OFFSET ${req.query.offset}) AS tmp USING (id)
-    INNER JOIN product_categories pc ON pc.id = p.category_id
-    ${req.query.cat ? 'WHERE pc.slug = ?' : ''} ORDER BY id DESC`;
-    const { response: productsArr, error } = await (0, queryHelpers_1.execQuery)(TABLE_NAME, product_query, null, (req.query.cat ? [req.query.cat] : null));
-    if (error) {
-        console.error(error);
+    let products = await productServices.fetchProducts({ perPage: parseInt(req.query.per_page), offset: parseInt(req.query.offset), });
+    if (!products) {
         res.status(500).json({
             message: "Error fetching products"
         });
         return;
     }
-    else if (productsArr) {
-        const productIds = lodash_1.default.map(productsArr[0], (product) => product.id);
+    if (!products[0].length) {
+        res.status(200).json({ products: products[0] });
+    }
+    else {
+        const productIds = products[0].map((product) => product.id);
         const { response: variationsArr, error } = await (0, queryHelpers_1.execQuery)("product_variations", `SELECT pv.id, pv.product_id, pv.variation, pv.buy_price FROM product_variations pv WHERE pv.product_id IN (${',?'.repeat(productIds.length).slice(1)})`, null, productIds);
         const { response: imagesArr, error: imagesError } = await (0, queryHelpers_1.execQuery)("producty_images", `SELECT pi.product_id, pi.path_url as url, pi.ext FROM product_images pi WHERE pi.product_id IN (${',?'.repeat(productIds.length).slice(1)})`, null, productIds);
         const groupedVariations = lodash_1.default.groupBy(variationsArr?.[0], 'product_id');
         const groupImages = lodash_1.default.groupBy(imagesArr?.[0], 'product_id');
-        const productsEmbedded = lodash_1.default.map(productsArr[0], (record) => {
+        const productsEmbedded = lodash_1.default.map(products[0], (record) => {
             return {
                 ...record,
                 variations: groupedVariations[record.id],
@@ -83,39 +104,34 @@ const fetchAllUserProducts = async (req, res) => {
 };
 exports.fetchAllUserProducts = fetchAllUserProducts;
 const fetchUserProductBySlug = async (req, res) => {
-    const { response: productsArr, error: productsErr } = await (0, queryHelpers_1.execQuery)(TABLE_NAME, `SELECT p.id, p.category_id, p.name as name, p.slug as slug, p.description FROM products p WHERE p.slug = ? LIMIT 1`, null, [req.params.slug]);
-    if (productsErr) {
+    const productArr = await productServices.fetchProductsBySlug(req.params.slug);
+    if (!productArr) {
         res.status(500).json({
             message: "Error fetching products"
         });
     }
-    else if (productsArr) {
-        const productIds = lodash_1.default.map(productsArr[0], (product) => product.id);
-        const { response: variationsArr, error } = await (0, queryHelpers_1.execQuery)("product_variations", `SELECT pv.id, pv.product_id, pv.variation, pv.buy_price FROM product_variations pv WHERE pv.product_id IN (${',?'.repeat(productIds.length).slice(1)})`, null, productIds);
-        const { response: imagesArr, error: imagesError } = await (0, queryHelpers_1.execQuery)("producty_images", `SELECT pi.product_id, pi.path_url as url FROM product_images pi WHERE pi.product_id IN (${',?'.repeat(productIds.length).slice(1)})`, null, productIds);
-        const { response: relatedArr } = await (0, queryHelpers_1.execQuery)("products", `SELECT p.id, p.name as name, p.slug as slug, p.description FROM products p WHERE p.category_id = ? LIMIT 8`, null, [productsArr[0][0].category_id]);
-        if (relatedArr) {
-            const relatedProductsId = lodash_1.default.map(relatedArr[0], (related) => related.id);
-            const { response: relatedVariationsArr } = await (0, queryHelpers_1.execQuery)("product_variations", `SELECT pv.id, pv.product_id, pv.variation, pv.buy_price FROM product_variations pv WHERE pv.product_id IN (${',?'.repeat(relatedProductsId.length).slice(1)})`, null, relatedProductsId);
-            const groupedRelatedVariations = lodash_1.default.groupBy(relatedVariationsArr?.[0], 'product_id');
-            const groupedVariations = lodash_1.default.groupBy(variationsArr?.[0], 'product_id');
-            const groupImages = lodash_1.default.groupBy(imagesArr?.[0], 'product_id');
-            const relatedEmbedded = lodash_1.default.map(relatedArr?.[0], (record) => {
-                return {
-                    ...record,
-                    variations: groupedRelatedVariations[record.id]
-                };
-            });
-            const productsEmbedded = lodash_1.default.map(productsArr?.[0], (record) => {
-                return {
-                    ...record,
-                    variations: groupedVariations[record.id],
-                    images: groupImages[record.id],
-                    related: relatedEmbedded
-                };
-            });
-            res.status(200).json({ product: productsEmbedded });
-        }
+    else if (!productArr[0]) {
+        res.status(404).json({ message: "Product not found" });
+        return;
+    }
+    const { response: variationsArr, error } = await (0, queryHelpers_1.execQuery)("product_variations", `SELECT pv.id, pv.product_id, pv.variation, pv.buy_price FROM product_variations pv WHERE pv.product_id = ?`, null, [productArr?.[0].id]);
+    const { response: imagesArr, error: imagesError } = await (0, queryHelpers_1.execQuery)("producty_images", `SELECT pi.product_id, pi.path_url as url FROM product_images pi WHERE pi.product_id = ?`, null, [productArr?.[0].id]);
+    const { response: relatedArr } = await (0, queryHelpers_1.execQuery)("products", `SELECT p.id, p.name as name, p.slug as slug, p.description FROM products p WHERE p.category_id = ? LIMIT 8`, null, [productArr?.[0].category_id]);
+    if (relatedArr) {
+        const relatedProductsId = lodash_1.default.map(relatedArr[0], (related) => related.id);
+        const { response: relatedVariationsArr } = await (0, queryHelpers_1.execQuery)("product_variations", `SELECT pv.id, pv.product_id, pv.variation, pv.buy_price FROM product_variations pv WHERE pv.product_id IN (${',?'.repeat(relatedProductsId.length).slice(1)})`, null, relatedProductsId);
+        const groupedRelatedVariations = lodash_1.default.groupBy(relatedVariationsArr?.[0], 'product_id');
+        const groupedVariations = lodash_1.default.groupBy(variationsArr?.[0], 'product_id');
+        const groupedImages = lodash_1.default.groupBy(imagesArr?.[0], 'product_id');
+        const relatedEmbedded = lodash_1.default.map(relatedArr?.[0], (record) => {
+            return {
+                ...record,
+                variations: groupedRelatedVariations[record.id]
+            };
+        });
+        (productArr?.[0]).variations = groupedVariations;
+        (productArr?.[0]).images = groupedImages;
+        res.status(200).json({ product: productArr?.[0], related: relatedEmbedded });
     }
 };
 exports.fetchUserProductBySlug = fetchUserProductBySlug;
@@ -163,6 +179,36 @@ const searchUserProducts = async (req, res) => {
     }
 };
 exports.searchUserProducts = searchUserProducts;
+const fetchDistributorProducts = async (req, res) => {
+    const { response, error } = await (0, queryHelpers_1.execQuery)(TABLE_NAME, "SELECT pc.category_name, pc.slug, p.id, p.name, p.slug, p.description FROM products p INNER JOIN product_categories pc ON pc.id = p.category_id ORDERBY DESC");
+    if (error) {
+        res.status(500).json({
+            message: 'Error fetching distributor products'
+        });
+    }
+    else if (response && response[0]) {
+        const productIds = response[0].map(product => product.id);
+        const { response: productVariationsResponse, error: productVariationsError } = await (0, queryHelpers_1.execQuery)(TABLE_NAME, "SELECT pv.variation, pv.wholesale_price, pv.recommended_price, pv.wholesale_min WHERE product_variations pv WHERE pv.product_id IN (?)", null, productIds);
+        if (productVariationsError || !productVariationsResponse) {
+            res.status(500).json({ message: "Error fetching product variations" });
+            return;
+        }
+        const { response: productImagesResponse, error: productImagesError } = await (0, queryHelpers_1.execQuery)(TABLE_NAME, "SELECT path_url FROM product_images pi WHERE pi.product_id IN (?)", null, productIds);
+        if (productImagesError || !productImagesResponse) {
+            res.status(500).json({ message: "Error fetching product images" });
+            return;
+        }
+        const groupedVariations = lodash_1.default.groupBy(productVariationsResponse[0], 'product_id');
+        const groupedImages = lodash_1.default.groupBy(productImagesResponse[0], 'product_id');
+        const products = response[0].map((product => ({
+            ...product,
+            variations: groupedVariations[product.id],
+            images: groupedImages[product.id]
+        })));
+        res.status(200).json({ products });
+    }
+};
+exports.fetchDistributorProducts = fetchDistributorProducts;
 const store = async (req, res) => {
     upload(req, res, async (err) => {
         if (err instanceof multer_1.default.MulterError) {

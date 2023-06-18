@@ -22,7 +22,7 @@ function Categories({ categories, selectCategory }: { categories: ProductCategor
                         <ul>
                             {
                                 categories?.map(category => (
-                                    <li>
+                                    <li key={category.slug}>
                                         <a href="#0" onClick={() => selectCategory(category.slug as string)}> <img src={`/${category.image_path}`} alt="" />{ category.name }</a><span className="count">{ category.products_count }</span>
                                     </li>
                                 ))

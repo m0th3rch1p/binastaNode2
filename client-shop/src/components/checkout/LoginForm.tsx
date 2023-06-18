@@ -1,10 +1,10 @@
 import { useState } from "react";
+import { setAuthenticated, useAuthenticateUserMutation } from "@/store/reducers/userSlice";
 import { useAppDispatch } from "@/store/hooks";
-import { useRegisterUserMutation, resetUserSlice, User } from "@/store/reducers/userSlice";
 
 function LoginForm() {
-    const [ register, { isSuccess, isError, isLoading } ] = useRegisterUserMutation();
     const dispatch = useAppDispatch();
+    const [ login, { isSuccess, isError, isLoading } ] = useAuthenticateUserMutation();
     const [ form, setForm ] = useState({
         email: '',
         password: ''
@@ -21,12 +21,14 @@ function LoginForm() {
         e.preventDefault();
         if (!form.email || !form.password) return;
 
-        register(form);
+        login(form);
 
         setForm({
             email: '',
             password: ''
         });
+
+        dispatch(setAuthenticated(true));
     };
 
     return (

@@ -6,6 +6,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 export type Order = {
     id?: number,
     ref?: string,
+    status?: string,
     amount?: number,
     variations?: ProductVariation[],
     created_at?: string

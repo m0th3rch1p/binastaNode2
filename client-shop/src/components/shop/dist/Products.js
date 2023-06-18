@@ -1,10 +1,12 @@
 "use strict";
 exports.__esModule = true;
 var hooks_1 = require("@/store/hooks");
+var cartSlice_1 = require("@/store/reducers/cartSlice");
 var react_router_dom_1 = require("react-router-dom");
 function Products(_a) {
     var products = _a.products;
     var cart = hooks_1.useAppSelector(function (state) { return state.cart; });
+    var dispatch = hooks_1.useAppDispatch();
     return (React.createElement(React.Fragment, null,
         React.createElement("div", { className: "row product-grid" }, products === null || products === void 0 ? void 0 : products.map(function (product) {
             var _a, _b, _c, _d, _e, _f;
@@ -36,9 +38,11 @@ function Products(_a) {
                                     "ksh.", (_f = (_e = product === null || product === void 0 ? void 0 : product.variations) === null || _e === void 0 ? void 0 : _e[0]) === null || _f === void 0 ? void 0 :
                                     _f.buy_price)),
                             React.createElement("div", { className: "add-cart" },
-                                React.createElement("a", { className: "add", href: "#0" },
-                                    React.createElement("i", { className: "fi-rs-shopping-cart mr-5" }),
-                                    cart.products.find(function (productInCart) { return productInCart.product.slug === product.slug; }) ? 'In Cart' : 'Add')))))));
+                                React.createElement("a", { onClick: function (e) {
+                                        var _a;
+                                        e.preventDefault();
+                                        dispatch(cartSlice_1.addCart({ product: product, selectedVariation: (_a = product.variations) === null || _a === void 0 ? void 0 : _a[0], quantity: 1 }));
+                                    }, className: "add", href: "#0" }, cart.products.find(function (productInCart) { return productInCart.product.slug === product.slug; }) ? 'In Cart' : 'Add')))))));
         }))));
 }
 exports["default"] = Products;

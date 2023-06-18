@@ -1,6 +1,9 @@
 
 import { Request } from "express";
 import * as core from 'express-serve-static-core';
+import { IProductVariation } from "./ProductVariation.model";
+import { Dictionary } from "lodash";
+import { IProductImage } from "./ProductImage.model";
 
 export interface IProduct {
     id?: number,
@@ -10,8 +13,9 @@ export interface IProduct {
     category_slug?: string,
     name?: string,
     slug?: string,
-    variations?: string | string[],
-    images?: string | string[],
+    variations?: string | string[] | Dictionary<IProductVariation[]>,
+    images?: string | string[] | Dictionary<IProductImage[]>,
+    related?: Dictionary<IProduct>,
     description?: string,
     created_at?: string,
     updated_at?: string

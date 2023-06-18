@@ -6,6 +6,7 @@ import { Cart, CartProduct } from "@/store/reducers/cartSlice";
 import { addCart, changeQuantity, changeSelectedVariation } from "@/store/reducers/cartSlice";
 import Loader from "@/components/common/Loader";
 import { useFetchSingleProductQuery } from "@/store/reducers/productsSlice";
+import Related from "@/components/Product/Related";
 
 function Product() {
     const cart: Cart = useAppSelector((state) => state.cart);
@@ -18,26 +19,27 @@ function Product() {
 
     const { data: product, isLoading, isSuccess } = useFetchSingleProductQuery({ slug: params.slug as string });
     const [selected, setSelected] = useState<{ variation: ProductVariation | undefined, quantity: number, inCart: boolean }>({
-        variation: itemInCart?.selectedVariation,
-        quantity: itemInCart ? itemInCart.quantity : 1,
+        variation: undefined,
+        quantity: 1,
         inCart: itemInCart ? true : false
     });
 
     useEffect(() => {
-        if (!itemInCart) {
+        if (itemInCart) {
             setSelected((state) => ({
                 ...state,
-                variation: product?.variations?.[0]
-            }));
-        } else {
-            setSelected((state) => ({
-                ...state,
-                variation: itemInCart.selectedVariation,
                 quantity: itemInCart.quantity,
-                inCart: true
+                variation: itemInCart.selectedVariation
+            }))
+        } else if (product !== undefined && !itemInCart) {
+            console.log(product);
+            setSelected((state) => ({
+                ...state,
+                quantity: 1,
+                variation: product.variations?.[0]
             }))
         }
-    }, [product, itemInCart])
+    }, [itemInCart, product])
 
     const onHandleQtyDown = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
@@ -103,7 +105,7 @@ function Product() {
                 <div className="col-xl-10 col-lg-12 m-auto">
                     <div className="product-detail accordion-detail">
                         {
-                            !isLoading && product ? (
+                            !isLoading && product && selected.variation ? (
                                 <>
                                     <div className="row mb-50 mt-30">
                                         <div className="col-md-6 col-sm-12 col-xs-12 mb-md-0 mb-sm-5">
@@ -129,7 +131,7 @@ function Product() {
                                                 </div>
                                                 <div className="clearfix product-price-cover">
                                                     <div className="product-price primary-color float-left">
-                                                        <span className="current-price text-brand">ksh.{selected.variation ? selected.variation.buy_price * selected.quantity : ((product?.variations?.[0].buy_price) as number) * selected.quantity}</span>
+                                                        <span className="current-price text-brand">ksh.{selected.variation.buy_price * selected.quantity}</span>
                                                         {/* <span>
                                                 <span className="save-price font-md color3 ml-15">26% Off</span>
                                                 <span className="old-price font-md ml-15">$52</span>
@@ -171,37 +173,7 @@ function Product() {
                                             <h2 className="section-title style-1 mb-30">Related products</h2>
                                         </div>
                                         <div className="col-12">
-                                            <div className="row related-products">
-                                                {
-                                                    product?.related?.map(relatedProduct => (
-                                                        <div className="col-lg-3 col-md-4 col-12 col-sm-6" key={relatedProduct.id}>
-                                                            <div className="product-cart-wrap hover-up">
-                                                                <div className="product-img-action-wrap">
-                                                                    <div className="product-img product-img-zoom">
-                                                                        <Link to={`/product/${relatedProduct.slug}`} tabIndex={0}>
-                                                                            <img className="default-img" src={`${relatedProduct.images?.[0].url}`} alt="" />
-                                                                            <img className="hover-img" src={`${relatedProduct.images?.[1].url}`} alt="" />
-                                                                        </Link>
-                                                                    </div>
-                                                                    <div className="product-badges product-badges-position product-badges-mrg">
-                                                                        <span className="hot">Hot</span>
-                                                                    </div>
-                                                                </div>
-                                                                <div className="product-content-wrap">
-                                                                    <h2><Link to={`/product/${relatedProduct.slug}`} tabIndex={0}>{relatedProduct.name}</Link></h2>
-                                                                    <div className="rating-result" title="90%">
-                                                                        <span> </span>
-                                                                    </div>
-                                                                    <div className="product-price">
-                                                                        <span>ksh.{relatedProduct?.variations?.[0].buy_price} </span>
-                                                                        {/* <span className="old-price">$245.8</span> */}
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    ))
-                                                }
-                                            </div>
+                                            <Related relatedProduct={(product.related ?? [])} />
                                         </div>
                                     </div>
                                 </>

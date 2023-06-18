@@ -9,6 +9,8 @@ import _ from "lodash";
 import { IProductVariation } from "@/models/ProductVariation.model";
 import { slugify } from "@/helpers/StrHelper";
 
+import * as productServices from "@/services/products.services";
+
 const TABLE_NAME = "products";
 
 const multerStorage = multer.diskStorage({
@@ -56,28 +58,24 @@ export const index: RequestHandler = async (req: Request, res: Response) => {
 };
 
 export const fetchAllUserProducts: RequestHandler = async (req: Request, res: Response) => {
-    const product_query = `
-    SELECT p.id, p.name as name, p.slug as slug, pc.name as category_name, pc.slug as category_slug, p.description FROM products p
-    INNER JOIN (SELECT p.id FROM products p LIMIT ${req.query.per_page} OFFSET ${req.query.offset}) AS tmp USING (id)
-    INNER JOIN product_categories pc ON pc.id = p.category_id
-    ${req.query.cat ? 'WHERE pc.slug = ?' : ''} ORDER BY id DESC`
-    const { response: productsArr, error } = await execQuery<IProduct[][]>(TABLE_NAME, product_query, null, (req.query.cat ? [req.query.cat] : null));
-    
-    if (error) {
-        console.error(error);
+    let products = await productServices.fetchProducts({ perPage: parseInt(req.query.per_page as string), offset: parseInt(req.query.offset as string),  });
+    if (!products) {
         res.status(500).json({
             message: "Error fetching products"
         });
         return;
-    } else if (productsArr) {
-        const productIds = _.map(productsArr[0], (product) => product.id); 
+    }
+    if (!(products[0] as IProduct[]).length) {
+        res.status(200).json({ products: products[0] });
+    } else {
+        const productIds = products[0].map((product) => product.id) 
         const { response: variationsArr, error } = await execQuery<IProductVariation[][]>("product_variations", `SELECT pv.id, pv.product_id, pv.variation, pv.buy_price FROM product_variations pv WHERE pv.product_id IN (${',?'.repeat(productIds.length).slice(1)})`, null, productIds);
         const { response: imagesArr, error: imagesError } = await execQuery<IProductImage[][]>("producty_images", `SELECT pi.product_id, pi.path_url as url, pi.ext FROM product_images pi WHERE pi.product_id IN (${',?'.repeat(productIds.length).slice(1)})`, null, productIds); 
 
         const groupedVariations = _.groupBy(variationsArr?.[0], 'product_id');
         const groupImages =  _.groupBy(imagesArr?.[0], 'product_id');
         
-        const productsEmbedded = _.map(productsArr[0], (record) => {
+        const productsEmbedded = _.map(products[0], (record) => {
             return {
                 ...record,
                 variations: groupedVariations[<number>record.id],
@@ -90,28 +88,28 @@ export const fetchAllUserProducts: RequestHandler = async (req: Request, res: Re
 };
 
 export const fetchUserProductBySlug: RequestHandler = async (req: Request, res: Response) => {
-    const { response: productsArr, error: productsErr } = await execQuery<IProduct[][]>(TABLE_NAME, 
-    `SELECT p.id, p.category_id, p.name as name, p.slug as slug, p.description FROM products p WHERE p.slug = ? LIMIT 1`, 
-    null, [ req.params.slug ]);
+    const productArr = await productServices.fetchProductsBySlug(req.params.slug);
 
-    if (productsErr) {
+    if (!productArr) {
         res.status(500).json({
             message: "Error fetching products"
         });
-    } else if (productsArr) {
-        const productIds = _.map(productsArr[0], (product) => product.id); 
+    } else if (!productArr[0]) {   
+        res.status(404).json({ message: "Product not found"});
+        return;
+    }
 
-        const { response: variationsArr, error } = await execQuery<IProductVariation[][]>("product_variations", 
-        `SELECT pv.id, pv.product_id, pv.variation, pv.buy_price FROM product_variations pv WHERE pv.product_id IN (${',?'.repeat(productIds.length).slice(1)})`, 
-        null, productIds);
+    const { response: variationsArr, error } = await execQuery<IProductVariation[][]>("product_variations", 
+        `SELECT pv.id, pv.product_id, pv.variation, pv.buy_price FROM product_variations pv WHERE pv.product_id = ?`, 
+        null, [ productArr?.[0].id ]);
         
         const { response: imagesArr, error: imagesError } = await execQuery<IProductImage[][]>("producty_images", 
-        `SELECT pi.product_id, pi.path_url as url FROM product_images pi WHERE pi.product_id IN (${',?'.repeat(productIds.length).slice(1)})`, 
-        null, productIds); 
+        `SELECT pi.product_id, pi.path_url as url FROM product_images pi WHERE pi.product_id = ?`, 
+        null, [ productArr?.[0].id ]); 
         
         const { response: relatedArr } = await execQuery<IProduct[][]>("products", 
         `SELECT p.id, p.name as name, p.slug as slug, p.description FROM products p WHERE p.category_id = ? LIMIT 8`,
-        null, [productsArr[0][0].category_id]);
+        null, [productArr?.[0].category_id]);
 
         if (relatedArr) {
             const relatedProductsId = _.map(relatedArr[0], (related) => related.id);
@@ -122,7 +120,7 @@ export const fetchUserProductBySlug: RequestHandler = async (req: Request, res: 
 
             const groupedRelatedVariations = _.groupBy(relatedVariationsArr?.[0], 'product_id');
             const groupedVariations = _.groupBy(variationsArr?.[0], 'product_id');
-            const groupImages =  _.groupBy(imagesArr?.[0], 'product_id');
+            const groupedImages =  _.groupBy(imagesArr?.[0], 'product_id');
             
             const relatedEmbedded = _.map(relatedArr?.[0], (record) => {
                 return {
@@ -131,19 +129,11 @@ export const fetchUserProductBySlug: RequestHandler = async (req: Request, res: 
                 }
             });
 
-            const productsEmbedded = _.map(productsArr?.[0], (record) => {
-                return {
-                    ...record,
-                    variations: groupedVariations[<number>record.id],
-                    images: groupImages[<number>record.id],
-                    related: relatedEmbedded
-                };
-            });
-
-
-            res.status(200).json({ product: productsEmbedded });
+            (productArr?.[0] as IProduct).variations = groupedVariations;
+            (productArr?.[0] as IProduct).images = groupedImages;
+            
+            res.status(200).json({ product: productArr?.[0], related: relatedEmbedded });
         }
-    }
 };
 
 export const fetchUserProductsByCategorySlug: RequestHandler = async (req: Request, res: Response) => {
@@ -198,6 +188,40 @@ export const searchUserProducts: RequestHandler = async (req:Request, res:Respon
         });
     }
 }
+
+export const fetchDistributorProducts: RequestHandler = async (req: Request, res: Response) => {
+    const { response, error } = await execQuery<IProduct[][]>(TABLE_NAME, "SELECT pc.category_name, pc.slug, p.id, p.name, p.slug, p.description FROM products p INNER JOIN product_categories pc ON pc.id = p.category_id ORDERBY DESC");
+    if (error) {
+        res.status(500).json({
+            message: 'Error fetching distributor products'
+        });
+    } else if (response && response[0]) {
+        const productIds = response[0].map(product => product.id);
+        const { response: productVariationsResponse, error: productVariationsError } = await execQuery<IProductVariation[][]>(TABLE_NAME, "SELECT pv.variation, pv.wholesale_price, pv.recommended_price, pv.wholesale_min WHERE product_variations pv WHERE pv.product_id IN (?)", null, productIds);
+        if (productVariationsError || !productVariationsResponse) {
+            res.status(500).json({message: "Error fetching product variations"});
+            return;
+        }
+    
+        const { response: productImagesResponse, error: productImagesError } = await execQuery<IProductImage[][]>(TABLE_NAME, "SELECT path_url FROM product_images pi WHERE pi.product_id IN (?)", null, productIds);
+        if (productImagesError || !productImagesResponse ) {
+            res.status(500).json({ message: "Error fetching product images" });
+            return;
+        }
+    
+        const groupedVariations = _.groupBy(productVariationsResponse[0], 'product_id');
+        const groupedImages = _.groupBy(productImagesResponse[0], 'product_id');
+
+        const products = response[0].map((product => ({
+            ...product,
+            variations: groupedVariations[product.id as number],
+            images: groupedImages[product.id as number]
+        })));
+
+        res.status(200).json({ products });
+    }
+
+};
 
 export const store: RequestHandler = async (req: IAddProductReq, res: Response) => {
     upload((req as Request), res, async (err) => {

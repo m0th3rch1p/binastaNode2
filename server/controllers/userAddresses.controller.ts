@@ -14,8 +14,11 @@ export const index: RequestHandler = async (req: Request, res: Response) => {
 };
 
 export const fethUserAddresses = async (req: Request, res: Response) => {
-    const { response, error } = await execQuery<IUserAddress[][]>(TABLE_NAME, `SELECT (address, phone_number, default) FROM ${TABLE_NAME} WHERE user_id = ?`, null, [req.session.user_id]);
-    if (error) res.status(500).json({ message: 'Error fetching user addresses' });
+    const { response, error } = await execQuery<IUserAddress[][]>(TABLE_NAME, `SELECT address, phone_number FROM ${TABLE_NAME} WHERE user_id = ?`, null, [req.session.user_id]);
+    if (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Error fetching user addresses' });
+    }
     else if (response) {
         const [ addresses ] = response;
         res.status(200).json({ addresses });

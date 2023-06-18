@@ -18,7 +18,7 @@ function Categories(_a) {
                 } },
                 React.createElement("div", { className: "sidebar-widget widget-category-2 mb-30" },
                     React.createElement("h5", { className: "section-title style-1 mb-30" }, "Category"),
-                    React.createElement("ul", null, categories === null || categories === void 0 ? void 0 : categories.map(function (category) { return (React.createElement("li", null,
+                    React.createElement("ul", null, categories === null || categories === void 0 ? void 0 : categories.map(function (category) { return (React.createElement("li", { key: category.slug },
                         React.createElement("a", { href: "#0", onClick: function () { return selectCategory(category.slug); } },
                             " ",
                             React.createElement("img", { src: "/" + category.image_path, alt: "" }),

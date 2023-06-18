@@ -1,11 +1,11 @@
-import { useAppSelector } from "@/store/hooks";
-import { Cart } from "@/store/reducers/cartSlice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { Cart, addCart } from "@/store/reducers/cartSlice";
 import { Product } from "@/store/reducers/productsSlice";
 import { Link } from "react-router-dom";
 
 function Products({ products } : {products: Product[]}) {
     const cart: Cart = useAppSelector((state) => state.cart);
-    
+    const dispatch = useAppDispatch();
     return (
         <>
             <div className="row product-grid">
@@ -45,7 +45,10 @@ function Products({ products } : {products: Product[]}) {
                                         {/* <span className="old-price">$32.8</span> */}
                                     </div>
                                     <div className="add-cart">
-                                        <a  className="add" href="#0"><i className="fi-rs-shopping-cart mr-5"></i>{ cart.products.find((productInCart) => productInCart.product.slug === product.slug) ? 'In Cart' : 'Add' }</a>
+                                        <a onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+                                            e.preventDefault();
+                                            dispatch(addCart({ product, selectedVariation: product.variations?.[0], quantity: 1 }))
+                                        }} className="add" href="#0">{ cart.products.find((productInCart) => productInCart.product.slug === product.slug) ? 'In Cart' : 'Add' }</a>
                                     </div>
                                 </div>
                             </div>

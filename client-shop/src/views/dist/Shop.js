@@ -17,13 +17,14 @@ var PageHeader_1 = require("@/components/shop/PageHeader");
 var productsSlice_1 = require("@/store/reducers/productsSlice");
 var productCategorySlice_1 = require("@/store/reducers/productCategorySlice");
 var react_1 = require("react");
+var Loader_1 = require("@/components/common/Loader");
 function Shop() {
     var _a = react_1.useState({
         offset: 0,
         per_page: 10,
         cat: null
     }), shopState = _a[0], setShopState = _a[1];
-    var products = productsSlice_1.useFetchProductsQuery(__assign({}, shopState)).data;
+    var _b = productsSlice_1.useFetchProductsQuery(__assign({}, shopState)), products = _b.data, isProductsLoading = _b.isLoading;
     var categories = productCategorySlice_1.useFetchProductCategoriesQuery().data;
     var onPageNext = function (e) {
         e.preventDefault();
@@ -101,7 +102,7 @@ function Shop() {
                                             React.createElement("a", { href: "#" }, "Release Date")),
                                         React.createElement("li", null,
                                             React.createElement("a", { href: "#" }, "Avg. Rating"))))))),
-                    React.createElement(Products_1["default"], { products: products }),
+                    !isProductsLoading && products ? React.createElement(Products_1["default"], { products: products }) : React.createElement(Loader_1["default"], null),
                     React.createElement("div", { className: "pagination-area mt-20 mb-20" },
                         React.createElement("nav", { "aria-label": "Page navigation example" },
                             React.createElement("ul", { className: "pagination justify-content-middle" },

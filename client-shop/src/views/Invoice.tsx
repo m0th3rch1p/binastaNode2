@@ -1,4 +1,4 @@
-import { Link, useLocation, useParams } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import Logo from "@/components/common/Logo"
 import mpesaImg from "@/assets/images/mpesa.jpg";
 

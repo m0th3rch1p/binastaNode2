@@ -17,7 +17,8 @@ export const blogsApiSlice = createApi({
     endpoints: (builder) => ({
         fetchBlogs: builder.query<Blog[], null>({
             query: () => "/",
-            transformResponse: (response: { blogs: Blog[] }) => response.blogs
+            transformResponse: (response: { blogs: Blog[] }) => response.blogs,
+            providesTags: ['blogs']
         }),
         storeBlog: builder.mutation<null, FormData>({
             query: (blog: FormData) => ({
@@ -27,7 +28,8 @@ export const blogsApiSlice = createApi({
                 headers: {
                     contentType: "multipart/form-data"
                 }
-            })
+            }),
+            invalidatesTags: ['blogs']
         })
     })
 });

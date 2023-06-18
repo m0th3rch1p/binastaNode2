@@ -12,8 +12,14 @@ import Shop from "./views/Shop";
 import Invoice from "./views/Invoice";
 import Product from "./views/Product";
 import Checkout from "./views/Checkout";
+import DashboardLayout from "./layout/DashboardLayout";
+import Orders from "./views/Orders";
+import Addresses from "./views/Addresses";
+import ProtectedRoute from "./components/ProtectedRoute";
+
 
 function App() {
+  const user = store.getState().user;
   return (
     <React.StrictMode>
       <Provider store={store}>
@@ -27,6 +33,10 @@ function App() {
             </Route>
             <Route element={<InvoiceLayout />}>
               <Route path="/invoice/:orderId" element={<Invoice />} />
+            </Route>
+            <Route element={<DashboardLayout />}>
+              <Route path="/account/orders" element={<ProtectedRoute isLoggedIn={user.authenticated as boolean}><Orders /></ProtectedRoute>} />
+              <Route path="/account/addresses" element={<ProtectedRoute isLoggedIn={user.authenticated as boolean}><Addresses /></ProtectedRoute>}/>
             </Route>
           </Routes>
         </BrowserRouter>

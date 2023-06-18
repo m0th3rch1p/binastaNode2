@@ -4,6 +4,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 import vhost from "vhost";
 import path from 'path'
+import https from 'https';
+import fs from 'fs';
 
 import config from "@/config";
 import { db_init } from "@/database";
@@ -61,17 +63,22 @@ mainApp.use(vhost(`shop.${config.platform === 'development' ? config.dev_domain 
 mainApp.use(vhost(`distributor.${config.platform === 'development' ? config.dev_domain : config.prod_domain}`, distributorApp));
 mainApp.use(vhost(`management.${config.platform === 'development' ? config.dev_domain : config.prod_domain}`, adminApp));
 
+mainApp.use(express.static(path.join(__dirname, 'builds', 'front', 'build')));
 
 mainApp.use("/products", productRoutes);
 mainApp.use("/blogs", blogRoutes);
 
-mainApp.use(express.static(path.join(__dirname, 'builds', 'front', 'build')));
 
 mainApp.get('*', function (req, res) {
     res.sendFile(path.join(__dirname, 'builds', 'front', 'build', 'index.html'))
 })
 
-mainApp.listen(config.serverPort, () => {
-    console.log("[+] Server configured & started successfully...");
+const httpsServer = https.createServer({
+  key: config.certificate.privateKeyPath,
+  cert: config.certificate.fullChainPath  
+}, mainApp);
+
+httpsServer.listen(config.serverPort, () => {
+    console.log("Https server running successfully");
 });
 

@@ -58,5 +58,9 @@ export default {
         consumer_secret: process.env.MPESA_CONSUMER_SECRET || "",
         business_short_code: process.env.MPESA_BUSINESS_SHORT_CODE || "",
         pass_key: process.env.MPESA_PASS_KEY || ""
+    },
+    certificate: {
+        privateKeyPath: process.env.SSL_PRIVATE_KEY_PATH || "",
+        fullChainPath: process.env.SSL_FULL_CHAIN_PATH || ""
     }
 };

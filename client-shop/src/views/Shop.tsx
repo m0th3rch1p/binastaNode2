@@ -4,6 +4,7 @@ import PageHeader from "@/components/shop/PageHeader";
 import { Product, useFetchProductsQuery } from "@/store/reducers/productsSlice";
 import { ProductCategory, useFetchProductCategoriesQuery } from "@/store/reducers/productCategorySlice";
 import { useState } from "react";
+import Loader from "@/components/common/Loader";
 
 function Shop() {
   const [shopState, setShopState] = useState<{offset: number, per_page: number, cat: string | null}>({
@@ -12,9 +13,9 @@ function Shop() {
     cat: null
   });
   
-  
 
-  const { data: products } = useFetchProductsQuery({ ...shopState });
+
+  const { data: products, isLoading: isProductsLoading } = useFetchProductsQuery({ ...shopState });
   const { data: categories } = useFetchProductCategoriesQuery();
 
   const onPageNext = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -101,7 +102,7 @@ function Shop() {
                 </div>
               </div>
             </div>
-            <Products products={products as Product[]} />
+            { !isProductsLoading && products ?  <Products products={products as Product[]} /> : <Loader /> }
 
             <div className="pagination-area mt-20 mb-20">
                     <nav aria-label="Page navigation example">

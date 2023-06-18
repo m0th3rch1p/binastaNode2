@@ -20,8 +20,9 @@ export const index: RequestHandler = async (req: Request, res: Response) => {
 };
 
 export const fetchUserOrders: RequestHandler = async (req: Request, res: Response) => {
-    const { response, error } = await execQuery<IOrder[][]>(TABLE_NAME, "SELECTBYCOL", ['ref', 'status', 'amount', 'created_at'], [req.session.user_id]);
+    const { response, error } = await execQuery<IOrder[][]>(TABLE_NAME, "SELECT ref, status, amount, created_at FROM orders WHERE user_id = ?", null, [req.session.user_id]);
     if (error) {
+        console.log(error);
         res.status(500).json({ message: "Error fetching orders" });
     } else if (response) {
         const [ orders ] = response;
@@ -30,27 +31,29 @@ export const fetchUserOrders: RequestHandler = async (req: Request, res: Respons
 };
 
 export const fetchUserUserOrderById: RequestHandler = async (req: Request, res: Response) => {
-    const { response, error } = await execQuery<IOrder[][]>(TABLE_NAME, "SELECT ref, status, amount, created_at FROM orders WHERE id =? AND user_id = ?", null, [ req.params.id, req.session.user_id ]);
+    const { response, error } = await execQuery<IOrder[][]>(TABLE_NAME, "SELECT ref, status, amount, created_at FROM orders WHERE id =? AND user_id = ?", null, [ parseInt(req.params.id), req.session.user_id ]);
     
     if (error) {
         res.status(500).json({ message: "Error fetching order by id" });
     } else if (response) {
         const [ orders ] = response;
 
-        const { response: orderProductVariationResponse } = await execQuery<IOrderProductVariation[][]>("order_product_variations", "SELECT product_variation_id, quantity FROM order_product_variations WHERE order_id = ?", null, [req.params.id]);
-        const groupedVariations = _.groupBy(orderProductVariationResponse?.[0], 'product_variation_id');
-        const opvIds = orderProductVariationResponse?.[0].map(opv => opv.product_variation_id);
+        if (orders.length) {
+            const { response: orderProductVariationResponse } = await execQuery<IOrderProductVariation[][]>("order_product_variations", "SELECT product_variation_id, quantity FROM order_product_variations WHERE order_id = ?", null, [req.params.id]);
+            const groupedVariations = _.groupBy(orderProductVariationResponse?.[0], 'product_variation_id');
+            const opvIds = orderProductVariationResponse?.[0].map(opv => opv.product_variation_id);
 
-        const { response: productVariationsResponse } = await execQuery<IProductVariation[][]>("product_variations", 
-        "SELECT pv.id, pv.variation, pv.buy_price, p.name as product_name FROM product_variations pv INNER JOIN products p ON p.id = pv.product_id WHERE pv.id IN (?)", null, opvIds);
-        const productVariationsEmbedded = _.map(productVariationsResponse?.[0], (pv) => {
+            const { response: productVariationsResponse } = await execQuery<IProductVariation[][]>("product_variations", 
+            "SELECT pv.id, pv.variation, pv.buy_price, p.name as product_name FROM product_variations pv INNER JOIN products p ON p.id = pv.product_id WHERE pv.id IN (?)", null, opvIds);
+            const productVariationsEmbedded = _.map(productVariationsResponse?.[0], (pv) => {
             return { 
                 ...pv,
                 quantity: groupedVariations?.[pv.id as number]
             }
-        })
-        
-        res.status(200).json({ order: orders[0], product_variations: productVariationsEmbedded });
+            })
+                
+            res.status(200).json({ order: orders[0], product_variations: productVariationsEmbedded });
+        } else res.status(404).json({message: 'Order Not Found'});
     }
 };
 
@@ -85,7 +88,7 @@ export const store: RequestHandler = async (req: IAddOrderReq, res: Response) =>
             "quantity"   
         ], [orderProductVariations]);
 
-        res.status(200).json({ status: variationResponse?.[0].affectedRows, id: variationResponse?.[0].insertId });
+        res.status(200).json({ status: variationResponse?.[0].affectedRows, id: response?.[0].insertId });
     }
 };
 
