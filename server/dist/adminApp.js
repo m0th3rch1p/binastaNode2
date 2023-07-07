@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.adminApp = void 0;
 const express_1 = __importDefault(require("express"));
+const path_1 = __importDefault(require("path"));
 const adminApp = (0, express_1.default)();
 exports.adminApp = adminApp;
 const auth_routes_1 = __importDefault(require("./routes/admins/auth.routes"));
@@ -19,6 +20,7 @@ const productCategory_routes_1 = __importDefault(require("./routes/admins/produc
 const product_routes_1 = __importDefault(require("./routes/admins/product.routes"));
 const user_routes_1 = __importDefault(require("./routes/admins/user.routes"));
 const userAddress_routes_1 = __importDefault(require("./routes/admins/userAddress.routes"));
+adminApp.use(express_1.default.static(path_1.default.join(__dirname, 'front', 'dashboard', 'build')));
 adminApp.use("/auth", auth_routes_1.default);
 adminApp.use("/blog_categories", blogCategories_routes_1.default);
 adminApp.use("/blogs", blog_routes_1.default);
@@ -31,3 +33,6 @@ adminApp.use("/product_categories", productCategory_routes_1.default);
 adminApp.use("/products", product_routes_1.default);
 adminApp.use("/users", user_routes_1.default);
 adminApp.use("/user_addresses", userAddress_routes_1.default);
+adminApp.get('*', function (req, res) {
+    res.sendFile(path_1.default.join(__dirname, 'front/main/build', 'index.html'));
+});

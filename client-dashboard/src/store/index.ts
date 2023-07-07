@@ -19,6 +19,8 @@ import { blogsApiSlice } from './reducers/blogsSlice';
 import { productCategoryApiSlice } from './reducers/productCategoriesSlice';
 import { blogCategoriesApiSlice } from './reducers/blogCategoriesSlice';
 import { productApiSlice } from './reducers/productsSlice';
+import { distributorsApiSlice } from './reducers/distributorsSlice';
+import { countriesApiSlice } from './reducers/countriesSlice';
 
 export const resetStore = createAction("resetStore");
 
@@ -29,6 +31,8 @@ const rootReducer = combineReducers({
     [ productApiSlice.reducerPath ]: productApiSlice.reducer,
     [ blogCategoriesApiSlice.reducerPath ]: blogCategoriesApiSlice.reducer,
     [ blogsApiSlice.reducerPath ]: blogsApiSlice.reducer,
+    [ distributorsApiSlice.reducerPath ]: distributorsApiSlice.reducer,
+    [ countriesApiSlice.reducerPath ]: countriesApiSlice.reducer 
 })
 
 const appReducer: typeof rootReducer = (state, action) => {
@@ -42,7 +46,7 @@ const persistConfig = {
     key: 'root',
     version: 1,
     storage,
-    blacklist: [ userApiSlice.reducerPath, productCategoryApiSlice.reducerPath, productApiSlice.reducerPath, blogCategoriesApiSlice.reducerPath, blogsApiSlice.reducerPath ]  
+    blacklist: [ userApiSlice.reducerPath, productCategoryApiSlice.reducerPath, productApiSlice.reducerPath, blogCategoriesApiSlice.reducerPath, blogsApiSlice.reducerPath, distributorsApiSlice.reducerPath, countriesApiSlice.reducerPath ]  
 };
 
 const persistedReducer = persistReducer(persistConfig, appReducer)
@@ -53,7 +57,7 @@ const store = configureStore({
         serializableCheck: {
             ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
         }
-    }).concat(userApiSlice.middleware, productCategoryApiSlice.middleware, productApiSlice.middleware, blogCategoriesApiSlice.middleware, blogsApiSlice.middleware))
+    }).concat(userApiSlice.middleware, productCategoryApiSlice.middleware, productApiSlice.middleware, blogCategoriesApiSlice.middleware, blogsApiSlice.middleware, distributorsApiSlice.middleware, countriesApiSlice.middleware))
 });
 
 export const persistor = persistStore(store);

@@ -9,3 +9,7 @@ export const storeSchema = Joi.object({
 export const idSchema = Joi.object({
     id: Joi.number().min(1).required(),
 });
+
+export const markDeliveredSchema = Joi.object({
+    order_id: Joi.number().min(1).required()
+});

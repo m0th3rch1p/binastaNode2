@@ -17,7 +17,7 @@ exports.registerSchema = joi_1.default.object({
     password: joi_1.default.string().max(32).required(),
     phone_number: joi_1.default.string().required(),
     gender: joi_1.default.string().required(),
-    referal_code: joi_1.default.string()
+    parent: joi_1.default.string().allow('')
 });
 exports.authenticateSchema = joi_1.default.object({
     email: joi_1.default.string().email().required(),

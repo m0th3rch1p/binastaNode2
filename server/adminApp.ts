@@ -1,4 +1,5 @@
 import express from 'express';
+import path from 'path';
 
 const adminApp: express.Application = express();
 
@@ -15,6 +16,8 @@ import productRoutes from "@/routes/admins/product.routes";
 import userRoutes from "@/routes/admins/user.routes";
 import userAddressRoutes from "@/routes/admins/userAddress.routes";
 
+adminApp.use(express.static(path.join(__dirname, 'front', 'dashboard', 'build')));
+
 adminApp.use("/auth", authRoutes);
 adminApp.use("/blog_categories", blogCategoryRoutes);
 adminApp.use("/blogs", blogRoutes);
@@ -27,5 +30,9 @@ adminApp.use("/product_categories", productCategoryRoutes);
 adminApp.use("/products", productRoutes);
 adminApp.use("/users", userRoutes);
 adminApp.use("/user_addresses", userAddressRoutes);
+
+adminApp.get('*', function (req, res) {
+    res.sendFile(path.join(__dirname, 'front/main/build', 'index.html'))
+});
 
 export { adminApp };

@@ -9,5 +9,7 @@ const distributorOrders_controller_1 = require("../../controllers/distributorOrd
 const auth_middleware_1 = __importDefault(require("../../middlewares/auth.middleware"));
 const router = (0, express_1.Router)();
 router.get("/", [auth_middleware_1.default, roles_middleware_1.isTenant], distributorOrders_controller_1.fetchDistributorOrders);
-router.get("/:id", [auth_middleware_1.default, roles_middleware_1.isTenant], distributorOrders_controller_1.fetchDistributorOrderByRef);
+router.get("/:id", [auth_middleware_1.default, roles_middleware_1.isTenant], distributorOrders_controller_1.fetchDistributorOrderById);
+router.get("/:ref", [auth_middleware_1.default, roles_middleware_1.isTenant], distributorOrders_controller_1.fetchDistributorOrderByRef);
+router.post("/", [auth_middleware_1.default, roles_middleware_1.isTenant], distributorOrders_controller_1.store);
 exports.default = router;

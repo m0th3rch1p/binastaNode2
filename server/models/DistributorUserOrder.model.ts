@@ -4,8 +4,8 @@ import * as core from 'express-serve-static-core';
 
 export interface IDistributorUserOrder {
     id?: number,
-    distributorUserId?: number,
-    distributorUserAddressId?: number,
+    distributor_user_id?: number,
+    distributor_user_address_id?: number,
     ref?: string,
     status?: "pending" | "delivered",
     amount?: number,

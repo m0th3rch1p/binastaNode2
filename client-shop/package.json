@@ -73,5 +73,5 @@
     "stylelint-config-css-modules": "^4.2.0",
     "stylelint-config-prettier": "^9.0.5"
   },
-  "proxy": "http://shop.binasta.test"
+  "proxy": "https://shop.binasta.test"
 }

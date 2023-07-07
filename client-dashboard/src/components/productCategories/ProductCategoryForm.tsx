@@ -11,7 +11,7 @@ function ProductCategoryForm({ show } : { show: boolean }) {
 
     useEffect(() => {
         if (isSuccess) {
-            setCategoryForm((state) => ({ ...state, name: '' }))         
+            setCategoryForm((state) => ({ ...state, name: '', file: undefined }));         
         }
     }, [isSuccess]);
 
@@ -48,7 +48,7 @@ function ProductCategoryForm({ show } : { show: boolean }) {
                 </div>
                 <div className="form-group">
                     <label>Category Image</label>
-                    <input type="file" onChange={onHandleFileChange} className="form-control" required  />
+                    <input type="file" id="catImg" onChange={onHandleFileChange} className="form-control" required  />
                 </div>
             </div>
         </div>

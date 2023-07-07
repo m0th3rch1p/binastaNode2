@@ -3,23 +3,37 @@ import { Request, Response, RequestHandler } from "express";
 import { execQuery } from "@/helpers/queryHelpers";
 import { IDistributorAddress } from "@/models/DistributorAddress.model";
 
+import * as distributorAddressServices from "@/services/distributorAddresses.services";
+
 export const index: RequestHandler = async (req: Request, res: Response) => {
-    const { response: distributor_addresses , error} = await execQuery<IDistributorAddress[]>("distributor_addresses", "SELECTALL");
-    if (error) {
-      res.status(500).json({ message: "error fetching distributoraddress" });
-    } else if (distributor_addresses) {
-      res.status(200).json({ distributor_addresses })
-    }
+  const addresses = await distributorAddressServices.fetchDistributorAddresses("admin");
+  if (!addresses) {
+    res.status(500).json({ message: "Error fetching distributor addresses" });
+  } else {
+    res.status(200).json({ addresses });
+  }
+};
+
+
+
+export const fetchDistributorAddresses = async (req: Request, res: Response) => {
+  const addresses = await distributorAddressServices.fetchDistributorAddresses(req.session.role === 'admin' ? "admin" : "distributor", req.session.role === 'admin' ? parseInt(req.params.id as string) : req.session.user_id);
+  if (!addresses) {
+    res.status(500).json({ message: "Error fetching distributor addresses" });
+  } else {
+    res.status(200).json({ addresses });
+  }
 };
 
 export const store: RequestHandler = async (req: IAddDistributorAddressReq, res: Response) => {
   const distributorAddress: IDistributorAddress = req.body;
-  const { response, error } = await execQuery<{ affectedRows: number }>("distributor_addresses", "INSERT", ["distributor_id", "address", "phoneNumber"], [distributorAddress.distributorId, distributorAddress.address, distributorAddress.phoneNumber]);
-  
-  if (error) {
-    res.status(500).json({ message: "error fetching distributor addresses" });
-  } else if (response) {
-    res.status(200).json({ status: response.affectedRows });
+  distributorAddress.distributor_id = req.session.user_id;
+
+  const results = await distributorAddressServices.store(distributorAddress);
+  if (!results) {
+    res.status(500).json({ message: "Error fetching distributor addresses" });
+  } else {
+    res.status(200).json({ status: results.affectedRows, id: results.insertId });
   }
 };
 

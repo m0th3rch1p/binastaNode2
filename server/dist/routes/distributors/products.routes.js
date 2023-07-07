@@ -26,6 +26,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const productsController = __importStar(require("../../controllers/products.controller"));
 const router = (0, express_1.Router)();
-router.get("/", productsController.index);
-router.get("/:slug", productsController.fetchUserProductBySlug);
+router.get("/", productsController.fetchDistributorProducts);
+router.get("/:slug", productsController.fetchDistributorProductBySlug);
 exports.default = router;

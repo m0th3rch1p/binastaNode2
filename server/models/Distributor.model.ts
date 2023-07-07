@@ -4,18 +4,20 @@ import * as core from 'express-serve-static-core';
 
 export interface IDistributor {
     id?: number,
-    countryId?: number,
-    storeName?: string,
-    fullName?: string,
+    country_id?: number,
+    store_name?: string,
+    first_name?: string,
+    last_name?: string,
     email?: string,
     password?: string,
-    phoneNumber?: string,
+    phone_number?: string,
     gender?: "male" | "female",
-    rewardPoints?: number,
+    reward_points?: number,
     status?: "pending" | "active" | "suspended" | "disabled",
-    referalCode?: string,
+    referal_code?: string,
     verified: boolean,
-    parent: IDistributor["id"],
+    parent: IDistributor["id"] | null,
+    child_count?: number,
     created_at?: string,
     updated_at?: string
 };

@@ -18,14 +18,15 @@ import { distributorApp } from "./distributorApp";
 
 import productRoutes from "@/routes/products.routes";
 import blogRoutes from "@/routes/blog.routes";
+import { distributorShopApp } from "./distributorShopApp";
 
 // import { init_pp } from "@/services/paymentGateways/paypal.gateway";
 // import { init_mpesa } from "@/services/paymentGateways/mpesa.gateway";
-
 declare module "express-session" {
     interface SessionData {
         user_id: number,
-        role: string
+        role: string,
+        tenant_id: number,
     }
 };
 
@@ -62,20 +63,21 @@ mainApp.use(express.static("blogPosts"));
 mainApp.use(vhost(`shop.${config.platform === 'development' ? config.dev_domain : config.prod_domain}`, shopApp));
 mainApp.use(vhost(`distributor.${config.platform === 'development' ? config.dev_domain : config.prod_domain}`, distributorApp));
 mainApp.use(vhost(`management.${config.platform === 'development' ? config.dev_domain : config.prod_domain}`, adminApp));
+mainApp.use(vhost(`*.${config.platform === 'development' ? config.dev_domain : config.prod_domain}`, distributorShopApp));
 
-mainApp.use(express.static(path.join(__dirname, 'builds', 'front', 'build')));
+mainApp.use(express.static(path.join(__dirname, 'front', 'main', 'build')));
 
 mainApp.use("/products", productRoutes);
 mainApp.use("/blogs", blogRoutes);
 
 
 mainApp.get('*', function (req, res) {
-    res.sendFile(path.join(__dirname, 'builds', 'front', 'build', 'index.html'))
+    res.sendFile(path.join(__dirname, 'front', 'main', 'build', 'index.html'))
 })
 
 const httpsServer = https.createServer({
-  key: fs.readFileSync(config.certificate.privateKeyPath),
-  cert: fs.readFileSync(config.certificate.fullChainPath)  
+  key: fs.readFileSync(path.join(__dirname, 'certs', 'key.pem'), 'utf8'),
+  cert: fs.readFileSync(path.join(__dirname, 'certs', 'cert.pem'), 'utf8')  
 }, mainApp);
 
 httpsServer.listen(config.serverPort, () => {

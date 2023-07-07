@@ -1,0 +1,10 @@
+"use strict";
+exports.__esModule = true;
+var express_1 = require("express");
+var distributorUsers_controller_1 = require("@/controllers/distributorUsers.controller");
+var auth_policies_1 = require("@/policies/auth.policies");
+var domains_middleware_1 = require("@/middlewares/domains.middleware");
+var router = express_1.Router();
+router.post("/login", [domains_middleware_1.verifyDomain, auth_policies_1.authPolicy], distributorUsers_controller_1.authenticate);
+router.post("/register", [domains_middleware_1.verifyDomain, auth_policies_1.authPolicy], distributorUsers_controller_1.register);
+exports["default"] = router;

@@ -27,3 +27,12 @@ export const idPolicy = (req: Request, res: Response, next: NextFunction) => {
         });
     } else next();   
 };
+
+export const markDeliveredPolicy = (req: Request, res: Response, next: NextFunction) => {
+    const { error, value } = distributorUserOrderValidations.markDeliveredSchema.validate(req.body);
+    if (error) {
+        res.status(422).json({
+            errors: error.details
+        });
+    } else next();
+};

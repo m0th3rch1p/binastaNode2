@@ -2,16 +2,15 @@
   "compilerOptions": {
     "target": "es2021",                                  
     "lib": ["es2021"],                                   
-  
     "module": "commonjs",                                
     "moduleResolution": "node",                          
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"]
     },
-    "outDir": "dist",                                                   
     "esModuleInterop": true,                             
     "strict": true,                                     
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "outDir": "dist"
   }
 }

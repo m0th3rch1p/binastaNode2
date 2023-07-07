@@ -2,10 +2,11 @@ import { slugify } from "@/helpers/StrHelper";
 import { execQuery } from "@/helpers/queryHelpers";
 import { IAddCountryReq, ICountry, IGetCountryReq, IUpdateCountryReq } from "@/models/Country.model";
 import { Request, Response, RequestHandler } from "express";
+import * as countriesServices from "@/services/countries.services"
 
 export const index: RequestHandler = async (req: Request, res: Response) => {
-    const { response: countries, error } = await execQuery<ICountry[][]>("countries", "SELECTALL"); 
-    if (error) {
+    const countries = await countriesServices.fetchCountries("admin");
+    if (!countries) {
         res.status(500).json({ message: "Error fetching countries" });
     } else {
         res.status(200).json({ countries });
@@ -13,8 +14,8 @@ export const index: RequestHandler = async (req: Request, res: Response) => {
 };
 
 export const fetchDistributorCountries: RequestHandler = async (req: Request, res: Response) => {
-    const { response: countries, error } = await execQuery<ICountry[][]>("countries", "SELECT", ["name", "country_code"]); 
-    if (error) {
+    const countries = await countriesServices.fetchCountries("distributor");
+    if (!countries) {
         res.status(500).json({ message: "Error fetching countries" });
     } else {
         res.status(200).json({ countries });
@@ -22,10 +23,8 @@ export const fetchDistributorCountries: RequestHandler = async (req: Request, re
 }
 
 export const fetchDistributorCountryBySlug: RequestHandler = async (req: Request, res: Response) => {
-    const { response: countries, error } = await execQuery<ICountry[][]>("countries", `
-        
-    `); 
-    if (error) {
+    const countries = await countriesServices.fetchCountriesBySlug(req.params.slug, "distributor");
+    if (!countries) {
         res.status(500).json({ message: "Error fetching countries" });
     } else {
         res.status(200).json({ countries });
@@ -34,12 +33,11 @@ export const fetchDistributorCountryBySlug: RequestHandler = async (req: Request
 
 export const store: RequestHandler = async (req: IAddCountryReq, res: Response) => {
     const country: ICountry = req.body;
-    country.slug = slugify(country.name as string);
-    const { response, error } = await execQuery<{ affectedRows: number, insertId: number }>("countries", "INSERT", ['name', 'slug', 'country_code'], [country.name, country.slug, country.countryCode]); 
-    if (error) {
-        res.status(500).json({ message: "Error fetching countries" });
+    const results = await countriesServices.storeCountry(country);
+    if (!results) {
+        res.status(500).json({ message: "Error storing country" });
     } else {
-        res.status(200).json({ status: response?.affectedRows });
+        res.status(200).json(results);
     }
 };
 
@@ -47,22 +45,20 @@ export const store: RequestHandler = async (req: IAddCountryReq, res: Response) 
 export const updateById: RequestHandler = async (req: IUpdateCountryReq, res: Response) => {
     const country: ICountry = req.body;
     country.slug = slugify(<string>country.name);
-    const { response, error } = await execQuery<{ affectedRows: number, insertId: number }>("countries", "UPDATEBYID", ['name', 'slug', 'country_code'], [country.name, country.slug, country.countryCode, country.id]); 
-    if (error) {
-        res.status(500).json({ message: "Error updating country" });
+    const results = countriesServices.updateCountryById(country);
+    if (!results) {
+        res.status(500).json({ message: "Error update country by id" });
     } else {
-        res.status(200).json({ status: response?.affectedRows });
+        res.status(200).json(results);
     }
 };
 
 //@ts-expect-error
 export const destroyById: RequestHandler = async (req: IGetCountryReq, res: Response) => {
-    const country: ICountry = { ...req.params, ...req.body };
-    country.slug = slugify(<string>country.name);
-    const { response, error } = await execQuery<{ affectedRows: number, insertId: number }>("countries", "DELETEBYID", ['id'], [country.name, country.slug, country.countryCode, country.id]); 
-    if (error) {
-        res.status(500).json({ message: "Error deleting countries" });
+    const results = countriesServices.destroyCountryById(req.params.id as number);
+    if (!results) {
+        res.status(500).json({ message: "Error deleting country by id" });
     } else {
-        res.status(200).json({ status: response?.affectedRows });
+        res.status(200).json(results);
     }
 };

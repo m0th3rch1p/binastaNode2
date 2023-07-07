@@ -15,7 +15,6 @@ export const index: RequestHandler = async (req: Request, res: Response) => {
         });
     }
 };
-
 export const store: RequestHandler = async (req: IAddProductVariationReq, res: Response) => {
     const productVariation: IProductVariation = req.body;
     const { response, error } = await execQuery<{affectedRows: number, insertId: number}>(TABLE_NAME, "INSERT", [
@@ -29,13 +28,13 @@ export const store: RequestHandler = async (req: IAddProductVariationReq, res: R
         'stock',
         'sold'
     ], [
-        productVariation.productId,
+        productVariation.product_id,
         productVariation.variation,
-        productVariation.buyPrice,
-        productVariation.salePrice,
-        productVariation.wholesalePrice,
-        productVariation.recommendedPrice,
-        productVariation.wholesaleMin,
+        productVariation.buy_price,
+        productVariation.sale_rice,
+        productVariation.wholesale_price,
+        productVariation.recommended_price,
+        productVariation.wholesale_min,
         productVariation.stock,
         productVariation.sold
     ]);  
@@ -63,13 +62,13 @@ export const updateById: RequestHandler = async (req: IUpdateProductVariationReq
         'stock',
         'sold'
     ], [
-        productVariation.productId,
+        productVariation.product_id,
         productVariation.variation,
-        productVariation.buyPrice,
-        productVariation.salePrice,
-        productVariation.wholesalePrice,
-        productVariation.recommendedPrice,
-        productVariation.wholesaleMin,
+        productVariation.buy_price,
+        productVariation.sale_rice,
+        productVariation.wholesale_price,
+        productVariation.recommended_price,
+        productVariation.wholesale_min,
         productVariation.stock,
         productVariation.sold,
         productVariation.id

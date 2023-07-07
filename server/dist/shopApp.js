@@ -13,13 +13,12 @@ const auth_routes_1 = __importDefault(require("./routes/shop/auth.routes"));
 const addresses_routes_1 = __importDefault(require("./routes/shop/addresses.routes"));
 const shopApp = (0, express_1.default)();
 exports.shopApp = shopApp;
-shopApp.use(express_1.default.static(path_1.default.join(__dirname, 'builds', 'shop', 'build')));
+shopApp.use(express_1.default.static(path_1.default.join(__dirname, 'front', 'shop', 'build')));
 shopApp.use("/auth", auth_routes_1.default);
 shopApp.use("/product_categories", productCategories_routes_1.default);
 shopApp.use("/products", products_routes_1.default);
 shopApp.use("/addresses", addresses_routes_1.default);
 shopApp.use("/orders", orders_routes_1.default);
 shopApp.get('*', function (req, res) {
-    console.log(req.path);
-    res.sendFile(path_1.default.join(__dirname, 'builds/shop/build', 'index.html'));
+    res.sendFile(path_1.default.join(__dirname, 'front', 'shop', 'build', 'index.html'));
 });

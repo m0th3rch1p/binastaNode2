@@ -17,6 +17,9 @@ import ProductCategories from "./views/ProductCategories";
 import Products from "./views/Products";
 import Blog from "./views/Blog";
 import ProtectedRoute from "./helpers/ProtectedRoute";
+import Distributors from "./views/Distributors";
+import SinlgeDistributor from "./views/SinlgeDistributor";
+import Countries from "./views/Countries";
 
 function App() {
   const user = store.getState().user;
@@ -31,6 +34,11 @@ function App() {
             <ProtectedRoute isLoggedIn={user.authenticated as boolean}>
               <Index />
             </ProtectedRoute>  } />
+            <Route path="/countries" element={
+              <ProtectedRoute isLoggedIn={user.authenticated as boolean}>
+                <Countries />
+              </ProtectedRoute>
+            } />
             <Route path="/blog_categories" element={
               <ProtectedRoute isLoggedIn={user.authenticated as boolean}>
                 <BlogCategories />
@@ -51,7 +59,18 @@ function App() {
                 <Blog />
               </ProtectedRoute>
             }/>
+            <Route path="/distributors" element={
+              <ProtectedRoute isLoggedIn={user.authenticated as boolean}>
+                <Distributors />
+              </ProtectedRoute>
+            }/>
+            <Route path="/distributor/:id" element={
+              <ProtectedRoute isLoggedIn={user.authenticated as boolean}>
+                <SinlgeDistributor />
+              </ProtectedRoute>
+            }/>
           </Route>
+          
           <Route element={<GuestLayout />}>
             <Route path="/login" element={<Login />} />
           </Route>

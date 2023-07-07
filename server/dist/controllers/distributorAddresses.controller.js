@@ -1,25 +1,60 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.destroyById = exports.updateById = exports.store = exports.index = void 0;
-const queryHelpers_1 = require("../helpers/queryHelpers");
-const index = async (req, res) => {
-    const { response: distributor_addresses, error } = await (0, queryHelpers_1.execQuery)("distributor_addresses", "SELECTALL");
-    if (error) {
-        res.status(500).json({ message: "error fetching distributoraddress" });
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
     }
-    else if (distributor_addresses) {
-        res.status(200).json({ distributor_addresses });
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.destroyById = exports.updateById = exports.store = exports.fetchDistributorAddresses = exports.index = void 0;
+const queryHelpers_1 = require("../helpers/queryHelpers");
+const distributorAddressServices = __importStar(require("../services/distributorAddresses.services"));
+const index = async (req, res) => {
+    const addresses = await distributorAddressServices.fetchDistributorAddresses("admin");
+    if (!addresses) {
+        res.status(500).json({ message: "Error fetching distributor addresses" });
+    }
+    else {
+        res.status(200).json({ addresses });
     }
 };
 exports.index = index;
+const fetchDistributorAddresses = async (req, res) => {
+    const addresses = await distributorAddressServices.fetchDistributorAddresses(req.session.role === 'admin' ? "admin" : "distributor", req.session.role === 'admin' ? parseInt(req.params.id) : req.session.user_id);
+    if (!addresses) {
+        res.status(500).json({ message: "Error fetching distributor addresses" });
+    }
+    else {
+        res.status(200).json({ addresses });
+    }
+};
+exports.fetchDistributorAddresses = fetchDistributorAddresses;
 const store = async (req, res) => {
     const distributorAddress = req.body;
-    const { response, error } = await (0, queryHelpers_1.execQuery)("distributor_addresses", "INSERT", ["distributor_id", "address", "phoneNumber"], [distributorAddress.distributorId, distributorAddress.address, distributorAddress.phoneNumber]);
-    if (error) {
-        res.status(500).json({ message: "error fetching distributor addresses" });
+    distributorAddress.distributor_id = req.session.user_id;
+    const results = await distributorAddressServices.store(distributorAddress);
+    if (!results) {
+        res.status(500).json({ message: "Error fetching distributor addresses" });
     }
-    else if (response) {
-        res.status(200).json({ status: response.affectedRows });
+    else {
+        res.status(200).json({ status: results.affectedRows, id: results.insertId });
     }
 };
 exports.store = store;

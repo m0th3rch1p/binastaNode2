@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const distributor_policies_1 = require("../../policies/distributor.policies");
+const distributor_controller_1 = require("../../controllers/distributor.controller");
+const auth_policies_1 = require("../../policies/auth.policies");
+const router = (0, express_1.Router)();
+router.post("/register", [distributor_policies_1.storePolicy], distributor_controller_1.store);
+router.post("/login", [auth_policies_1.authPolicy], distributor_controller_1.authenticate);
+exports.default = router;

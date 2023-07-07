@@ -4,7 +4,7 @@ import * as core from 'express-serve-static-core';
 
 export interface IDistributorUser {
     id?: number,
-    distributorId?: number,
+    distributor_id?: number,
     email?: string,
     password?: string,
     created_at?: string,

@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS product_variations(
     variation VARCHAR(255) NOT NULL,
     buy_price NUMERIC(8, 2) DEFAULT 0,
     sale_price NUMERIC(8, 2) DEFAULT 0,
-    wholesale_price NUMERIC(8, 2) DEFAULT 9,
+    wholesale_price NUMERIC(8, 2) DEFAULT 0,
     recomended_price NUMERIC(8, 2) UNSIGNED NOT NULL DEFAULT 0,
     wholesale_min INT UNSIGNED NOT NULL DEFAULT 1,
     stock INT UNSIGNED NOT NULL DEFAULT 0,

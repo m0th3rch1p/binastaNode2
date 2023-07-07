@@ -6,7 +6,7 @@ export interface IDistributorUserAddress {
     id?: number,
     distributor_user_id?: number,
     address?: string,
-    phoneNumber?: string,
+    phone_number?: string,
     default?: boolean,
     created_at?: string,
     updated_at?: string

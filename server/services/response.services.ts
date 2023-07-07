@@ -1,8 +1,14 @@
-export const execResponse = <T>(response: [unknown][] | null, error: unknown) => {
+type storeResponse = { affectedRows: number, insertId: number };
+
+export const execResponse = <T>(response: [unknown][] | storeResponse |  null, error: unknown) => {
     if (error) {
-        console.log("[-] error fetching product variations");
+        console.log("[-] response error", error);
         return null;
     }
 
-    return <T>response?.[0]
+    if (!Array.isArray(response)) {
+        return response ? <T>response : null;
+    }
+
+    return <T> response?.[0] 
 };

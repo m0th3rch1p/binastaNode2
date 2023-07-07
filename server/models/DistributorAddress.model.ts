@@ -4,9 +4,9 @@ import * as core from 'express-serve-static-core';
 
 export interface IDistributorAddress {
     id?: number,
-    distributorId?: number,
+    distributor_id?: number,
     address?: string,
-    phoneNumber?: string,
+    phone_number?: string,
     default: boolean,
     created_at?: string,
     updated_at?: string

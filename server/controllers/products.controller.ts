@@ -5,13 +5,13 @@ import { execQuery } from "@/helpers/queryHelpers";
 import { IProduct } from "@/models/Product.model";
 import { IProductImage } from "@/models/ProductImage.model";
 
-import _, { Dictionary } from "lodash";
-import { IProductVariation } from "@/models/ProductVariation.model";
+import _ from "lodash";
 import { slugify } from "@/helpers/StrHelper";
 
 import * as productServices from "@/services/products.services";
-import { fetchProductVariationByProductsArray, fetchProductVariationsByProductId } from "@/services/productVariations.services";
+import { Client, fetchProductVariationByProductsArray, fetchProductVariationsByProductId } from "@/services/productVariations.services";
 import { fetchProductImagesByProductId, fetchProductImagesByProductIdArray } from "@/services/productImages.services";
+import { IProductVariation } from "@/models/ProductVariation.model";
 
 const TABLE_NAME = "products";
 
@@ -45,22 +45,73 @@ const upload = multer({
 }).array('img[]', 2);
 
 export const index: RequestHandler = async (req: Request, res: Response) => {
-    const { response, error } = await execQuery<IProduct[][]>(TABLE_NAME, "SELECTALL"); 
-    if (error) {
-        console.error(error);
+    let products = await productServices.fetchProducts("admin", { perPage: parseInt(req.query.per_page as string), offset: parseInt(req.query.offset as string)});
+    if (!products) {
         res.status(500).json({
             message: "Error fetching products"
         });
-    } else if (response) {
-        const [ products ] = response;
-        res.status(200).json({
-            products
-        });
-    }
+        return;
+    } 
+
+    res.status(200).json({
+        products
+    });
 };
 
 export const fetchAllUserProducts: RequestHandler = async (req: Request, res: Response) => {
-    let products = await productServices.fetchProducts({ perPage: parseInt(req.query.per_page as string), offset: parseInt(req.query.offset as string),  });
+    let products = await productServices.fetchProducts("user", { perPage: parseInt(req.query.per_page as string), offset: parseInt(req.query.offset as string)});
+    if (!products) {
+        res.status(500).json({
+            message: "Error fetching products"
+        });
+        return;
+    } else if (!(products).length) {
+        res.status(200).json({ products });
+        return;
+    } 
+
+    const productIds = (products).map((product: IProduct) => product.id) 
+
+    const extras = await fetchSingleProductExtras(productIds as number[], "user");
+    if (!extras) {
+        res.status(500).json({ message: 'Error fetching products' });
+        return;
+    }
+
+    const productsEmbedded = products.map(product => ({
+        ...product,
+        variations: (extras.productVariations as _.Dictionary<IProductVariation[]>)?.[product.id as number],
+        images: (extras.productImages as _.Dictionary<IProductImage[]>)?.[product.id as number]
+    }))
+
+    res.status(200).json({ products: productsEmbedded });
+};
+
+export const fetchUserProductBySlug: RequestHandler = async (req: Request, res: Response) => {
+    const product = await productServices.fetchProductsBySlug(req.params.slug);
+
+    if (!product) {
+        res.status(500).json({ message: "Error fetching products" });
+        return;
+    } else if (!product[0] || !product.length) {
+        res.status(404).json({ message: "Product not found" });
+        return;
+    }
+
+    const extras = await fetchSingleProductExtras(product[0].id as number, "user");
+    if (!extras) {
+        res.status(500).json({ message: "Error fetching products"});
+        return;
+    }
+
+    product[0].variations = extras.productVariations
+    product[0].images = extras.productImages ?? [];
+    product[0].related = extras.relatedProducts;
+    res.status(200).json({ product });
+};
+
+export const fetchDistributorProducts: RequestHandler = async (req: Request, res: Response) => {
+    let products = await productServices.fetchProducts("user", { perPage: parseInt(req.query.per_page as string), offset: parseInt(req.query.offset as string)});
     if (!products) {
         res.status(500).json({
             message: "Error fetching products"
@@ -73,59 +124,43 @@ export const fetchAllUserProducts: RequestHandler = async (req: Request, res: Re
 
     const productIds = (products).map((product: IProduct) => product.id) 
 
-    const productVariations = await fetchProductVariationByProductsArray({productIds: productIds as number[], client: "user"});
-    const productImages = await fetchProductImagesByProductIdArray(productIds as number[]);
+    const client: Client = "distributor";
+    const extras = await fetchSingleProductExtras(productIds as number[], client);
+    console.log(extras);
+    if (!extras) {
+        res.status(500).json({ message: 'Error fetching products' });
+        return;
+    }
 
-    const groupedVariations = _.groupBy(productVariations, 'product_id');
-    const groupImages =  _.groupBy(productImages, 'product_id');
-    
     const productsEmbedded = products.map(product => ({
         ...product,
-        variations: groupedVariations[product.id as number],
-        images: groupImages[product.id as number]
+        variations: (extras.productVariations as _.Dictionary<IProductVariation[]>)[product.id as number],
+        images: (extras.productImages as _.Dictionary<IProductImage[]>)[product.id as number]
     }))
 
     res.status(200).json({ products: productsEmbedded });
-};
+}
 
-export const fetchUserProductBySlug: RequestHandler = async (req: Request, res: Response) => {
+export const fetchDistributorProductBySlug: RequestHandler = async (req: Request, res: Response) => {
     const product = await productServices.fetchProductsBySlug(req.params.slug);
-
-    if (product === null) {
+    console.log(product);
+    if (!product) {
         res.status(500).json({ message: "Error fetching products" });
+        return;
+    } else if (!product[0] || !product.length) {
+        res.status(404).json({ message: "Product not found" });
         return;
     }
 
-    const productVariations = await fetchProductVariationsByProductId({productId: product.id as number, client: "user"});
-    if (!productVariations) {
-        res.status(500).json({ message: "Error fetching products" });
+    const extras = await fetchSingleProductExtras(product[0].id as number, "distributor");
+    if (!extras) {
+        res.status(500).json({ message: "Error fetching products"});
         return;
     }
-    
-    const productImages = await fetchProductImagesByProductId(product.id as number);
-    product.variations = productVariations
-    product.images = productImages ?? [];
 
-    let relatedProducts: IProduct["related"] = [];
-    const related = await productServices.fetchRelatedProductsByProductId(product.id as number);
-    if (related && related.length) {
-        const relatedIds = related?.map(product => product.id);
-        
-        const relatedProductVariations = fetchProductVariationByProductsArray({productIds: relatedIds as number[], client: "user"});
-        const groupedRelatedVariations = _.groupBy(relatedProductVariations, "product_id")
-        
-        const relatedImages = await fetchProductImagesByProductIdArray(relatedIds as number[]);
-        const groupedRelatedImages = _.groupBy(relatedImages, "product_id");
-
-        //@ts-expect-error
-        relatedProducts = related.map(product => ({
-            ...product,
-            images: groupedRelatedImages[product.id as number],
-            variations: groupedRelatedVariations[product.id as number]
-        }))
-    }
-    
-    product.related = relatedProducts;
+    product[0].variations = extras.productVariations
+    product[0].images = extras.productImages ?? [];
+    product[0].related = extras.relatedProducts;
     res.status(200).json({ product });
 };
 
@@ -192,4 +227,43 @@ export const updateById: RequestHandler = async (req: IUpdateProductReq, res: Re
 //@ts-expect-error
 export const destroyById: RequestHandler = async (req: IGetProductReq, res: Response) => {
     
+};
+
+const fetchSingleProductExtras = async (productId: number | number[], client: Client) => {
+    let productVariations;
+    let productImages;
+    let relatedProducts: IProduct["related"] = [];
+
+    if (!Array.isArray(productId)) {
+        productVariations = productVariations = await fetchProductVariationsByProductId({productId: productId as number, client});
+        if (!productVariations) return null;
+
+        productImages = await fetchProductImagesByProductId(productId as number);
+    
+        const related = await productServices.fetchRelatedProductsByProductId(productId as number);
+        if (related && related.length) {
+            const relatedIds = related?.map(product => product.id);
+
+            const relatedProductVariations = fetchProductVariationByProductsArray({productIds: relatedIds as number[], client: "user"});
+            const groupedRelatedVariations = _.groupBy(relatedProductVariations, "product_id")
+
+            const relatedImages = await fetchProductImagesByProductIdArray(relatedIds as number[]);
+            const groupedRelatedImages = _.groupBy(relatedImages, "product_id");
+
+            //@ts-expect-error
+            relatedProducts = related.map(product => ({
+                ...product,
+                images: groupedRelatedImages[product.id as number],
+                variations: groupedRelatedVariations[product.id as number]
+            }))
+        }
+    } else {
+        const rawVariations = await fetchProductVariationByProductsArray({productIds: productId, client});
+        if (!rawVariations) return null;
+        productVariations = _.groupBy(rawVariations, "product_id");
+        
+        const rawImages = await fetchProductImagesByProductIdArray(productId);
+        productImages = _.groupBy(rawImages, "product_id");
+    }
+    return { relatedProducts, productVariations, productImages };
 };

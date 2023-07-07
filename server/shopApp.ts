@@ -9,7 +9,7 @@ import addressRoutes from "@/routes/shop/addresses.routes";
 
 const shopApp: express.Application = express();
 
-shopApp.use(express.static(path.join(__dirname, 'builds', 'shop', 'build')));
+shopApp.use(express.static(path.join(__dirname, 'front', 'shop', 'build')));
 
 shopApp.use("/auth", authRoutes);
 shopApp.use("/product_categories", productCategoryRoutes);
@@ -18,8 +18,7 @@ shopApp.use("/addresses", addressRoutes);
 shopApp.use("/orders", orderRoutes);
 
 shopApp.get('*', function (req, res) {
-    console.log(req.path);
-    res.sendFile(path.join(__dirname, 'builds/shop/build', 'index.html'))
+    res.sendFile(path.join(__dirname, 'front', 'shop', 'build', 'index.html'))
 });
 
 export { shopApp };

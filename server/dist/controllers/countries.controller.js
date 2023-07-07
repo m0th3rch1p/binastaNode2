@@ -1,11 +1,34 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.destroyById = exports.updateById = exports.store = exports.fetchDistributorCountryBySlug = exports.fetchDistributorCountries = exports.index = void 0;
 const StrHelper_1 = require("../helpers/StrHelper");
-const queryHelpers_1 = require("../helpers/queryHelpers");
+const countriesServices = __importStar(require("../services/countries.services"));
 const index = async (req, res) => {
-    const { response: countries, error } = await (0, queryHelpers_1.execQuery)("countries", "SELECTALL");
-    if (error) {
+    const countries = await countriesServices.fetchCountries("admin");
+    if (!countries) {
         res.status(500).json({ message: "Error fetching countries" });
     }
     else {
@@ -14,8 +37,8 @@ const index = async (req, res) => {
 };
 exports.index = index;
 const fetchDistributorCountries = async (req, res) => {
-    const { response: countries, error } = await (0, queryHelpers_1.execQuery)("countries", "SELECT", ["name", "country_code"]);
-    if (error) {
+    const countries = await countriesServices.fetchCountries("distributor");
+    if (!countries) {
         res.status(500).json({ message: "Error fetching countries" });
     }
     else {
@@ -24,10 +47,8 @@ const fetchDistributorCountries = async (req, res) => {
 };
 exports.fetchDistributorCountries = fetchDistributorCountries;
 const fetchDistributorCountryBySlug = async (req, res) => {
-    const { response: countries, error } = await (0, queryHelpers_1.execQuery)("countries", `
-        
-    `);
-    if (error) {
+    const countries = await countriesServices.fetchCountriesBySlug(req.params.slug, "distributor");
+    if (!countries) {
         res.status(500).json({ message: "Error fetching countries" });
     }
     else {
@@ -37,13 +58,12 @@ const fetchDistributorCountryBySlug = async (req, res) => {
 exports.fetchDistributorCountryBySlug = fetchDistributorCountryBySlug;
 const store = async (req, res) => {
     const country = req.body;
-    country.slug = (0, StrHelper_1.slugify)(country.name);
-    const { response, error } = await (0, queryHelpers_1.execQuery)("countries", "INSERT", ['name', 'slug', 'country_code'], [country.name, country.slug, country.countryCode]);
-    if (error) {
-        res.status(500).json({ message: "Error fetching countries" });
+    const results = await countriesServices.storeCountry(country);
+    if (!results) {
+        res.status(500).json({ message: "Error storing country" });
     }
     else {
-        res.status(200).json({ status: response?.affectedRows });
+        res.status(200).json(results);
     }
 };
 exports.store = store;
@@ -51,25 +71,23 @@ exports.store = store;
 const updateById = async (req, res) => {
     const country = req.body;
     country.slug = (0, StrHelper_1.slugify)(country.name);
-    const { response, error } = await (0, queryHelpers_1.execQuery)("countries", "UPDATEBYID", ['name', 'slug', 'country_code'], [country.name, country.slug, country.countryCode, country.id]);
-    if (error) {
-        res.status(500).json({ message: "Error updating country" });
+    const results = countriesServices.updateCountryById(country);
+    if (!results) {
+        res.status(500).json({ message: "Error update country by id" });
     }
     else {
-        res.status(200).json({ status: response?.affectedRows });
+        res.status(200).json(results);
     }
 };
 exports.updateById = updateById;
 //@ts-expect-error
 const destroyById = async (req, res) => {
-    const country = { ...req.params, ...req.body };
-    country.slug = (0, StrHelper_1.slugify)(country.name);
-    const { response, error } = await (0, queryHelpers_1.execQuery)("countries", "DELETEBYID", ['id'], [country.name, country.slug, country.countryCode, country.id]);
-    if (error) {
-        res.status(500).json({ message: "Error deleting countries" });
+    const results = countriesServices.destroyCountryById(req.params.id);
+    if (!results) {
+        res.status(500).json({ message: "Error deleting country by id" });
     }
     else {
-        res.status(200).json({ status: response?.affectedRows });
+        res.status(200).json(results);
     }
 };
 exports.destroyById = destroyById;

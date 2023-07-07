@@ -1,0 +1,38 @@
+"use strict";
+exports.__esModule = true;
+function Blogs() {
+    return (React.createElement("div", { className: "section-main-blog", id: "blog" },
+        React.createElement("div", { className: "wrapper" },
+            React.createElement("div", { className: "section-heading h-center" },
+                React.createElement("span", null, "news")),
+            React.createElement("h2", { className: "h2 h-center" }, "read our blog"),
+            React.createElement("div", { className: "section-subtitle h-center" }, "Dolor duis voluptate enim exercitation consequat ex. "),
+            React.createElement("div", { className: "blog-more" },
+                React.createElement("a", { href: "blog.html", className: "btn" }, "view all")),
+            React.createElement("div", { className: "news" },
+                React.createElement("div", { className: "news__item" },
+                    React.createElement("a", { href: "article.html", className: "news__img" },
+                        React.createElement("img", { "data-src": "img/examples/news_1.jpg", alt: "", className: "js-lazy loaded", src: "img/examples/news_1.jpg", "data-was-processed": "true" })),
+                    React.createElement("div", { className: "news__content" },
+                        React.createElement("div", { className: "news-header" },
+                            React.createElement("div", { className: "news__date" }, "Jun 25, 2021"),
+                            React.createElement("div", { className: "news__author" },
+                                React.createElement("img", { "data-src": "img/examples/avatar_2.jpg", alt: "", className: "js-lazy loaded", src: "img/examples/avatar_2.jpg", "data-was-processed": "true" }),
+                                React.createElement("span", { className: "news__author-title" }, "Annette Black")),
+                            React.createElement("a", { href: "blog.html", className: "news__category" }, "Community")),
+                        React.createElement("div", { className: "news__title" },
+                            React.createElement("a", { href: "article.html" }, "Dolor duis voluptate enim exercitation consequat ex. Voluptate in sunt ")))),
+                React.createElement("div", { className: "news__item" },
+                    React.createElement("a", { href: "article.html", className: "news__img" },
+                        React.createElement("img", { "data-src": "img/examples/news_2.jpg", alt: "", className: "js-lazy loaded", src: "img/examples/news_2.jpg", "data-was-processed": "true" })),
+                    React.createElement("div", { className: "news__content" },
+                        React.createElement("div", { className: "news-header" },
+                            React.createElement("div", { className: "news__date" }, "Jun 25, 2021"),
+                            React.createElement("div", { className: "news__author" },
+                                React.createElement("img", { "data-src": "img/examples/avatar_3.jpg", alt: "", className: "js-lazy loaded", src: "img/examples/avatar_3.jpg", "data-was-processed": "true" }),
+                                React.createElement("span", { className: "news__author-title" }, "Dianne Russell")),
+                            React.createElement("a", { href: "blog.html", className: "news__category" }, "Community")),
+                        React.createElement("div", { className: "news__title" },
+                            React.createElement("a", { href: "article.html" }, "Dolor duis voluptate enim exercitation consequat ex. Voluptate in sunt "))))))));
+}
+exports["default"] = Blogs;

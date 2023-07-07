@@ -17,6 +17,7 @@
     "@types/react-dom": "^18.2.4",
     "@types/redux-persist": "^4.3.1",
     "axios": "^1.4.0",
+    "bootstrap-icons": "^1.10.5",
     "hero-slider": "^3.1.0",
     "jquery": "^3.7.0",
     "node-sass": "^9.0.0",
@@ -73,5 +74,5 @@
     "stylelint-config-css-modules": "^4.2.0",
     "stylelint-config-prettier": "^9.0.5"
   },
-  "proxy": "http://management.binasta.test"
+  "proxy": "https://management.binasta.test"
 }

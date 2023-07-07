@@ -29,13 +29,13 @@ const store = async (req, res) => {
         'stock',
         'sold'
     ], [
-        productVariation.productId,
+        productVariation.product_id,
         productVariation.variation,
-        productVariation.buyPrice,
-        productVariation.salePrice,
-        productVariation.wholesalePrice,
-        productVariation.recommendedPrice,
-        productVariation.wholesaleMin,
+        productVariation.buy_price,
+        productVariation.sale_rice,
+        productVariation.wholesale_price,
+        productVariation.recommended_price,
+        productVariation.wholesale_min,
         productVariation.stock,
         productVariation.sold
     ]);
@@ -63,13 +63,13 @@ const updateById = async (req, res) => {
         'stock',
         'sold'
     ], [
-        productVariation.productId,
+        productVariation.product_id,
         productVariation.variation,
-        productVariation.buyPrice,
-        productVariation.salePrice,
-        productVariation.wholesalePrice,
-        productVariation.recommendedPrice,
-        productVariation.wholesaleMin,
+        productVariation.buy_price,
+        productVariation.sale_rice,
+        productVariation.wholesale_price,
+        productVariation.recommended_price,
+        productVariation.wholesale_min,
         productVariation.stock,
         productVariation.sold,
         productVariation.id

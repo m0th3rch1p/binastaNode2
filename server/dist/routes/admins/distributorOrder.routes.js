@@ -32,4 +32,5 @@ const roles_middleware_1 = require("../../middlewares/roles.middleware");
 const distributorOrdersController = __importStar(require("../../controllers/distributorOrders.controller"));
 const router = (0, express_1.Router)();
 router.get("/", [auth_middleware_1.default, roles_middleware_1.isAdmin], distributorOrdersController.index);
+router.get("/:id", [auth_middleware_1.default, roles_middleware_1.isAdmin], distributorOrdersController.fetchDistributorOrders);
 exports.default = router;

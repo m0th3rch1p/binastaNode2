@@ -13,7 +13,7 @@ export const registerSchema = Joi.object({
     password: Joi.string().max(32).required(),
     phone_number: Joi.string().required(),
     gender: Joi.string().required(),
-    referal_code: Joi.string()
+    parent: Joi.string().allow('')
 });
 
 export const authenticateSchema = Joi.object({

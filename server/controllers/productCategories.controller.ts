@@ -4,6 +4,7 @@ import { execQuery } from "@/helpers/queryHelpers";
 import { IProductCategory } from "@/models/ProductCategory.model";
 import { slugify } from "@/helpers/StrHelper";
 import multer from 'multer';
+import * as productCategoriesServices from "@/services/productCategories.services";
 
 const TABLE_NAME = "product_categories";
 
@@ -37,14 +38,12 @@ const upload = multer({
 }).single('img');
 
 export const index: RequestHandler = async (req: Request, res: Response) => {
-    const { response, error } = await execQuery<IProductCategory[][]>(TABLE_NAME, "SELECT pc.id, pc.name, pc.slug, pc.image_path, COUNT(p.id) as products_count FROM product_categories pc INNER JOIN products p ON p.category_id = pc.id GROUP BY pc.id", ['id', 'name', 'slug', 'image_path', 'created_at']);
-    if (error) {
-        console.error("Error fetching product categories", error);
+    const categories = await productCategoriesServices.fetchCategories("admin");
+    if (!categories) {
         res.status(500).json({ message: 'Error fetching product categories' });
-    } else if (response) {
-        const [ categories ] = response;
-        res.status(200).json({ categories });
+        return;
     }
+    res.status(200).json({ categories });
 };
 
 //@ts-expect-error
@@ -61,34 +60,26 @@ export const fetchBySlug: RequestHandler = async (req: IGetSlugProductCategoryRe
 
 export const store: RequestHandler = async (req: IAddProductCategoryReq, res: Response) => {
     upload((req as Request), res, async (err) => {
-        if (err instanceof multer.MulterError) {
+        if (err instanceof multer.MulterError || !req.file) {
             res.status(422).json({errors: [{
-                img: err.message
+                img: err.message ?? "Please include an image for the category"
             }]});
+            return;
         } else if (err) {
-            console.log(err);
             res.status(500).json({message: "Error uploading file"});
-        } else {
-            console.log(req.file);
-            if (!req.file) {
-                res.status(422).json({
-                    errors: [{
-                        img: "Please include product images"
-                    }]
-                });
-            } else {
-                const productCategory: IProductCategory = req.body;
-                productCategory.slug = slugify(productCategory.name as string);
-                productCategory.image_path = req.file?.filename;
-                productCategory.ext = req.file?.mimetype;
+            return;
+        }
 
-                const { response, error } = await execQuery<{affectedRows: number}>(TABLE_NAME, "INSERT", ['name', 'slug', 'image_path', 'ext'], [productCategory.name, productCategory.slug, productCategory.image_path, productCategory.ext]);
-                if (error) {
-                    res.status(500).json({ message: 'Error inserting product category' });
-                } else if (response) {
-                    res.status(200).json({ status: response.affectedRows })
-                }          
-            }
+        const productCategory: IProductCategory = req.body;
+        productCategory.slug = slugify(productCategory.name as string);
+        productCategory.image_path = req.file?.filename;
+        productCategory.ext = req.file?.mimetype;
+        
+        const response = await productCategoriesServices.storeCategory(productCategory);
+        if (!response) {
+            res.status(500).json({ message: 'Error inserting product category' });
+        } else if (response) {
+            res.status(200).json({ status: response.affectedRows })
         }
     });
 };

@@ -25,12 +25,17 @@ function Products() {
       selector: (row: TableRow): string => row.name as string
     },
     {
-      name: 'Slug',
-      selector: (row: TableRow): string => row.slug as string
+      name: 'Category',
+      selector: (row: TableRow): string => row.category_name as string,
     },
     {
-      name: 'No.Of Blogs',
-      selector: (row: TableRow): number => row.blogs_count as number
+      name: 'Product Image',
+      selector: (row: Product): string => row.images?.[0].path as string,
+      cell: (row) => <img src={row.images?.[0].path} alt={row.product_name} />
+    },
+    {
+      name: 'Total Views',
+      selector: (row: TableRow): number => row.views as number
     }
   ];
 
@@ -47,7 +52,7 @@ function Products() {
           className='btn btn-icon btn-primary'
           onClick={() => setProductsState((state) => ({ ...state, show: !productsState.show }))}
         >
-          <i className='bi bi-plus-circle'></i> Add Category{' '}
+          <i className='bi bi-plus-circle'></i> {productsState.show ? 'Close' : 'Add Product'}
         </button>
       </div>
       <div className='card-body'>

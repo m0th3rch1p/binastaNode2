@@ -4,8 +4,8 @@ import * as core from 'express-serve-static-core';
 
 export interface IDomain {
     id?: number,
-    distributorId?: number,
-    name?: string,
+    distributor_id?: number,
+    domain?: string,
     created_at?: string,
     updated_at?: string
 };

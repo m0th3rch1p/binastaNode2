@@ -111,6 +111,46 @@ UPDATE orders o SET o.amount = order_amount WHERE o.id = NEW.order_id;
 END; |
 DELIMITER ;
 
+-- Updates The Distributor Order Amount
+DELIMITER |
+CREATE TRIGGER IF NOT EXISTS set_distributor_order_amount AFTER INSERT ON distributor_order_product_variations FOR EACH ROW
+BEGIN
+DECLARE order_amount INT DEFAULT 0;
+DECLARE bp INT;
+(SELECT wholesale_price * wholesale_min INTO bp FROM product_variations pv WHERE pv.id = NEW.product_variation_id);
+SET order_amount = order_amount + (bp * NEW.quantity);
+UPDATE distributor_orders o SET o.amount = order_amount WHERE o.id = NEW.distributor_order_id;
+END; |
+DELIMITER ;
+
+-- INSERT distributor order products
+DELIMITER |
+CREATE TRIGGER IF NOT EXISTS set_distributor_products AFTER INSERT ON distributor_order_product_variations FOR EACH ROW
+BEGIN
+DECLARE stock INT DEFAULT 0;
+DECLARE wm INT;
+DECLARE sp INT;
+
+(SELECT wholesale_min, recomended_price INTO wm, sp FROM product_variations pv WHERE pv.id = NEW.product_variation_id);
+SET stock = wm * NEW.quantity;
+
+INSERT INTO distributor_product_variations (distributor_id, product_variation_id, stock, selling_price) VALUES (NEW.distributor_id, NEW.product_variation_id, stock, sp);
+END; |
+DELIMITER ;
+
+-- Update distributor user order amounT
+DELIMITER |
+CREATE TRIGGER IF NOT EXISTS set_distributor_user_orders AFTER INSERT ON distributor_user_order_product_variations FOR EACH ROW
+BEGIN
+DECLARE sp INT DEFAULT 0;
+DECLARE amount INT DEFAULT 0;
+(SELECT selling_price INTO sp FROM distributor_product_variations);
+
+SET amount = sp * NEW.quantity;
+
+UPDATE distributor_user_orders duo SET duo.amount = amount WHERE id = NEW.distributor_user_order_id;
+END; |
+DELIMITER ;
 -- Updates Packages Amount
 -- DELIMITER |
 -- CREATE TRIGGER IF NOT EXISTS set_package_amount AFTER INSERT ON package_product_variations FOR EACH ROW

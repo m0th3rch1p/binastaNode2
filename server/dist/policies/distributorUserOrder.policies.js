@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.idPolicy = exports.storePolicy = void 0;
+exports.markDeliveredPolicy = exports.idPolicy = exports.storePolicy = void 0;
 const distributorUserOrderValidations = __importStar(require("../validations/distributorUserOrder.validations"));
 const storePolicy = (req, res, next) => {
     const { error, value } = distributorUserOrderValidations.storeSchema.validate(req.body);
@@ -55,3 +55,14 @@ const idPolicy = (req, res, next) => {
         next();
 };
 exports.idPolicy = idPolicy;
+const markDeliveredPolicy = (req, res, next) => {
+    const { error, value } = distributorUserOrderValidations.markDeliveredSchema.validate(req.body);
+    if (error) {
+        res.status(422).json({
+            errors: error.details
+        });
+    }
+    else
+        next();
+};
+exports.markDeliveredPolicy = markDeliveredPolicy;

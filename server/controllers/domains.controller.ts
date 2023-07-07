@@ -14,7 +14,7 @@ export const index: RequestHandler = async (req: Request, res: Response) => {
 
 export const store: RequestHandler = async (req: IAddDomainReq, res: Response) => {
   const domain: IDomain = req.body;
-  const { response, error } = await execQuery<{ affectedRows: number }>("domains", "INSERT", ["distributor_id", "name"], [domain.distributorId, domain.name]);
+  const { response, error } = await execQuery<{ affectedRows: number }>("domains", "INSERT", ["distributor_id", "name"], [domain.distributor_id, domain.domain]);
   
   if (error) {
     res.status(500).json({ message: "error fetching domains" });
@@ -26,7 +26,7 @@ export const store: RequestHandler = async (req: IAddDomainReq, res: Response) =
 //@ts-expect-error
 export const updateById: RequestHandler = async (req: IUpdateDomainReq, res: Response) => {
   const domain: IDomain = req.body;
-  const { response, error } = await execQuery<{ affectedRows: number }>("domains", "UPDATEBYID", ["distributor_id", "name"], [domain.distributorId, domain.name]);
+  const { response, error } = await execQuery<{ affectedRows: number }>("domains", "UPDATEBYID", ["distributor_id", "name"], [domain.distributor_id, domain.domain]);
   
   if (error) {
     res.status(500).json({ message: "error updating domains" });

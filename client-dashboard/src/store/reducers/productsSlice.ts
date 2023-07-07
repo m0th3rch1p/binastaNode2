@@ -5,6 +5,7 @@ export type Product = {
     category_name?: string,
     product_name?: string,
     product_slug?: string,
+    images?: { path: string }[]
 };
 
 export const productApiSlice = createApi({
@@ -15,7 +16,7 @@ export const productApiSlice = createApi({
     tagTypes: ['products'],
     endpoints: (builder) => ({
         fetchProducts: builder.query<Product[], void>({
-            query: () => "/",
+            query: () => "/?per_page=10&offset=0",
             providesTags: ['products'],
             transformResponse: (response: { products: Product[] }) => response.products
         }),

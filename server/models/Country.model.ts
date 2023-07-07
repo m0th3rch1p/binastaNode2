@@ -6,7 +6,7 @@ export interface ICountry {
     id?: number,
     name?: string,
     slug?: string,
-    countryCode?: string,
+    country_code?: string,
     created_at?: string,
     updated_at?: string
 };

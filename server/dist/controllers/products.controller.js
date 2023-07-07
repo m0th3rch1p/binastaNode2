@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.destroyById = exports.updateById = exports.store = exports.searchUserProducts = exports.fetchUserProductBySlug = exports.fetchAllUserProducts = exports.index = void 0;
+exports.destroyById = exports.updateById = exports.store = exports.searchUserProducts = exports.fetchDistributorProductBySlug = exports.fetchDistributorProducts = exports.fetchUserProductBySlug = exports.fetchAllUserProducts = exports.index = void 0;
 const multer_1 = __importDefault(require("multer"));
 const queryHelpers_1 = require("../helpers/queryHelpers");
 const lodash_1 = __importDefault(require("lodash"));
@@ -62,23 +62,67 @@ const upload = (0, multer_1.default)({
     fileFilter: multerFilter
 }).array('img[]', 2);
 const index = async (req, res) => {
-    const { response, error } = await (0, queryHelpers_1.execQuery)(TABLE_NAME, "SELECTALL");
-    if (error) {
-        console.error(error);
+    let products = await productServices.fetchProducts("admin", { perPage: parseInt(req.query.per_page), offset: parseInt(req.query.offset) });
+    if (!products) {
         res.status(500).json({
             message: "Error fetching products"
         });
+        return;
     }
-    else if (response) {
-        const [products] = response;
-        res.status(200).json({
-            products
-        });
-    }
+    res.status(200).json({
+        products
+    });
 };
 exports.index = index;
 const fetchAllUserProducts = async (req, res) => {
-    let products = await productServices.fetchProducts({ perPage: parseInt(req.query.per_page), offset: parseInt(req.query.offset), });
+    let products = await productServices.fetchProducts("user", { perPage: parseInt(req.query.per_page), offset: parseInt(req.query.offset) });
+    if (!products) {
+        res.status(500).json({
+            message: "Error fetching products"
+        });
+        return;
+    }
+    else if (!(products).length) {
+        res.status(200).json({ products });
+        return;
+    }
+    const productIds = (products).map((product) => product.id);
+    const extras = await fetchSingleProductExtras(productIds, "user");
+    if (!extras) {
+        res.status(500).json({ message: 'Error fetching products' });
+        return;
+    }
+    const productsEmbedded = products.map(product => ({
+        ...product,
+        variations: extras.productVariations?.[product.id],
+        images: extras.productImages?.[product.id]
+    }));
+    res.status(200).json({ products: productsEmbedded });
+};
+exports.fetchAllUserProducts = fetchAllUserProducts;
+const fetchUserProductBySlug = async (req, res) => {
+    const product = await productServices.fetchProductsBySlug(req.params.slug);
+    if (!product) {
+        res.status(500).json({ message: "Error fetching products" });
+        return;
+    }
+    else if (!product[0] || !product.length) {
+        res.status(404).json({ message: "Product not found" });
+        return;
+    }
+    const extras = await fetchSingleProductExtras(product[0].id, "user");
+    if (!extras) {
+        res.status(500).json({ message: "Error fetching products" });
+        return;
+    }
+    product[0].variations = extras.productVariations;
+    product[0].images = extras.productImages ?? [];
+    product[0].related = extras.relatedProducts;
+    res.status(200).json({ product });
+};
+exports.fetchUserProductBySlug = fetchUserProductBySlug;
+const fetchDistributorProducts = async (req, res) => {
+    let products = await productServices.fetchProducts("user", { perPage: parseInt(req.query.per_page), offset: parseInt(req.query.offset) });
     if (!products) {
         res.status(500).json({
             message: "Error fetching products"
@@ -90,51 +134,43 @@ const fetchAllUserProducts = async (req, res) => {
         return;
     }
     const productIds = (products).map((product) => product.id);
-    const productVariations = await (0, productVariations_services_1.fetchProductVariationByProductsArray)({ productIds: productIds, client: "user" });
-    const productImages = await (0, productImages_services_1.fetchProductImagesByProductIdArray)(productIds);
-    const groupedVariations = lodash_1.default.groupBy(productVariations, 'product_id');
-    const groupImages = lodash_1.default.groupBy(productImages, 'product_id');
+    const client = "distributor";
+    const extras = await fetchSingleProductExtras(productIds, client);
+    console.log(extras);
+    if (!extras) {
+        res.status(500).json({ message: 'Error fetching products' });
+        return;
+    }
     const productsEmbedded = products.map(product => ({
         ...product,
-        variations: groupedVariations[product.id],
-        images: groupImages[product.id]
+        variations: extras.productVariations[product.id],
+        images: extras.productImages[product.id]
     }));
     res.status(200).json({ products: productsEmbedded });
 };
-exports.fetchAllUserProducts = fetchAllUserProducts;
-const fetchUserProductBySlug = async (req, res) => {
+exports.fetchDistributorProducts = fetchDistributorProducts;
+const fetchDistributorProductBySlug = async (req, res) => {
     const product = await productServices.fetchProductsBySlug(req.params.slug);
-    if (product === null) {
+    console.log(product);
+    if (!product) {
         res.status(500).json({ message: "Error fetching products" });
         return;
     }
-    const productVariations = await (0, productVariations_services_1.fetchProductVariationsByProductId)({ productId: product.id, client: "user" });
-    if (!productVariations) {
+    else if (!product[0] || !product.length) {
+        res.status(404).json({ message: "Product not found" });
+        return;
+    }
+    const extras = await fetchSingleProductExtras(product[0].id, "distributor");
+    if (!extras) {
         res.status(500).json({ message: "Error fetching products" });
         return;
     }
-    const productImages = await (0, productImages_services_1.fetchProductImagesByProductId)(product.id);
-    product.variations = productVariations;
-    product.images = productImages ?? [];
-    let relatedProducts = [];
-    const related = await productServices.fetchRelatedProductsByProductId(product.id);
-    if (related && related.length) {
-        const relatedIds = related?.map(product => product.id);
-        const relatedProductVariations = (0, productVariations_services_1.fetchProductVariationByProductsArray)({ productIds: relatedIds, client: "user" });
-        const groupedRelatedVariations = lodash_1.default.groupBy(relatedProductVariations, "product_id");
-        const relatedImages = await (0, productImages_services_1.fetchProductImagesByProductIdArray)(relatedIds);
-        const groupedRelatedImages = lodash_1.default.groupBy(relatedImages, "product_id");
-        //@ts-expect-error
-        relatedProducts = related.map(product => ({
-            ...product,
-            images: groupedRelatedImages[product.id],
-            variations: groupedRelatedVariations[product.id]
-        }));
-    }
-    product.related = relatedProducts;
+    product[0].variations = extras.productVariations;
+    product[0].images = extras.productImages ?? [];
+    product[0].related = extras.relatedProducts;
     res.status(200).json({ product });
 };
-exports.fetchUserProductBySlug = fetchUserProductBySlug;
+exports.fetchDistributorProductBySlug = fetchDistributorProductBySlug;
 const searchUserProducts = async (req, res) => {
     const { response, error } = await (0, queryHelpers_1.execQuery)(TABLE_NAME, "SELECT pc.name as category_name, pc.slug as category_slug, p.name, p.slug FROM products p INNER JOIN product_categories pc ON p.category_id = pc.id WHERE p.name LIKE ? LIMIT 10", null, [`%${req.params.query}%`]);
     if (error) {
@@ -202,3 +238,37 @@ exports.updateById = updateById;
 const destroyById = async (req, res) => {
 };
 exports.destroyById = destroyById;
+const fetchSingleProductExtras = async (productId, client) => {
+    let productVariations;
+    let productImages;
+    let relatedProducts = [];
+    if (!Array.isArray(productId)) {
+        productVariations = productVariations = await (0, productVariations_services_1.fetchProductVariationsByProductId)({ productId: productId, client });
+        if (!productVariations)
+            return null;
+        productImages = await (0, productImages_services_1.fetchProductImagesByProductId)(productId);
+        const related = await productServices.fetchRelatedProductsByProductId(productId);
+        if (related && related.length) {
+            const relatedIds = related?.map(product => product.id);
+            const relatedProductVariations = (0, productVariations_services_1.fetchProductVariationByProductsArray)({ productIds: relatedIds, client: "user" });
+            const groupedRelatedVariations = lodash_1.default.groupBy(relatedProductVariations, "product_id");
+            const relatedImages = await (0, productImages_services_1.fetchProductImagesByProductIdArray)(relatedIds);
+            const groupedRelatedImages = lodash_1.default.groupBy(relatedImages, "product_id");
+            //@ts-expect-error
+            relatedProducts = related.map(product => ({
+                ...product,
+                images: groupedRelatedImages[product.id],
+                variations: groupedRelatedVariations[product.id]
+            }));
+        }
+    }
+    else {
+        const rawVariations = await (0, productVariations_services_1.fetchProductVariationByProductsArray)({ productIds: productId, client });
+        if (!rawVariations)
+            return null;
+        productVariations = lodash_1.default.groupBy(rawVariations, "product_id");
+        const rawImages = await (0, productImages_services_1.fetchProductImagesByProductIdArray)(productId);
+        productImages = lodash_1.default.groupBy(rawImages, "product_id");
+    }
+    return { relatedProducts, productVariations, productImages };
+};

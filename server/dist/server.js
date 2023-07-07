@@ -19,6 +19,7 @@ const adminApp_1 = require("./adminApp");
 const distributorApp_1 = require("./distributorApp");
 const products_routes_1 = __importDefault(require("./routes/products.routes"));
 const blog_routes_1 = __importDefault(require("./routes/blog.routes"));
+const distributorShopApp_1 = require("./distributorShopApp");
 ;
 const mainApp = (0, express_1.default)();
 // 3rd Party Middlewares
@@ -46,15 +47,16 @@ mainApp.use(express_1.default.static("blogPosts"));
 mainApp.use((0, vhost_1.default)(`shop.${config_1.default.platform === 'development' ? config_1.default.dev_domain : config_1.default.prod_domain}`, shopApp_1.shopApp));
 mainApp.use((0, vhost_1.default)(`distributor.${config_1.default.platform === 'development' ? config_1.default.dev_domain : config_1.default.prod_domain}`, distributorApp_1.distributorApp));
 mainApp.use((0, vhost_1.default)(`management.${config_1.default.platform === 'development' ? config_1.default.dev_domain : config_1.default.prod_domain}`, adminApp_1.adminApp));
-mainApp.use(express_1.default.static(path_1.default.join(__dirname, 'builds', 'front', 'build')));
+mainApp.use((0, vhost_1.default)(`*.${config_1.default.platform === 'development' ? config_1.default.dev_domain : config_1.default.prod_domain}`, distributorShopApp_1.distributorShopApp));
+mainApp.use(express_1.default.static(path_1.default.join(__dirname, 'front', 'main', 'build')));
 mainApp.use("/products", products_routes_1.default);
 mainApp.use("/blogs", blog_routes_1.default);
 mainApp.get('*', function (req, res) {
-    res.sendFile(path_1.default.join(__dirname, 'builds', 'front', 'build', 'index.html'));
+    res.sendFile(path_1.default.join(__dirname, 'front', 'main', 'build', 'index.html'));
 });
 const httpsServer = https_1.default.createServer({
-    key: fs_1.default.readFileSync(config_1.default.certificate.privateKeyPath),
-    cert: fs_1.default.readFileSync(config_1.default.certificate.fullChainPath)
+    key: fs_1.default.readFileSync(path_1.default.join(__dirname, 'certs', 'key.pem'), 'utf8'),
+    cert: fs_1.default.readFileSync(path_1.default.join(__dirname, 'certs', 'cert.pem'), 'utf8')
 }, mainApp);
 httpsServer.listen(config_1.default.serverPort, () => {
     console.log("Https server running successfully");
