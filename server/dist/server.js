@@ -56,7 +56,8 @@ mainApp.get('*', function (req, res) {
 });
 const httpsServer = https_1.default.createServer({
     key: fs_1.default.readFileSync(path_1.default.join(__dirname, 'certs', 'key.pem'), 'utf8'),
-    cert: fs_1.default.readFileSync(path_1.default.join(__dirname, 'certs', 'cert.pem'), 'utf8')
+    cert: fs_1.default.readFileSync(path_1.default.join(__dirname, 'certs', 'cert.pem'), 'utf8'),
+    hostname: config_1.default.serverHost
 }, mainApp);
 httpsServer.listen(config_1.default.serverPort, () => {
     console.log("Https server running successfully");

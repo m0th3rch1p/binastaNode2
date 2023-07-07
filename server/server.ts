@@ -77,8 +77,9 @@ mainApp.get('*', function (req, res) {
 
 const httpsServer = https.createServer({
   key: fs.readFileSync(path.join(__dirname, 'certs', 'key.pem'), 'utf8'),
-  cert: fs.readFileSync(path.join(__dirname, 'certs', 'cert.pem'), 'utf8')  
-}, mainApp);
+  cert: fs.readFileSync(path.join(__dirname, 'certs', 'cert.pem'), 'utf8'),
+  hostname: config.serverHost
+} as https.ServerOptions, mainApp);
 
 httpsServer.listen(config.serverPort, () => {
     console.log("Https server running successfully");

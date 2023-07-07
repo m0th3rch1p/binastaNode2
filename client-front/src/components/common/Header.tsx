@@ -33,7 +33,7 @@ function Header() {
             <nav className="navbar">
       <div className="container">
         <Link to="/" className="navbar-brand logo" >
-          <img src="logo/logo.png"alt="" style={{ width: '165px !important' }} />
+          <img src="logo/logo.png"alt="" width="165" />
         </Link>
         <div className="ml-auto main-menu">
           <ul>
