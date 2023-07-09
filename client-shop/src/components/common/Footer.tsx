@@ -6,6 +6,7 @@ import icon2 from "@/assets/images/image-2.svg"
 import icon3 from "@/assets/images/icon-3.svg"
 import icon4 from "@/assets/images/icon-4.svg"
 import icon5 from "@/assets/images/icon-5.svg"
+import SliderForm from "../index/SliderForm"
 
 function Footer() {
     return (
@@ -21,10 +22,7 @@ function Footer() {
                                         needs from our shop
                                     </h2>
                                     <p className="mb-45">Start You'r Daily Shopping with <span className="text-brand">Nest Mart</span></p>
-                                    <form className="form-subcriber d-flex">
-                                        <input type="email" placeholder="Your emaill address" />
-                                        <button className="btn" type="submit">Subscribe</button>
-                                    </form>
+                                    <SliderForm />
                                 </div>
                                 <img src="assets/imgs/banner/banner-9.png" alt="newsletter" />
                             </div>

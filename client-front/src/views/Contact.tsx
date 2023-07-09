@@ -1,6 +1,14 @@
-import React from 'react'
+import useStoreMessage from "@/hooks/useStoreMessage";
 
 function Contact() {
+  const { 
+    validations, 
+    onHandleChange,
+    isLoading,
+    isSuccess, 
+    isError, 
+    onSubmitMessage
+} = useStoreMessage();
   return (
     <>
       <section className='page-banner'>
@@ -30,7 +38,7 @@ function Contact() {
             <div className='col-lg-4'>
               <div className='single-contact-innfo d-flex flex-column justify-content-center align-items-center'>
                 <div className='boxicon mr-3'>
-                  <i className='icofont icofont-location'></i>
+                  <i className='icofont icofont-pin'></i>
                 </div>
                 <h3>Our Location</h3>
                 <p>A26BT5 Building, SilverC Street, London England</p>
@@ -73,9 +81,12 @@ function Contact() {
                 <div className='form-row'>
                   <div className='col-12'>
                     <input
+                      name="name"
+                      onChange={onHandleChange}
                       type='text'
                       className='form-control'
                       placeholder='Type Your Name'
+                      required
                     />
                   </div>
                   <div className='col-12'>
@@ -83,19 +94,26 @@ function Contact() {
                       type='email'
                       className='form-control'
                       placeholder='Email'
+                      name="email"
+                      onChange={onHandleChange}
                     />
                   </div>
                   <div className='col-12'>
                     <input
                       type='text'
                       className='form-control'
-                      placeholder='Phone Number (Optional)'
+                      placeholder='Phone Number'
+                      name="phone_number"
+                      onChange={onHandleChange}
                     />
                   </div>
                   <div className='col-12'>
                     <textarea
                       className='form-control'
                       placeholder='write your message'
+                      name="message"
+                      onChange={onHandleChange}
+                      required
                     ></textarea>
                   </div>
                 </div>
@@ -103,10 +121,23 @@ function Contact() {
                   id='submitBtn'
                   type='submit'
                   className='btn-mr th-primary pill'
+                  onClick={onSubmitMessage}
                 >
-                  SEND
+                  {isLoading ? "SENDING...." : "SEND"} 
                 </button>
               </form>
+              {
+                  isSuccess ? (
+                      <div className="row">
+                          <div className="col-12">
+                              <div className="badge badge-success" style={{
+                                  padding: "20px",
+                                  marginTop: "10px"
+                              }}>Thank you for writing to us. We will get back to you in 24hrs</div>
+                          </div>
+                      </div>
+                 ) : <></>
+              }
             </div>
             <div className='col-lg-6'>
               <div className='promo-add'>

@@ -19,6 +19,7 @@ import userReducer, { userApiSlice } from '@/store/reducers/userSlice';
 import ordersReducer, { orderApiSlice }  from './reducers/ordersSlice';
 import addressesReducer, { addressApiSlice } from './reducers/addressSlice';
 import cartReducer from './reducers/cartSlice';
+import { subscriberApiSlice } from './reducers/subscriberSlice';
 
 export const resetStore = createAction("resetStore");
 
@@ -33,8 +34,9 @@ const rootReducer = combineReducers({
     [ orderApiSlice.reducerPath ]: orderApiSlice.reducer,
     [ addressApiSlice.reducerPath ]: addressApiSlice.reducer,
     [ productCategoryApiSlice.reducerPath ]: productCategoryApiSlice.reducer,
-    [ productApiSlice.reducerPath ]: productApiSlice.reducer
-})
+    [ productApiSlice.reducerPath ]: productApiSlice.reducer,
+    [ subscriberApiSlice.reducerPath ]: subscriberApiSlice.reducer
+});
 
 const appReducer: typeof rootReducer = (state, action) => {
     if (action.type === resetStore.type) {
@@ -47,7 +49,7 @@ const persistConfig = {
     key: 'root',
     version: 1,
     storage,
-    blacklist: [ userApiSlice.reducerPath , orderApiSlice.reducerPath, addressApiSlice.reducerPath, productApiSlice.reducerPath, productCategoryApiSlice.reducerPath ]  
+    blacklist: [ userApiSlice.reducerPath , orderApiSlice.reducerPath, addressApiSlice.reducerPath, productApiSlice.reducerPath, productCategoryApiSlice.reducerPath, subscriberApiSlice.reducerPath ]  
 };
 
 const persistedReducer = persistReducer(persistConfig, appReducer)
@@ -58,7 +60,7 @@ const store = configureStore({
         serializableCheck: {
             ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
         }
-    }).concat(userApiSlice.middleware, orderApiSlice.middleware, addressApiSlice.middleware, productApiSlice.middleware, productCategoryApiSlice.middleware))
+    }).concat(userApiSlice.middleware, orderApiSlice.middleware, addressApiSlice.middleware, productApiSlice.middleware, productCategoryApiSlice.middleware, subscriberApiSlice.middleware))
 });
 
 export const persistor = persistStore(store);

@@ -6,7 +6,7 @@ function LineChart({ data, xLabel, yLabel, curveType } : { data: any[], xLabel?:
     return (
     <ResponsiveLine
         data={data}
-        margin={{ top: 50, bottom: 50, left: 60 }}
+        margin={{ top: 50, bottom: 50, left: 50, right: 50 }}
         xScale={{ type: 'point' }}
         yScale={{
             type: 'linear',
@@ -24,7 +24,7 @@ function LineChart({ data, xLabel, yLabel, curveType } : { data: any[], xLabel?:
             tickRotation: 0,
             legend: xLabel,
             legendOffset: 36,
-            legendPosition: 'middle'
+            legendPosition: "middle"
         }}
         axisLeft={{
             tickSize: 5,
@@ -32,7 +32,7 @@ function LineChart({ data, xLabel, yLabel, curveType } : { data: any[], xLabel?:
             tickRotation: 0,
             legend: yLabel,
             legendOffset: -40,
-            legendPosition: 'middle'
+            legendPosition: "middle"
         }}
         colors={{ scheme: 'nivo' }}
         pointSize={10}

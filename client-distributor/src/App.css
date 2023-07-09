@@ -12549,7 +12549,7 @@ footer.content-footer .nav a:hover {
   }
 
   .card-body{
-    min-height: 200px !important;
+    /* min-height: 200vh !important; */
     width: 100%;  
   }
 }

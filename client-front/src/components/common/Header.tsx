@@ -1,5 +1,4 @@
-
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from 'react-router-dom';
 
 
@@ -33,10 +32,10 @@ function Header() {
             <nav className="navbar">
       <div className="container">
         <Link to="/" className="navbar-brand logo" >
-          <img src="logo/logo.png"alt="" width="165" />
+          <img src="logo/logo.png"alt="" width="140" />
         </Link>
         <div className="ml-auto main-menu">
-          <ul>
+          <ul className={isVisible ? "show" : ""}>
             <li><Link to="/">Home</Link></li>
             <li><Link to="https://shop.binasta.co.ke">Shop</Link></li>
             <li><Link to="/how-it-works">How It Works</Link></li>
@@ -45,7 +44,7 @@ function Header() {
           </ul>
         </div>
         <div className="mobile-menu ml-auto">
-          <div className="menu-click">
+          <div className="menu-click" onClick={handleToggle}>
             <span></span>
             <span></span>
             <span></span>

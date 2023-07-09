@@ -19,6 +19,7 @@ const adminApp_1 = require("./adminApp");
 const distributorApp_1 = require("./distributorApp");
 const products_routes_1 = __importDefault(require("./routes/products.routes"));
 const blog_routes_1 = __importDefault(require("./routes/blog.routes"));
+const message_routes_1 = __importDefault(require("./routes/message.routes"));
 const distributorShopApp_1 = require("./distributorShopApp");
 ;
 const mainApp = (0, express_1.default)();
@@ -51,6 +52,7 @@ mainApp.use((0, vhost_1.default)(`*.${config_1.default.platform === 'development
 mainApp.use(express_1.default.static(path_1.default.join(__dirname, 'front', 'main', 'build')));
 mainApp.use("/products", products_routes_1.default);
 mainApp.use("/blogs", blog_routes_1.default);
+mainApp.use("/messages", message_routes_1.default);
 mainApp.get('*', function (req, res) {
     res.sendFile(path_1.default.join(__dirname, 'front', 'main', 'build', 'index.html'));
 });

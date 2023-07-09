@@ -1,4 +1,14 @@
+import useStoreMessage from "@/hooks/useStoreMessage";
+
 function QueryForm() {
+    const { 
+        validations, 
+        onHandleChange,
+        isLoading,
+        isSuccess, 
+        isError, 
+        onSubmitMessage
+    } = useStoreMessage();    
   return (
     <section className="appoinment-area">
     <div className="container-fluid custom2">
@@ -18,7 +28,7 @@ function QueryForm() {
                                     <div className="input-group-prepend">
                                         <div className="input-group-text"><i className="icofont iconfont-ui-user"></i></div>
                                     </div>
-                                    <input type="text" className="form-control" placeholder="Full Name" />
+                                    <input type="text" name="name" onChange={onHandleChange} className="form-control"  placeholder="Full Name" required/>
                                 </div>
                             </div>
                             <div className="form-group col-md-6">
@@ -26,7 +36,7 @@ function QueryForm() {
                                     <div className="input-group-prepend">
                                         <div className="input-group-text"><i className="icofont icofont-email"></i></div>
                                     </div>
-                                    <input type="tel" className="form-control"  placeholder="Email Address" />
+                                    <input type="email" name="email" onChange={onHandleChange} className="form-control"  placeholder="Email Address" required/>
                                 </div>
                             </div>
                             <div className="form-group col-md-6 animation" data-animation="fadeInUp" data-animation-delay="0.3s">
@@ -34,7 +44,7 @@ function QueryForm() {
                                     <div className="input-group-prepend">
                                         <div className="input-group-text"><i className="icofont icofont-iphone"></i></div>
                                     </div>
-                                    <input type="email" className="form-control"  placeholder="Phone Number" />
+                                    <input type="text" name="phone_number" onChange={onHandleChange} className="form-control"  placeholder="Phone Number" required/>
                                 </div>
                             </div>
                             <div className="form-group col-md-12 animation" data-animation="fadeInUp" data-animation-delay="0.5s">
@@ -42,20 +52,31 @@ function QueryForm() {
                                     <div className="input-group-prepend">
                                         <div className="input-group-text"><i className="icofont icofont-ui-messaging"></i></div>
                                     </div>
-                                    <textarea  className="form-control" placeholder="Message"></textarea>
+                                    <textarea name="message"  onChange={onHandleChange} className="form-control" placeholder="Message" required></textarea>
                                 </div>
                             </div>
                         </div>
-
-                        <button type="submit" className="animation" data-animation="fadeInUp" data-animation-delay="0.6s">Submit Now</button>
+                        <button type="submit" onClick={onSubmitMessage} className="animation" data-animation="fadeInUp" data-animation-delay="0.6s">{ isLoading ? "Submitting..." : "Submit Now" }</button>
                         <div className="appoinmentshpae-2">
                             <div className="innershape"></div>
                         </div>
+                        {
+                            isSuccess ? (
+                                <div className="row">
+                                    <div className="col-12">
+                                        <div className="badge badge-success" style={{
+                                            padding: "20px",
+                                            marginTop: "10px"
+                                        }}>Thank you for writing to us. We will get back to you in 24hrs</div>
+                                    </div>
+                                </div>
+                           ) : <></>
+                        }
                     </form>
             </div>
         </div>
     </div>
-    <div className="videobgplay bg_1"><a href="https://www.youtube.com/watch?v=OKGX7gQnxpc" className="playVideo videoicon"><i className="icofont">play</i></a></div>
+    <div className="videobgplay bg_1"></div>
 </section>
 
   )

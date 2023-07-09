@@ -16,6 +16,8 @@ import DashboardLayout from "./layout/DashboardLayout";
 import Orders from "./views/Orders";
 import Addresses from "./views/Addresses";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Register from "./views/Register";
+import Login from "./views/Login";
 
 
 function App() {
@@ -30,6 +32,8 @@ function App() {
               <Route path="/shop" element={<Shop />} />
               <Route path="/product/:slug" element={<Product />} />
               <Route path="/checkout" element={<Checkout />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
             </Route>
             <Route element={<InvoiceLayout />}>
               <Route path="/invoice/:orderId" element={<Invoice />} />

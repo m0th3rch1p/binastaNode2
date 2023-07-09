@@ -8,6 +8,7 @@ import Index from "./views/Index";
 import HowItWorks from "./views/HowItWorks";
 import Contact from "./views/Contact";
 import Blog from "./views/Blog"
+import Terms from "./views/Terms"
 
 import "@/assets/css/plugins.css";
 import "@/assets/css/app.css";
@@ -26,6 +27,7 @@ function App() {
               <Route path="/contact" element={<Contact />}/>
               <Route path="/blog" element={<Blog />}/>
               <Route path="/blog/:slug" element={<SingleBlog />}/>
+              <Route path="/terms" element={<Terms />}/>
             </Route>
           </Routes>
       </BrowserRouter>

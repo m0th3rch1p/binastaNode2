@@ -9,7 +9,7 @@ function Footer() {
           <div className="col-lg-4 col-md-6">
             <div className="single-footer">
               <Link className="footer-logo" to="/">
-                <img src="logo/flogo.png" alt="" style={{ width: '140px !important' }} />
+                <img src="logo/flogo.png" alt="" width={140} />
               </Link>
               <h3 className="footer-titil">Binasta Limited</h3>
               <p>

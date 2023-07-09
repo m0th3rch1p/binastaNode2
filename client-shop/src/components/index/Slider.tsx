@@ -1,4 +1,5 @@
 import SlickSlider from 'react-slick'
+import SliderForm from './SliderForm';
 
 function Slider() {
     const sliderSettings = {
@@ -25,12 +26,7 @@ function Slider() {
                                         grocery deals
                                     </h1>
                                     <p className='mb-65'>Sign up for the daily newsletter</p>
-                                    <form className='form-subcriber d-flex'>
-                                        <input type='email' placeholder='Your emaill address' />
-                                        <button className='btn' type='submit'>
-                                            Subscribe
-                                        </button>
-                                    </form>
+                                    <SliderForm />
                                 </div>
                             </div>
                             <div
@@ -45,12 +41,7 @@ function Slider() {
                                     <p className='mb-65'>
                                         Save up to 50% off on your first order
                                     </p>
-                                    <form className='form-subcriber d-flex'>
-                                        <input type='email' placeholder='Your emaill address' />
-                                        <button className='btn' type='submit'>
-                                            Subscribe
-                                        </button>
-                                    </form>
+                                    <SliderForm />
                                 </div>
                             </div>
                         </SlickSlider>

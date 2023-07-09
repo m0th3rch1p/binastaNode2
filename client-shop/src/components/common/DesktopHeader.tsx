@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom"
+import { useAppSelector } from "@/store/hooks"
 import Logo from "./Logo"
 import ShoppingCart from "../header/ShoppingCart"
 
 import UserIcon from "@/assets/images/icon-user.svg"
 
 function DesktopHeader() {
+    const user = useAppSelector(state => state.user);
   return (
     <header className="header-area header-style-1 header-height-2">
         <div className="mobile-promotion">
@@ -33,12 +35,30 @@ function DesktopHeader() {
                                     <a href="page-account.html"><span className="lable ml-0">Account</span></a>
                                     <div className="cart-dropdown-wrap cart-dropdown-hm2 account-dropdown">
                                         <ul>
-                                            <li>
-                                                <a href="#"><i className="fi fi-rs-user mr-10"></i>Login</a>
-                                            </li>
-                                            <li>
-                                                <a href="#"><i className="fi fi-rs-location-alt mr-10"></i>Register</a>
-                                            </li>
+                                            {
+                                                !user.authenticated ? (
+                                                    <>
+                                                        <li>
+                                                            <Link to="/login"><i className="fi fi-rs-user mr-10"></i>Login</Link>
+                                                        </li>
+                                                        <li>
+                                                            <Link to="/register"><i className="fi fi-rs-location-alt mr-10"></i>Register</Link>
+                                                        </li>
+                                                    </>
+                                                )  : (
+                                                    <>
+                                                        <li>
+                                                            <Link to="/orders"><i className="fi fi-rs-boxes mr-10"></i>My Orders</Link>
+                                                        </li>
+                                                        <li>
+                                                            <Link to="/addresses"><i className="fi fi-rs-location mr-10"></i>My Addresses</Link>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#"><i className="fi fi-rs-door mr-10"></i>Logout</a>
+                                                        </li>
+                                                    </>
+                                                )
+                                            }
                                         </ul>
                                     </div>
                                 </div>

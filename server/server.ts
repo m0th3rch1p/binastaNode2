@@ -18,6 +18,7 @@ import { distributorApp } from "./distributorApp";
 
 import productRoutes from "@/routes/products.routes";
 import blogRoutes from "@/routes/blog.routes";
+import messageRoutes from "@/routes/message.routes";
 import { distributorShopApp } from "./distributorShopApp";
 
 // import { init_pp } from "@/services/paymentGateways/paypal.gateway";
@@ -69,7 +70,7 @@ mainApp.use(express.static(path.join(__dirname, 'front', 'main', 'build')));
 
 mainApp.use("/products", productRoutes);
 mainApp.use("/blogs", blogRoutes);
-
+mainApp.use("/messages", messageRoutes);
 
 mainApp.get('*', function (req, res) {
     res.sendFile(path.join(__dirname, 'front', 'main', 'build', 'index.html'))
