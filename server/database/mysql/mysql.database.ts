@@ -6,7 +6,7 @@ export let configuration: ConnectionOptions | PoolOptions | null = null;
 
 export const mysql_db_init = (dbConfig: MysqlConfig): Connection | Pool | null => {
     try {   
-        console.log(`Connecting to mysql server host: ${dbConfig.host}:${dbConfig.port} using user ${dbConfig.user}`);
+        console.log(`Intializing Connection to mysql server host: ${dbConfig.host}:${dbConfig.port} using user ${dbConfig.user}`);
         db_connect(dbConfig);
     } catch (error) {
         console.log("[database.mysql.index][error]: ", error);
@@ -27,6 +27,7 @@ const db_connect = async (dbConfig: MysqlConfig) : Promise<Connection | Pool | n
                ...dbConfig
             };
             connection = await createConnection(configuration);
+            console.log(connection);
         } else if (dbConfig.connectionType === "pool") {
             configuration = <PoolOptions> {
                 ...dbConfig,
