@@ -82,7 +82,7 @@ mainApp.get('*', function (req, res) {
 //   hostname: config.serverHost
 // } as https.ServerOptions, mainApp);
 
-mainApp.listen(config.serverPort, () => {
+mainApp.listen(config.serverPort || 3000, () => {
     console.log("Https server running successfully");
 });
 
