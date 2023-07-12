@@ -22,6 +22,7 @@ export const mysql_db_execute = <T> (query: string, params: any[])  => {
 
 const db_connect = async (dbConfig: MysqlConfig) : Promise<Connection | Pool | null> => {
     try {
+        console.log("Connection type: ", dbConfig.connectionType);
         if (dbConfig.connectionType === "connection") {
             configuration = <ConnectionOptions>{
                ...dbConfig
@@ -33,7 +34,7 @@ const db_connect = async (dbConfig: MysqlConfig) : Promise<Connection | Pool | n
                 ...dbConfig,
                 waitForConnections: true
             }
-            connection = createPool(configuration);
+            connection = await createPool(configuration);
         } else throw new Error("Can't find connection type. currently support pool and connection values");
 
         console.log("[+] Connection to DB Successfull");
