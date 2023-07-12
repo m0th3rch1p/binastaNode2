@@ -5,5 +5,5 @@ import * as distributorOrdersController from "@/controllers/distributorOrders.co
 
 const router = Router();
 router.get("/", [authMiddleware, isAdmin], distributorOrdersController.index);
-router.get("/:id", [authMiddleware, isAdmin], distributorOrdersController.fetchDistributorOrders);
+router.get("/:id", [authMiddleware, isAdmin], distributorOrdersController.fetchDistributorOrderById);
 export default router;

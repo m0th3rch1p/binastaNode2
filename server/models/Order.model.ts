@@ -4,12 +4,12 @@ import * as core from 'express-serve-static-core';
 
 export interface IOrder {
     id?: number,
-    userId?: number,
-    userAddressId?: number,
+    user_id?: number,
+    user_address_id?: number,
     ref?: string,
     status?: "pending" | "paid" | "delivered",
     amount?: number,
-    discountAmount?: number,
+    discount_amount?: number,
     created_at?: string,
     updated_at?: string
 };

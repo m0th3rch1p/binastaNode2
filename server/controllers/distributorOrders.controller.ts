@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { IAddDistributorOrderReq, IGetDistributorOrderReq, IUpdateDistributorOrderReq } from "@/models/DistributorOrder.model";
 import { Request, Response, RequestHandler } from "express";
 import { execQuery } from "@/helpers/queryHelpers";
@@ -5,6 +6,9 @@ import { IDistributorOrder } from "@/models/DistributorOrder.model";
 import { makeRef } from "@/helpers/StrHelper";
 import * as distributorOrderServices from "@/services/distributorOrders.services";
 import { fetchProductVariationsbyIdArray } from "@/services/productVariations.services";
+import { fetchDistributorOrderProductVariationsByOrderId } from "@/services/distributorOrderProductVariations.services";
+import { fetchProductImagesByProductIdArray } from "@/services/productImages.services";
+
 
 export const index: RequestHandler = async (req: Request, res: Response) => {
     const orders = await distributorOrderServices.fetchOrders("admin");
@@ -44,18 +48,33 @@ export const fetchDistributorOrderById: RequestHandler = async (req: Request, re
     res.status(404).json({ message: 'Could not find order'});
     return;
   }
-  const productVariationIdsArr = await distributorOrderServices.fetchOrderProductVariationsById(order[0].id as number);
-  console.log(productVariationIdsArr);
-  if (!productVariationIdsArr) {
+  // const productVariationIdsArr = await fetchDistributorOrderProductVariationsByOrderId(order[0].id as number);
+  // console.log(productVariationIdsArr);
+  // if (!productVariationIdsArr) {
+  //   res.status(500).json({ message: 'Error fetching order' });
+  //   return;
+  // }
+
+  // const productVariationIds = productVariationIdsArr.map((productVariation) => productVariation.product_variation_id );
+
+  let productVariations = await fetchDistributorOrderProductVariationsByOrderId(order[0].id as number);
+  if (!productVariations) {
     res.status(500).json({ message: 'Error fetching order' });
     return;
   }
 
-  const productVariationIds = productVariationIdsArr.map((productVariation) => productVariation.product_variation_id );
+  const productIds = productVariations.map(variation => variation.product_id);
+  const productImages = await fetchProductImagesByProductIdArray(productIds as number[]);
+  
+  if (productImages) {
+    const groupedImages = _.groupBy(productImages, "product_id");
+    productVariations = productVariations.map((variation) => ({
+      ...variation,
+      images: groupedImages[variation.product_id as number]
+    }))
+  }
 
-  const productVariations = await fetchProductVariationsbyIdArray("distributor", productVariationIds as number[]);
   order[0].variations = productVariations;
-
   res.status(200).json({ order: order[0] });
 };
 

@@ -71,7 +71,7 @@ function CustomerOrders() {
                         </div>
                     </div>
                 </div>
-            </div>
+        </div>
         <Table columns={columns} data={orders ?? []} />
     </>
   )

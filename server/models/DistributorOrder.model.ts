@@ -2,6 +2,7 @@
 import { Request } from "express";
 import * as core from 'express-serve-static-core';
 import { IProductVariation } from "./ProductVariation.model";
+import { IDistributorProductVariation } from "./DistributorProductVariation.model";
 
 export interface IDistributorOrder {
     id?: number,
@@ -9,7 +10,7 @@ export interface IDistributorOrder {
     distributor_address_id?: number,
     ref?: string,
     status?: "pending" | "delivered",
-    variations?: IProductVariation[] | null,
+    variations?: IProductVariation[] | IDistributorProductVariation[] | null,
     created_at?: string,
     updated_at?: string
 };

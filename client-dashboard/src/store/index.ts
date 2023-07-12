@@ -21,6 +21,8 @@ import { blogCategoriesApiSlice } from './reducers/blogCategoriesSlice';
 import { productApiSlice } from './reducers/productsSlice';
 import { distributorsApiSlice } from './reducers/distributorsSlice';
 import { countriesApiSlice } from './reducers/countriesSlice';
+import { ordersApiSlice } from './reducers/ordersSlice';
+import { distributorOrdersApiSlice } from './reducers/distributorOrdersSlice';
 
 export const resetStore = createAction("resetStore");
 
@@ -32,8 +34,10 @@ const rootReducer = combineReducers({
     [ blogCategoriesApiSlice.reducerPath ]: blogCategoriesApiSlice.reducer,
     [ blogsApiSlice.reducerPath ]: blogsApiSlice.reducer,
     [ distributorsApiSlice.reducerPath ]: distributorsApiSlice.reducer,
-    [ countriesApiSlice.reducerPath ]: countriesApiSlice.reducer 
-})
+    [ countriesApiSlice.reducerPath ]: countriesApiSlice.reducer,
+    [ ordersApiSlice.reducerPath ]: ordersApiSlice.reducer,
+    [ distributorOrdersApiSlice.reducerPath ]: distributorOrdersApiSlice.reducer
+});
 
 const appReducer: typeof rootReducer = (state, action) => {
     if (action.type === resetStore.type) {
@@ -46,7 +50,7 @@ const persistConfig = {
     key: 'root',
     version: 1,
     storage,
-    blacklist: [ userApiSlice.reducerPath, productCategoryApiSlice.reducerPath, productApiSlice.reducerPath, blogCategoriesApiSlice.reducerPath, blogsApiSlice.reducerPath, distributorsApiSlice.reducerPath, countriesApiSlice.reducerPath ]  
+    blacklist: [ userApiSlice.reducerPath, productCategoryApiSlice.reducerPath, productApiSlice.reducerPath, blogCategoriesApiSlice.reducerPath, blogsApiSlice.reducerPath, distributorsApiSlice.reducerPath, countriesApiSlice.reducerPath, ordersApiSlice.reducerPath, distributorOrdersApiSlice.reducerPath ]  
 };
 
 const persistedReducer = persistReducer(persistConfig, appReducer)
@@ -57,7 +61,7 @@ const store = configureStore({
         serializableCheck: {
             ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
         }
-    }).concat(userApiSlice.middleware, productCategoryApiSlice.middleware, productApiSlice.middleware, blogCategoriesApiSlice.middleware, blogsApiSlice.middleware, distributorsApiSlice.middleware, countriesApiSlice.middleware))
+    }).concat(userApiSlice.middleware, productCategoryApiSlice.middleware, productApiSlice.middleware, blogCategoriesApiSlice.middleware, blogsApiSlice.middleware, distributorsApiSlice.middleware, countriesApiSlice.middleware, ordersApiSlice.middleware, distributorOrdersApiSlice.middleware))
 });
 
 export const persistor = persistStore(store);

@@ -1,12 +1,15 @@
 
 import { Request } from "express";
 import * as core from 'express-serve-static-core';
+import { IProductVariation } from "./ProductVariation.model";
 
 export interface IOrderProductVariation {
     id?: number,
-    orderId?: number,
-    productVariationId?: number,
+    order_id?: number,
     product_variation_id?: number,
+    variation?: string,
+    product_name?: string,
+    product_image?: string,
     quantity?: number,
     created_at?: string,
     updated_at?: string

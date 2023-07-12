@@ -7,27 +7,38 @@ import { makeRef } from "@/helpers/StrHelper";
 import { IOrderProductVariation } from "@/models/OrderProductVariation.model";
 import { IProductVariation } from "@/models/ProductVariation.model";
 
+import { fetchOrderProductVariationByOrderId } from '@/services/orderProductVariation.services';
+import * as orderServices from "@/services/orders.services";
+
 const TABLE_NAME = "orders";
 
 export const index: RequestHandler = async (req: Request, res: Response) => {
-    const { response, error } = await execQuery<IOrder[][]>(TABLE_NAME, "SELECTALL");
-    if (error) {
+    const orders = await orderServices.fetchAll("admin");
+    console.log(orders);
+    if (!orders) {
         res.status(500).json({ message: "Error fetching orders" });
-    } else if (response) {
-        const [ orders ] = response;
-        res.status(200).json({ orders });
-    }
+        return;
+    } 
+    res.status(200).json({ orders });
+};
+
+export const fetchById: RequestHandler = async (req: Request, res: Response) => {
+    const order = await orderServices.fetchById("admin", parseInt(req.params.id as string));
+    if (!order) {
+        res.status(500).json({ message: "Error fetching order" });
+        return;
+    } 
+    const product_variations = fetchOrderProductVariationByOrderId(order[0].id as number); 
+    res.status(200).json({ order, product_variations });
 };
 
 export const fetchUserOrders: RequestHandler = async (req: Request, res: Response) => {
-    const { response, error } = await execQuery<IOrder[][]>(TABLE_NAME, "SELECT ref, status, amount, created_at FROM orders WHERE user_id = ?", null, [req.session.user_id]);
-    if (error) {
-        console.log(error);
+    const orders = orderServices.fetchAll("user", req.session.user_id);
+    if (!orders) {
         res.status(500).json({ message: "Error fetching orders" });
-    } else if (response) {
-        const [ orders ] = response;
-        res.status(200).json({ orders });
-    }
+        return;
+    } 
+    res.status(200).json({ orders });
 };
 
 export const fetchUserUserOrderById: RequestHandler = async (req: Request, res: Response) => {
@@ -60,15 +71,15 @@ export const fetchUserUserOrderById: RequestHandler = async (req: Request, res: 
 export const store: RequestHandler = async (req: IAddOrderReq, res: Response) => {
     const order: IOrder = req.body;
     order.ref = makeRef(8);
-    order.userId = req.session.user_id;
-    order.userAddressId = req.body.user_address_id;
+    order.user_id = req.session.user_id;
+    order.user_address_id = req.body.user_address_id;
     const { response, error } = await execQuery<[{ affectedRows: number, insertId: number }]>(TABLE_NAME, "INSERT", [
         "user_id",
         "user_address_id",
         "ref",
     ], [
-        order.userId,
-        order.userAddressId,
+        order.user_id,
+        order.user_address_id,
         order.ref
     ]);
 
