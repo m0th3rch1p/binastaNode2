@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.destroyById = exports.updateById = exports.store = exports.searchUserProducts = exports.fetchDistributorProductBySlug = exports.fetchDistributorProducts = exports.fetchUserProductBySlug = exports.fetchAllUserProducts = exports.index = void 0;
+exports.destroyById = exports.updateById = exports.store = exports.searchUserProducts = exports.fetchDistributorProductBySlug = exports.fetchDistributorProducts = exports.fetchUserProductBySlug = exports.fetchAllUserProducts = exports.fetchProductBySlug = exports.fetchProductById = exports.index = void 0;
 const multer_1 = __importDefault(require("multer"));
 const queryHelpers_1 = require("../helpers/queryHelpers");
 const lodash_1 = __importDefault(require("lodash"));
@@ -74,6 +74,40 @@ const index = async (req, res) => {
     });
 };
 exports.index = index;
+const fetchProductById = async (req, res) => {
+    const product = await productServices.fetchRelatedProductsByProductId(parseInt(req.params.id, 10));
+    if (!product) {
+        res.status(500).json({ message: "Error fetching product by id" });
+        return;
+    }
+    else if (!product.length) {
+        res.status(404).json({ message: "Product not found" });
+        return;
+    }
+    const extras = await fetchSingleProductExtras(product[0].id, "admin");
+    product[0].variations = extras?.productVariations;
+    product[0].images = extras?.productImages;
+    product[0].related = extras?.productVariations;
+    res.status(200).json({ product: product[0] });
+};
+exports.fetchProductById = fetchProductById;
+const fetchProductBySlug = async (req, res) => {
+    const product = await productServices.fetchProductsBySlug(req.params.slug);
+    if (!product) {
+        res.status(500).json({ message: "Error fetching products" });
+        return;
+    }
+    else if (!product.length) {
+        res.status(404).json({ message: "Product not found" });
+        return;
+    }
+    const extras = await fetchSingleProductExtras(product[0].id, "admin");
+    product[0].variations = extras?.productVariations;
+    product[0].images = extras?.productImages;
+    product[0].related = extras?.relatedProducts;
+    res.status(200).json({ product: product[0] });
+};
+exports.fetchProductBySlug = fetchProductBySlug;
 const fetchAllUserProducts = async (req, res) => {
     let products = await productServices.fetchProducts("user", { perPage: parseInt(req.query.per_page), offset: parseInt(req.query.offset) });
     if (!products) {

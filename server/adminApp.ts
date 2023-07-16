@@ -13,6 +13,7 @@ import distributorOrderRoutes from "@/routes/admins/distributorOrder.routes";
 import orderRoutes from "@/routes/admins/order.routes";
 import productCategoryRoutes from "@/routes/admins/productCategory.routes";
 import productRoutes from "@/routes/admins/product.routes";
+import productVariationRoutes from "@/routes/admins/productVariations.routes"
 import userRoutes from "@/routes/admins/user.routes";
 import userAddressRoutes from "@/routes/admins/userAddress.routes";
 
@@ -28,6 +29,7 @@ adminApp.use("/distributor_orders", distributorOrderRoutes);
 adminApp.use("/orders", orderRoutes);
 adminApp.use("/product_categories", productCategoryRoutes);
 adminApp.use("/products", productRoutes);
+adminApp.use("/product_variations", productVariationRoutes);
 adminApp.use("/users", userRoutes);
 adminApp.use("/user_addresses", userAddressRoutes);
 

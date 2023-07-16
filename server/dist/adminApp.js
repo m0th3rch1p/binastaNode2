@@ -18,6 +18,7 @@ const distributorOrder_routes_1 = __importDefault(require("./routes/admins/distr
 const order_routes_1 = __importDefault(require("./routes/admins/order.routes"));
 const productCategory_routes_1 = __importDefault(require("./routes/admins/productCategory.routes"));
 const product_routes_1 = __importDefault(require("./routes/admins/product.routes"));
+const productVariations_routes_1 = __importDefault(require("./routes/admins/productVariations.routes"));
 const user_routes_1 = __importDefault(require("./routes/admins/user.routes"));
 const userAddress_routes_1 = __importDefault(require("./routes/admins/userAddress.routes"));
 adminApp.use(express_1.default.static(path_1.default.join(__dirname, 'front', 'dashboard', 'build')));
@@ -31,6 +32,7 @@ adminApp.use("/distributor_orders", distributorOrder_routes_1.default);
 adminApp.use("/orders", order_routes_1.default);
 adminApp.use("/product_categories", productCategory_routes_1.default);
 adminApp.use("/products", product_routes_1.default);
+adminApp.use("/product_variations", productVariations_routes_1.default);
 adminApp.use("/users", user_routes_1.default);
 adminApp.use("/user_addresses", userAddress_routes_1.default);
 adminApp.get('*', function (req, res) {

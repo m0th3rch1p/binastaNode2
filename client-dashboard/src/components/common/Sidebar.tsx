@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom"
 
+
 import logoImg from "@/assets/images/flogo.png" 
 import avatarImg from "@/assets/images/avatar.png";
 function Sidebar() {
@@ -88,11 +89,19 @@ function Sidebar() {
                         </Link>
                     </li>
                     <li data-v-7588be3f=''>
+                        <Link className={splitLocation[1] === "create_post" ? "active" : ""} to='/create_post' data-v-7588be3f=''>
+                            <span className='nav-link-icon' data-v-7588be3f=''>
+                                <i className='bi bi-pen' data-v-7588be3f=''></i>
+                            </span>
+                            <span data-v-7588be3f=''>New Blog Post</span>
+                        </Link>
+                    </li>
+                    <li data-v-7588be3f=''>
                         <Link className={splitLocation[1] === "blogs" ? "active" : ""} to='/blogs' data-v-7588be3f=''>
                             <span className='nav-link-icon' data-v-7588be3f=''>
                                 <i className='bi bi-newspaper' data-v-7588be3f=''></i>
                             </span>
-                            <span data-v-7588be3f=''>Blogs</span>
+                            <span data-v-7588be3f=''>Blog Posts</span>
                         </Link>
                     </li>
                     <li className='menu-divider' data-v-7588be3f=''>
@@ -104,6 +113,14 @@ function Sidebar() {
                                 <i className='bi bi-list' data-v-7588be3f=''></i>
                             </span>
                             <span data-v-7588be3f=''>Product Categories</span>
+                        </Link>
+                    </li>
+                    <li data-v-7588be3f=''>
+                        <Link className={splitLocation[1] === "create_product" ? "active" : ""} to='/create_product' data-v-7588be3f=''>
+                            <span className='nav-link-icon' data-v-7588be3f=''>
+                                <i className='bi bi-plus' data-v-7588be3f=''></i>
+                            </span>
+                            <span data-v-7588be3f=''>Add Product</span>
                         </Link>
                     </li>
                     <li data-v-7588be3f=''>
@@ -126,14 +143,6 @@ function Sidebar() {
                         </Link>
                     </li>
                     <li data-v-7588be3f=''>
-                        <Link className={splitLocation[1] === "distributor_addresses" ? "active" : ""} to='/distributor_address' data-v-7588be3f=''>
-                            <span className='nav-link-icon' data-v-7588be3f=''>
-                                <i className='bi bi-geo-alt' data-v-7588be3f=''></i>
-                            </span>
-                            <span data-v-7588be3f=''>Distributor Addresses</span>
-                        </Link>
-                    </li>
-                    <li data-v-7588be3f=''>
                         <Link className={splitLocation[1] === "distributor_orders" ? "active" : ""} to='/distributor_orders' data-v-7588be3f=''>
                             <span className='nav-link-icon' data-v-7588be3f=''>
                                 <i className='bi bi-cart' data-v-7588be3f=''></i>
@@ -147,17 +156,9 @@ function Sidebar() {
                     <li data-v-7588be3f=''>
                         <Link className={splitLocation[1] === "customers" ? "active" : ""} to='/customers' data-v-7588be3f=''>
                             <span className='nav-link-icon' data-v-7588be3f=''>
-                                <i className='bi bi-users' data-v-7588be3f=''></i>
+                                <i className='bi bi-people' data-v-7588be3f=''></i>
                             </span>
                             <span data-v-7588be3f=''>Customers</span>
-                        </Link>
-                    </li>
-                    <li data-v-7588be3f=''>
-                        <Link className={splitLocation[1] === "customer_addresses" ? "active" : ""} to='/customer_addresses' data-v-7588be3f=''>
-                            <span className='nav-link-icon' data-v-7588be3f=''>
-                                <i className='bi bi-geo-alt' data-v-7588be3f=''></i>
-                            </span>
-                            <span data-v-7588be3f=''>Customer Addresses</span>
                         </Link>
                     </li>
                     <li data-v-7588be3f=''>

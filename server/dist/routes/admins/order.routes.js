@@ -33,5 +33,6 @@ const order_policies_1 = require("../../policies/order.policies");
 const ordersController = __importStar(require("../../controllers/orders.controller"));
 const router = (0, express_1.Router)();
 router.get("/", [auth_middleware_1.default, roles_middleware_1.isAdmin], ordersController.index);
+router.get("/:id", [auth_middleware_1.default, roles_middleware_1.isAdmin], ordersController.fetchById);
 router.post("/", [auth_middleware_1.default, roles_middleware_1.isUser, order_policies_1.storePolicy], ordersController.store);
 exports.default = router;

@@ -1,4 +1,7 @@
 import LineChart from '@/components/common/LineChart'
+import PieChart from '@/components/common/PieChart';
+
+
 
 function Dashboard() {
     const data = [
@@ -80,39 +83,128 @@ function Dashboard() {
         },
     ];
 
-    const data1 = [
+    const pieData = [
         {
-            "id": "Product Count",
-            "color": "#05b171",
-            "data": [
-                {
-                    "x": "1",
-                    "y": 127
-                },
-                {
-                    "x": "2",
-                    "y": 427
-                },
-                {
-                    "x": "3",
-                    "y": 327
-                },
-            ]
+            "id": "Client Orders",
+            "label": "Client Orders",
+            "value": 101,
+            "color": "hsl(22, 70%, 50%)"
+        },
+        {
+            "id": "Distributor Orders",
+            "label": "Distributor Orders",
+            "value": 446,
+            "color": "hsl(152, 51%, 47%)"
         },
     ];
     return (
-        <div className="row row-cols-1 row-cols-md-3 g-4">
+        <>
+            <div className="row">
+                <div className="col-4">
+                    <div className="card mt-2 mb-2">
+                    <div className="card-body">
+                        <div className="d-flex mb-3">
+                            <div className="display-7">
+                                <i className="bi bi-award-fill" ></i>
+                            </div>
+                            <div className="dropdown ms-auto">
+                                <a href="#" data-bs-toggle="dropdown" className="btn btn-sm" aria-haspopup="true" aria-expanded="false">
+                                    <i className="bi bi-three-dots"></i>
+                                </a>
+                                <div className="dropdown-menu dropdown-menu-end">
+                                    <a href="#" className="dropdown-item">View Detail</a>
+                                    <a href="#" className="dropdown-item">Download</a>
+                                </div>
+                            </div>
+                        </div>
+                        <h4 className="mb-3">Pending Orders</h4>
+                        <div className="d-flex mb-3" style={{
+                            position: "relative"
+                        }}>
+                            <div className="display-7">3100</div>
+                            <div className="ms-auto" id="total-orders">
+                                <div className="text-success my-2 small">
+                                    <i className="bi bi-arrow-up me-1 small"></i>30.50%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <div className="col-4">
+                    <div className="card mt-2 mb-2">
+                    <div className="card-body">
+                        <div className="d-flex mb-3">
+                            <div className="display-7">
+                                <i className="bi bi-currency-dollar"></i>
+                            </div>
+                            <div className="dropdown ms-auto">
+                                <a href="#" data-bs-toggle="dropdown" className="btn btn-sm" aria-haspopup="true" aria-expanded="false">
+                                    <i className="bi bi-three-dots"></i>
+                                </a>
+                                <div className="dropdown-menu dropdown-menu-end">
+                                    <a href="#" className="dropdown-item">View Detail</a>
+                                    <a href="#" className="dropdown-item">Download</a>
+                                </div>
+                            </div>
+                        </div>
+                        <h4 className="mb-3">Total Orders</h4>
+                        <div className="d-flex mb-3" style={{
+                            position: "relative"
+                        }}>
+                            <div className="display-7">2500</div>
+                            <div className="ms-auto">
+                                <div className="text-success my-2 small">
+                                    <i className="bi bi-arrow-up me-1 small"></i>30.50%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <div className="col-4">
+                    <div className="card mt-2 mb-2">
+                    <div className="card-body">
+                        <div className="d-flex mb-3">
+                            <div className="display-7">
+                                <i className="bi bi-currency-dollar"></i>
+                            </div>
+                            <div className="dropdown ms-auto">
+                                <a href="#" data-bs-toggle="dropdown" className="btn btn-sm" aria-haspopup="true" aria-expanded="false">
+                                    <i className="bi bi-three-dots"></i>
+                                </a>
+                                <div className="dropdown-menu dropdown-menu-end">
+                                    <a href="#" className="dropdown-item">View Detail</a>
+                                    <a href="#" className="dropdown-item">Download</a>
+                                </div>
+                            </div>
+                        </div>
+                        <h4 className="mb-3">Total Profits</h4>
+                        <div className="d-flex mb-3" style={{
+                            position: "relative"
+                        }}>
+                            <div className="display-7">ksh.37459,00</div>
+                            <div className="ms-auto">
+                                <div className="text-success my-2 small">
+                                    <i className="bi bi-arrow-up me-1 small"></i>30.50%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div className="row row-cols-1 row-cols-md-3 g-4">
             <div className="col-lg-7 col-md-12">
                 <div className="card widget h-100">
                     <div className="card-header d-flex">
-                        <h6 className="card-title" style={{ 
+                        <h6 className="card-title" style={{
                             textAlign: "center"
                         }}>
                             Sales / Products Chart
                             <a href="#" className="bi bi-question-circle ms-1 small" data-bs-toggle="tooltip" title="" data-bs-original-title="Daily orders and sales" aria-label="Daily orders and sales"></a>
                         </h6>
                         <div className="d-flex gap-3 align-items-center ms-auto">
-
                         </div>
                     </div>
                     <div className="card-body" style={{
@@ -144,6 +236,12 @@ function Dashboard() {
                     <div className="card-body" style={{
                         position: "relative"
                     }}>
+                        <div style={{
+                            height: "300px",
+                            minHeight: "232.8px"
+                        }}>
+                            <PieChart data={pieData} /> 
+                        </div>
                         <div className="row text-center mb-5 mt-4">
                             <div className="col-4">
                                 <div className="display-7">48%</div>
@@ -178,70 +276,9 @@ function Dashboard() {
                         </div>
                     </div>
                 </div>
-                <div className="card mt-3 mb-3">
-                    <div className="card-body">
-                        <div className="d-flex mb-3">
-                            <div className="display-7">
-                                <i className="bi bi-award-fill" ></i>
-                            </div>
-                            <div className="dropdown ms-auto">
-                                <a href="#" data-bs-toggle="dropdown" className="btn btn-sm" aria-haspopup="true" aria-expanded="false">
-                                    <i className="bi bi-three-dots"></i>
-                                </a>
-                                <div className="dropdown-menu dropdown-menu-end">
-                                    <a href="#" className="dropdown-item">View Detail</a>
-                                    <a href="#" className="dropdown-item">Download</a>
-                                </div>
-                            </div>
-                        </div>
-                        <h4 className="mb-3">Total Binapoints</h4>
-                        <div className="d-flex mb-3" style={{
-                            position: "relative"
-                        }}>
-                            <div className="display-7">3100</div>
-                            <div className="ms-auto" id="total-orders" style={{
-                                minHeight: "35px",
-                                height: "70px",
-                                width: "100px"
-                            }}>
-                                <div className="text-success my-2 small">
-                                    <i className="bi bi-arrow-up me-1 small"></i>30.50%
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="card mt-2">
-                    <div className="card-body">
-                        <div className="d-flex mb-3">
-                            <div className="display-7">
-                                <i className="bi bi-currency-dollar"></i>
-                            </div>
-                            <div className="dropdown ms-auto">
-                                <a href="#" data-bs-toggle="dropdown" className="btn btn-sm" aria-haspopup="true" aria-expanded="false">
-                                    <i className="bi bi-three-dots"></i>
-                                </a>
-                                <div className="dropdown-menu dropdown-menu-end">
-                                    <a href="#" className="dropdown-item">View Detail</a>
-                                    <a href="#" className="dropdown-item">Download</a>
-                                </div>
-                            </div>
-                        </div>
-                        <h4 className="mb-3">Total Profits</h4>
-                        <div className="d-flex mb-3" style={{
-                            position: "relative"
-                        }}>
-                            <div className="display-7">ksh.37459,00</div>
-                            <div className="ms-auto">
-                                <div className="text-success my-2 small">
-                                    <i className="bi bi-arrow-up me-1 small"></i>30.50%
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
+        </>
     )
 }
 

@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -7,6 +30,7 @@ exports.destroyById = exports.updateById = exports.fetchBySlug = exports.store =
 const queryHelpers_1 = require("../helpers/queryHelpers");
 const StrHelper_1 = require("../helpers/StrHelper");
 const multer_1 = __importDefault(require("multer"));
+const blogServices = __importStar(require("../services/blogs.services"));
 const multerStorage = multer_1.default.diskStorage({
     destination: (req, file, cb) => {
         cb(null, "blogPosts");
@@ -34,12 +58,12 @@ const upload = (0, multer_1.default)({
     fileFilter: multerFilter
 }).single("img");
 const index = async (req, res) => {
-    const { response: blogs, error } = await (0, queryHelpers_1.execQuery)("blogs", "SELECTALL");
-    if (error) {
+    const blogs = await blogServices.fetchBlogs("admin");
+    if (!blogs) {
         res.status(500).json({ message: "error fetching blogs" });
     }
     else if (blogs) {
-        res.status(200).json({ blogs: blogs[0] });
+        res.status(200).json({ blogs });
     }
 };
 exports.index = index;
@@ -58,54 +82,34 @@ const store = async (req, res) => {
             console.log(err);
             res.status(500).json({ message: "Error uploading file" });
         }
+        else if (!req.file) {
+            res.status(422).json({
+                errors: [
+                    {
+                        img: "Please include product images"
+                    }
+                ]
+            });
+        }
         else {
-            console.log(req.file);
-            if (!req.file) {
-                res.status(422).json({
-                    errors: [
-                        {
-                            img: "Please include product images"
-                        }
-                    ]
-                });
+            const blog = req.body;
+            blog.slug = (0, StrHelper_1.slugify)(blog.title);
+            blog.image_path = req.file.filename;
+            blog.ext = req.file.mimetype;
+            const response = await blogServices.storeBlog(blog);
+            if (!response) {
+                res.status(500).json({ message: "error fetching blogs" });
             }
-            else {
-                const blog = req.body;
-                blog.slug = (0, StrHelper_1.slugify)(blog.title);
-                blog.blogCategoryId = req.body.blog_category_id;
-                blog.imagePath = req.file.filename;
-                blog.ext = req.file.mimetype;
-                const { response, error } = await (0, queryHelpers_1.execQuery)("blogs", "INSERT", [
-                    "blog_category_id",
-                    "title",
-                    "slug",
-                    "post",
-                    "description",
-                    "image_path",
-                    "ext"
-                ], [
-                    blog.blogCategoryId,
-                    blog.title,
-                    blog.slug,
-                    blog.post,
-                    blog.description,
-                    blog.imagePath,
-                    blog.ext
-                ]);
-                if (error) {
-                    res.status(500).json({ message: "error fetching blogs" });
-                }
-                else if (response) {
-                    res.status(200).json({ status: response.affectedRows });
-                }
+            else if (response) {
+                res.status(200).json({ status: response.affectedRows });
             }
         }
     });
 };
 exports.store = store;
 const fetchBySlug = async (req, res) => {
-    const { response: blogArr, error } = await (0, queryHelpers_1.execQuery)("blogs", "SELECT title, slug, post, image_path, ext, created_at FROM blogs WHERE slug=?", [], [req.params.slug]);
-    if (error) {
+    const blogArr = await blogServices.fetchBlogByRef("admin", req.params.ref);
+    if (!blogArr) {
         res.status(500).json({ message: "error fetching blog by slug" });
     }
     else if (blogArr) {

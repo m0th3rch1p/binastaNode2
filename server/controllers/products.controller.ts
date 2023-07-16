@@ -58,6 +58,42 @@ export const index: RequestHandler = async (req: Request, res: Response) => {
     });
 };
 
+export const fetchProductById = async (req: Request, res: Response) => {
+    const product = await productServices.fetchRelatedProductsByProductId(parseInt(req.params.id as string, 10));
+    if (!product) {
+        res.status(500).json({ message: "Error fetching product by id" });
+        return;
+    } else if (!product.length) {
+        res.status(404).json({ message: "Product not found" });
+        return;
+    }
+    const extras = await fetchSingleProductExtras(product[0].id as number, "admin");
+
+    product[0].variations = extras?.productVariations;
+    product[0].images = extras?.productImages as IProductImage[];
+    product[0].related = extras?.productVariations;
+
+    res.status(200).json({ product: product[0] });
+};
+
+export const fetchProductBySlug = async (req: Request, res: Response) => {
+    const product = await productServices.fetchProductsBySlug(req.params.slug as string);
+    if (!product) {
+        res.status(500).json({ message: "Error fetching products" });
+        return;
+    } else if (!product.length) {
+        res.status(404).json({ message: "Product not found" });
+        return;
+    }
+
+    const extras = await fetchSingleProductExtras(product[0].id as number, "admin");
+    product[0].variations = extras?.productVariations;
+    product[0].images = extras?.productImages as IProductImage[];
+    product[0].related = extras?.relatedProducts;
+
+    res.status(200).json({ product: product[0] });
+};
+
 export const fetchAllUserProducts: RequestHandler = async (req: Request, res: Response) => {
     let products = await productServices.fetchProducts("user", { perPage: parseInt(req.query.per_page as string), offset: parseInt(req.query.offset as string)});
     if (!products) {

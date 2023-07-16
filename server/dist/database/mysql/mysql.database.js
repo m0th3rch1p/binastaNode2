@@ -6,6 +6,7 @@ exports.connection = null;
 exports.configuration = null;
 const mysql_db_init = (dbConfig) => {
     try {
+        console.log(`Intializing Connection to mysql server host: ${dbConfig.host}:${dbConfig.port} using user ${dbConfig.user}`);
         db_connect(dbConfig);
     }
     catch (error) {
@@ -23,6 +24,7 @@ const mysql_db_execute = (query, params) => {
 exports.mysql_db_execute = mysql_db_execute;
 const db_connect = async (dbConfig) => {
     try {
+        console.log("Connection type: ", dbConfig.connectionType);
         if (dbConfig.connectionType === "connection") {
             exports.configuration = {
                 ...dbConfig

@@ -39,7 +39,7 @@ export const userSlice = createSlice({
             state = { authenticated: false };
         },
         setAuthenticated: (state, action) => {
-            state.authenticated = action.payload
+            state.authenticated = action.payload;
         }
     }
 });

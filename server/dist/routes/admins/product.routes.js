@@ -31,9 +31,12 @@ const auth_middleware_1 = __importDefault(require("../../middlewares/auth.middle
 const roles_middleware_1 = require("../../middlewares/roles.middleware");
 const product_policies_1 = require("../../policies/product.policies");
 const productsController = __importStar(require("../../controllers/products.controller"));
+const productVariations_controller_1 = require("../../controllers/productVariations.controller");
 const router = (0, express_1.Router)();
 router.get("/", [auth_middleware_1.default, roles_middleware_1.isAdmin], productsController.index);
+router.get("/:id", [auth_middleware_1.default, roles_middleware_1.isAdmin], productsController.fetchProductById);
 router.post("/", [auth_middleware_1.default, roles_middleware_1.isAdmin], productsController.store);
+router.post("/product_variations", [auth_middleware_1.default, roles_middleware_1.isAdmin], productVariations_controller_1.store);
 router.put("/:id", [auth_middleware_1.default, roles_middleware_1.isAdmin, product_policies_1.updatePolicy], productsController.updateById);
 router.delete("/:id", [auth_middleware_1.default, roles_middleware_1.isAdmin, product_policies_1.idPolicy], productsController.destroyById);
 exports.default = router;

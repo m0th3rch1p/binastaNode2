@@ -1,3 +1,4 @@
+import { baseQueryWithReauth } from "@/helpers/BaseQueryWrapper";
 import { createSlice } from "@reduxjs/toolkit";
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react';
 
@@ -16,9 +17,7 @@ const initialState: Address = {
 
 export const addressApiSlice = createApi({
     reducerPath: 'addressApi',
-    baseQuery: fetchBaseQuery({
-        baseUrl: `/addresses`,
-    }),
+    baseQuery: baseQueryWithReauth(`/addresses`),
     tagTypes: ["addresses"],
     endpoints: (builder) => ({
         fetchAddresses: builder.query<Address[], void>({

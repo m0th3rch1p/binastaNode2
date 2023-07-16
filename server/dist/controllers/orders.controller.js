@@ -1,34 +1,65 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.destroyById = exports.updateById = exports.store = exports.fetchUserUserOrderById = exports.fetchUserOrders = exports.index = void 0;
+exports.destroyById = exports.updateById = exports.store = exports.fetchUserUserOrderById = exports.fetchUserOrders = exports.fetchById = exports.index = void 0;
 const lodash_1 = __importDefault(require("lodash"));
 const queryHelpers_1 = require("../helpers/queryHelpers");
 const StrHelper_1 = require("../helpers/StrHelper");
+const orderProductVariation_services_1 = require("../services/orderProductVariation.services");
+const orderServices = __importStar(require("../services/orders.services"));
 const TABLE_NAME = "orders";
 const index = async (req, res) => {
-    const { response, error } = await (0, queryHelpers_1.execQuery)(TABLE_NAME, "SELECTALL");
-    if (error) {
+    const orders = await orderServices.fetchAll("admin");
+    console.log(orders);
+    if (!orders) {
         res.status(500).json({ message: "Error fetching orders" });
+        return;
     }
-    else if (response) {
-        const [orders] = response;
-        res.status(200).json({ orders });
-    }
+    res.status(200).json({ orders });
 };
 exports.index = index;
+const fetchById = async (req, res) => {
+    const order = await orderServices.fetchById("admin", parseInt(req.params.id));
+    if (!order) {
+        res.status(500).json({ message: "Error fetching order" });
+        return;
+    }
+    const product_variations = (0, orderProductVariation_services_1.fetchOrderProductVariationByOrderId)(order[0].id);
+    res.status(200).json({ order, product_variations });
+};
+exports.fetchById = fetchById;
 const fetchUserOrders = async (req, res) => {
-    const { response, error } = await (0, queryHelpers_1.execQuery)(TABLE_NAME, "SELECT ref, status, amount, created_at FROM orders WHERE user_id = ?", null, [req.session.user_id]);
-    if (error) {
-        console.log(error);
+    const orders = orderServices.fetchAll("user", req.session.user_id);
+    if (!orders) {
         res.status(500).json({ message: "Error fetching orders" });
+        return;
     }
-    else if (response) {
-        const [orders] = response;
-        res.status(200).json({ orders });
-    }
+    res.status(200).json({ orders });
 };
 exports.fetchUserOrders = fetchUserOrders;
 const fetchUserUserOrderById = async (req, res) => {
@@ -59,15 +90,15 @@ exports.fetchUserUserOrderById = fetchUserUserOrderById;
 const store = async (req, res) => {
     const order = req.body;
     order.ref = (0, StrHelper_1.makeRef)(8);
-    order.userId = req.session.user_id;
-    order.userAddressId = req.body.user_address_id;
+    order.user_id = req.session.user_id;
+    order.user_address_id = req.body.user_address_id;
     const { response, error } = await (0, queryHelpers_1.execQuery)(TABLE_NAME, "INSERT", [
         "user_id",
         "user_address_id",
         "ref",
     ], [
-        order.userId,
-        order.userAddressId,
+        order.user_id,
+        order.user_address_id,
         order.ref
     ]);
     if (error) {

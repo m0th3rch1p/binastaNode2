@@ -1,3 +1,4 @@
+import { baseQueryWithReauth } from "@/helpers/BaseQueryWrapper";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 
 export type Customer = {
@@ -12,9 +13,7 @@ export type CustomerStats = {
 
 export const customersApiSlice = createApi({
     reducerPath: "CustomersApiSlice",
-    baseQuery: fetchBaseQuery({
-        baseUrl: "/customers"
-    }),
+    baseQuery: baseQueryWithReauth("/customers"),
     tagTypes: ["customers"],
     endpoints: (builder) => ({
         fetchCustomers: builder.query<{ customers: Customer[], stats: CustomerStats[]}, void>({

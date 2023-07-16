@@ -1,8 +1,10 @@
 import { ProductCategory, useFetchProductCategoriesQuery } from "@/store/reducers/productCategoriesSlice";
 import { useStoreProductMutation } from "@/store/reducers/productsSlice";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 
-function ProductForm({ show }: {show: boolean}) {
+function ProductForm() {
+  const navigate = useNavigate();
   const [ storeProduct, { isLoading, isSuccess } ] = useStoreProductMutation();
   const { data: categories } = useFetchProductCategoriesQuery();
 
@@ -27,7 +29,7 @@ function ProductForm({ show }: {show: boolean}) {
         description: '',
         categories: [],
         files: [] as Blob[]
-      }))
+      }));
     }
   }, [categories, isSuccess])
 
@@ -64,16 +66,14 @@ const onHandleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   }
 
   return (
-    <form style={{
-      display: show ? 'block' : 'none'
-  }}>
+    <form>
       <div className="row">
           <div className="col">
-              <div className="form-group">
+              <div className="form-group mb-3">
                   <label>Product Name</label>
                   <input type="text" name="name" value={productForm.name} onChange={onHandleChange} className="form-control" required={true} />
               </div>
-              <div className="form-group">
+              <div className="form-group mb-3">
                   <label>Product Category</label>
                   <select className="form-control" value={productForm.category_id as number} onChange={onHandleChange} name="category_id" required>
                     <option value="" selected>Select Product Category</option>
@@ -84,11 +84,11 @@ const onHandleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                     }
                   </select>
               </div>
-              <div className="form-group">
+              <div className="form-group mb-3">
                   <label>Product Description</label>
                   <input type="text" name="description" value={productForm.description} onChange={onHandleChange} className="form-control" required={true} />
               </div>
-              <div className="form-group">
+              <div className="form-group mb-3">
                   <label>Product Images</label>
                   <input type="file" onChange={onHandleFileChange} className="form-control" multiple required  />
               </div>

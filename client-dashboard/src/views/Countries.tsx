@@ -4,6 +4,20 @@ import { Country, useFetchCountriesQuery } from "@/store/reducers/countriesSlice
 import DataTable, { TableColumn, TableRow } from 'react-data-table-component'
 
 function Countries() {
+  const countryData = [
+    {
+      "id": "KEN",
+      "value": 548419
+    },
+    {
+      "id": "TZN",
+      "value": 825622
+    },
+    {
+      "id": "UGN",
+      "value": 559207
+    }
+  ]
   const { data: countries, isLoading: isFetchCountryLoading, isSuccess: isFetchCountrySuccess, isError: isFetchCountryError } = useFetchCountriesQuery();
   const [countriesState, setCountriesState] = useState({
     show: false,

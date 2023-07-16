@@ -4,12 +4,12 @@ import * as core from 'express-serve-static-core';
 
 export interface IBlog {
     id?: number,
-    blogCategoryId?: number,
+    blog_category_id?: number,
     title?: string,
     slug?: string,
     description?: string,
     post?: string,
-    imagePath?: string,
+    image_path?: string,
     ext?: string,
     linkPath?: string,
     created_at?: string,

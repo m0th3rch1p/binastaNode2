@@ -2,6 +2,8 @@ import { IAddProductVariationReq, IGetProductVariationReq, IProductVariation, IU
 import { Request, Response, RequestHandler } from "express";
 import { execQuery } from "@/helpers/queryHelpers";
 
+import * as productVariationServices from "@/services/productVariations.services";
+
 const TABLE_NAME = "product_variations";
 
 export const index: RequestHandler = async (req: Request, res: Response) => {
@@ -15,37 +17,29 @@ export const index: RequestHandler = async (req: Request, res: Response) => {
         });
     }
 };
+
+export const fetchProductVariationsByProductRef = async (req: Request, res: Response) => {
+    const product_variations = await productVariationServices.fetchProductVariationsByProductRef(req.params.ref as string, "admin");
+    if (!product_variations) {
+        res.status(500).json({ message: "Error fetching product variations" });
+        return;
+    }
+
+    res.status(200).json({ product_variations });
+};
+
 export const store: RequestHandler = async (req: IAddProductVariationReq, res: Response) => {
     const productVariation: IProductVariation = req.body;
-    const { response, error } = await execQuery<{affectedRows: number, insertId: number}>(TABLE_NAME, "INSERT", [
-        'product_id', 
-        'variation', 
-        'buy_price', 
-        'sale_price', 
-        'wholesale_price', 
-        'recommended_price', 
-        'wholesale_min', 
-        'stock',
-        'sold'
-    ], [
-        productVariation.product_id,
-        productVariation.variation,
-        productVariation.buy_price,
-        productVariation.sale_rice,
-        productVariation.wholesale_price,
-        productVariation.recommended_price,
-        productVariation.wholesale_min,
-        productVariation.stock,
-        productVariation.sold
-    ]);  
+    const response = await productVariationServices.storeProductVariation("admin", productVariation);
     
-    if (error) {
+    if (!response) {
         res.status(500).json({ message: 'Error storing product variations' });
-    } else if (response) {
-        res.status(200).json({
-            status: response.affectedRows
-        });
-    }
+        return;
+    };
+
+    res.status(200).json({
+        status: response.affectedRows
+    });
 };
 
 //@ts-expect-error

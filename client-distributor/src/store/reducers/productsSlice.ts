@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react"
 import { createSlice } from "@reduxjs/toolkit";
 import { ProductVariation } from "@/types/ProductVariation.type";
+import { baseQueryWithReauth } from "@/helpers/BaseQueryWrapper";
 
 export type Product = {
     id?: number,
@@ -20,9 +21,7 @@ const initialState = {
 
 export const productApiSlice = createApi({
     reducerPath: "productApi",
-    baseQuery: fetchBaseQuery({
-        baseUrl: `/products`
-    }),
+    baseQuery: baseQueryWithReauth(`/products`),
     tagTypes: ['products', 'product'],
     endpoints: (builder) => ({
         fetchProducts: builder.query<Product[], { per_page:number, offset: number, cat?: string | null } | void>({

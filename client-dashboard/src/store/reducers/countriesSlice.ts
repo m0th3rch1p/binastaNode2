@@ -1,3 +1,4 @@
+import { baseQueryWithReauth } from "@/helpers/BaseQueryWrapper";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 
 export type Country = {
@@ -9,9 +10,7 @@ export type Country = {
 
 export const countriesApiSlice = createApi({
     reducerPath: "CountryApiSlice",
-    baseQuery: fetchBaseQuery({
-        baseUrl: "/countries"
-    }),
+    baseQuery: baseQueryWithReauth("/countries"),
     tagTypes: ['countries'],
     endpoints: (builder) => ({
         storeCountry: builder.mutation<{status: number}, {country: Country}>({

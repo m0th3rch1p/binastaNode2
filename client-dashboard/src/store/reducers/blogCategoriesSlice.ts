@@ -1,3 +1,4 @@
+import { baseQueryWithReauth } from "@/helpers/BaseQueryWrapper";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 
 export type BlogCategory = {
@@ -10,9 +11,7 @@ export type BlogCategory = {
 
 export const blogCategoriesApiSlice = createApi({
     reducerPath: "blogCategoriesApi",
-    baseQuery: fetchBaseQuery({
-        baseUrl: "/blog_categories"
-    }),
+    baseQuery: baseQueryWithReauth("/blog_categories"),
     tagTypes: ['blog-categories'],
     endpoints: (builder) => ({
         fetchBlogCategories: builder.query<BlogCategory[], void>({

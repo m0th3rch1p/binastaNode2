@@ -1,3 +1,4 @@
+import { baseQueryWithReauth } from "@/helpers/BaseQueryWrapper";
 import { ProductVariation } from "@/types/ProductVariation.type";
 import { createSlice } from "@reduxjs/toolkit";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
@@ -20,9 +21,7 @@ const initialState: Order = {
 
 export const orderApiSlice = createApi({
     reducerPath: 'orderApi',
-    baseQuery: fetchBaseQuery({
-        baseUrl: `/orders`
-    }),
+    baseQuery: baseQueryWithReauth(`/orders`),
     tagTypes: ["orders"],
     endpoints: (builder) => ({
         fetchOrders: builder.query<Order[], void>({

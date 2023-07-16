@@ -5,6 +5,8 @@ import { IBlog } from "@/models/Blog.model";
 import { slugify } from "@/helpers/StrHelper";
 import multer from "multer";
 
+import * as blogServices from "@/services/blogs.services";
+
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "blogPosts");
@@ -39,14 +41,11 @@ const upload = multer({
 }).single("img");
 
 export const index: RequestHandler = async (req: Request, res: Response) => {
-  const { response: blogs, error } = await execQuery<IBlog[][]>(
-    "blogs",
-    "SELECTALL"
-  );
-  if (error) {
+  const blogs = await blogServices.fetchBlogs("admin")
+  if (!blogs) {
     res.status(500).json({ message: "error fetching blogs" });
   } else if (blogs) {
-    res.status(200).json({ blogs: blogs[0] });
+    res.status(200).json({ blogs });
   }
 };
 
@@ -66,9 +65,7 @@ export const store: RequestHandler = async (
     } else if (err) {
       console.log(err);
       res.status(500).json({ message: "Error uploading file" });
-    } else {
-      console.log(req.file);
-      if (!req.file) {
+    } else if (!req.file) {
         res.status(422).json({
           errors: [
             {
@@ -79,45 +76,22 @@ export const store: RequestHandler = async (
       } else {
         const blog: IBlog = req.body;
         blog.slug = slugify(blog.title as string);
-        blog.blogCategoryId = req.body.blog_category_id;
-        blog.imagePath = req.file.filename;
+        blog.image_path = req.file.filename;
         blog.ext = req.file.mimetype;
-        const { response, error } = await execQuery<{ affectedRows: number }>(
-          "blogs",
-          "INSERT",
-          [
-            "blog_category_id",
-            "title",
-            "slug",
-            "post",
-            "description",
-            "image_path",
-            "ext"
-          ],
-          [
-            blog.blogCategoryId,
-            blog.title,
-            blog.slug,
-            blog.post,
-            blog.description,
-            blog.imagePath,
-            blog.ext
-          ]
-        );
+        const response = await blogServices.storeBlog(blog);
   
-        if (error) {
+        if (!response) {
           res.status(500).json({ message: "error fetching blogs" });
         } else if (response) {
           res.status(200).json({ status: response.affectedRows });
         }
       }
-    }
-  });
+    });
 };
 
 export const fetchBySlug: RequestHandler = async (req: Request, res: Response) => {
-  const { response: blogArr, error } = await execQuery<IBlog[][]>("blogs", "SELECT title, slug, post, image_path, ext, created_at FROM blogs WHERE slug=?", [], [req.params.slug])
-  if (error) {
+  const blogArr = await blogServices.fetchBlogByRef("admin", req.params.ref as string);
+  if (!blogArr) {
     res.status(500).json({ message: "error fetching blog by slug" });
   } else if (blogArr) {
     res.status(200).json({ blog: blogArr[0] });

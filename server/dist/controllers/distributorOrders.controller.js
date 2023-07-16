@@ -22,12 +22,17 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.destroyById = exports.updateById = exports.store = exports.fetchDistributorOrderById = exports.fetchDistributorOrderByRef = exports.fetchDistributorOrders = exports.index = void 0;
+const lodash_1 = __importDefault(require("lodash"));
 const queryHelpers_1 = require("../helpers/queryHelpers");
 const StrHelper_1 = require("../helpers/StrHelper");
 const distributorOrderServices = __importStar(require("../services/distributorOrders.services"));
-const productVariations_services_1 = require("../services/productVariations.services");
+const distributorOrderProductVariations_services_1 = require("../services/distributorOrderProductVariations.services");
+const productImages_services_1 = require("../services/productImages.services");
 const index = async (req, res) => {
     const orders = await distributorOrderServices.fetchOrders("admin");
     if (!orders) {
@@ -71,14 +76,27 @@ const fetchDistributorOrderById = async (req, res) => {
         res.status(404).json({ message: 'Could not find order' });
         return;
     }
-    const productVariationIdsArr = await distributorOrderServices.fetchOrderProductVariationsById(order[0].id);
-    console.log(productVariationIdsArr);
-    if (!productVariationIdsArr) {
+    // const productVariationIdsArr = await fetchDistributorOrderProductVariationsByOrderId(order[0].id as number);
+    // console.log(productVariationIdsArr);
+    // if (!productVariationIdsArr) {
+    //   res.status(500).json({ message: 'Error fetching order' });
+    //   return;
+    // }
+    // const productVariationIds = productVariationIdsArr.map((productVariation) => productVariation.product_variation_id );
+    let productVariations = await (0, distributorOrderProductVariations_services_1.fetchDistributorOrderProductVariationsByOrderId)(order[0].id);
+    if (!productVariations) {
         res.status(500).json({ message: 'Error fetching order' });
         return;
     }
-    const productVariationIds = productVariationIdsArr.map((productVariation) => productVariation.product_variation_id);
-    const productVariations = await (0, productVariations_services_1.fetchProductVariationsbyIdArray)("distributor", productVariationIds);
+    const productIds = productVariations.map(variation => variation.product_id);
+    const productImages = await (0, productImages_services_1.fetchProductImagesByProductIdArray)(productIds);
+    if (productImages) {
+        const groupedImages = lodash_1.default.groupBy(productImages, "product_id");
+        productVariations = productVariations.map((variation) => ({
+            ...variation,
+            images: groupedImages[variation.product_id]
+        }));
+    }
     order[0].variations = productVariations;
     res.status(200).json({ order: order[0] });
 };

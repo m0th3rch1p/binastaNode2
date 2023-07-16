@@ -1,3 +1,4 @@
+import { baseQueryWithReauth } from "@/helpers/BaseQueryWrapper";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 
 
@@ -28,9 +29,7 @@ export interface DistributorOrder {
 
 export const distributorOrdersApiSlice = createApi({
     reducerPath: "DistributorOrderApiSlice",
-    baseQuery: fetchBaseQuery({
-        baseUrl: "/distributor_orders"
-    }),
+    baseQuery: baseQueryWithReauth("/distributor_orders"),
     tagTypes: ['distributor-orders', 'distributor-order'],
     endpoints: (builder) => ({
         fetchDistributorOrders: builder.query<DistributorOrder[], void>({

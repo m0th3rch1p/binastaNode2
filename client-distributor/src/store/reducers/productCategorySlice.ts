@@ -1,3 +1,4 @@
+import { baseQueryWithReauth } from "@/helpers/BaseQueryWrapper";
 import { createSlice } from "@reduxjs/toolkit";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 
@@ -13,9 +14,7 @@ const initialState: ProductCategory[] = [] as ProductCategory[];
 
 export const productCategoryApiSlice = createApi({
     reducerPath: 'productCategoryApi',
-    baseQuery: fetchBaseQuery({
-        baseUrl: `/product_categories`
-    }),
+    baseQuery: baseQueryWithReauth(`/product_categories`),
     tagTypes: ['productCategories'],
     endpoints: (builder) => ({
         fetchProductCategories: builder.query<ProductCategory[], void>({

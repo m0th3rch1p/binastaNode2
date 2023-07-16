@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
+
 import GuestLayout from './layout/GuestLayout';
 import Register from './views/Register';
 import { Provider } from 'react-redux';
@@ -21,8 +22,10 @@ import CustomerAddresses from './views/CustomerAddresses';
 import CustomerOrders from './views/CustomerOrders';
 import SingleCustomerOrder from './views/SingleCustomerOrder';
 import Dashboard from './views/Dashboard';
+import ProtectedRoute from './helpers/ProtectedRoute';
 
 function App() {
+  const user = store.getState().user;
   return (
     <Provider store={store}>
       <BrowserRouter>
@@ -33,18 +36,62 @@ function App() {
           </Route>
           <Route element={<AuthenticatedLayout />}>
             <Route path="/" element={<Navigate to="dashboard" replace />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/addresses" element={<Addresses />} />
-            <Route path="/shop" element={<Shop />} />
-            <Route path="/shop/:slug" element={<Product />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/invoice/:id" element={<Invoice />} />
-            <Route path="/shop_products" element={<ShopProducts />} />
-            <Route path="/shop_products/:slug" element={<SingleShopProduct />} />
-            <Route path="/customers" element={<Customers />} />
-            <Route path="/customer_addresses" element={<CustomerAddresses />}/>
-            <Route path="/customer_orders" element={<CustomerOrders />} />
-            <Route path="/customer_orders/:ref" element={<SingleCustomerOrder />} />
+            <Route path="/dashboard" element={
+            <ProtectedRoute isLoggedIn={user.authenticated as boolean}>
+              <Dashboard />
+            </ProtectedRoute>  } />
+            <Route path="/addresses" element={
+            <ProtectedRoute isLoggedIn={user.authenticated as boolean}>
+              <Addresses />
+            </ProtectedRoute>  } />
+            <Route path="/shop" element={
+              <ProtectedRoute isLoggedIn={user.authenticated as boolean}>
+                <Shop />
+            </ProtectedRoute>  } />
+            <Route path="/shop/:slug" element={
+              <ProtectedRoute isLoggedIn={user.authenticated as boolean}>
+              <Product />
+            </ProtectedRoute>  } />
+            <Route path="/checkout" element={
+              <ProtectedRoute isLoggedIn={user.authenticated as boolean}>
+              <Checkout />
+            </ProtectedRoute>
+            } />
+            <Route path="/invoice/:id" element={
+              <ProtectedRoute isLoggedIn={user.authenticated as boolean}>
+              <Invoice />
+            </ProtectedRoute>
+            } />
+            <Route path="/shop_products" element={
+              <ProtectedRoute isLoggedIn={user.authenticated as boolean}>
+              <ShopProducts />
+            </ProtectedRoute>
+            } />
+            <Route path="/shop_products/:slug" element={
+              <ProtectedRoute isLoggedIn={user.authenticated as boolean}>
+              <SingleShopProduct />
+            </ProtectedRoute>
+            } />
+            <Route path="/customers" element={
+              <ProtectedRoute isLoggedIn={user.authenticated as boolean}>
+              <Customers />
+            </ProtectedRoute>
+            } />
+            <Route path="/customer_addresses" element={
+              <ProtectedRoute isLoggedIn={user.authenticated as boolean}>
+              <CustomerAddresses />
+            </ProtectedRoute>
+            }/>
+            <Route path="/customer_orders" element={
+              <ProtectedRoute isLoggedIn={user.authenticated as boolean}>
+              <CustomerOrders />
+            </ProtectedRoute>
+            } />
+            <Route path="/customer_orders/:ref" element={
+              <ProtectedRoute isLoggedIn={user.authenticated as boolean}>
+              <SingleCustomerOrder />
+            </ProtectedRoute>
+            } />
           </Route>
         </Routes>
       </BrowserRouter>

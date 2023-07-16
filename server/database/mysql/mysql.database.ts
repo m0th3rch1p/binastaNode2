@@ -28,14 +28,12 @@ const db_connect = async (dbConfig: MysqlConfig) : Promise<Connection | Pool | n
                ...dbConfig
             };
             connection = await createConnection(configuration);
-            console.log("Connection Response:", connection);
         } else if (dbConfig.connectionType === "pool") {
             configuration = <PoolOptions> {
                 ...dbConfig,
                 waitForConnections: true
             }
             connection = createPool(configuration);
-            console.log("Connection Response:", connection);
         } else throw new Error("Can't find connection type. currently support pool and connection values");
 
         console.log("[+] Connection to DB Successfull");
