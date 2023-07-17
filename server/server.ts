@@ -61,6 +61,7 @@ mainApp.use(express.static("blogPosts"));
 
 
 // Subdomain Routing
+console.log("Platform", config.platform);
 mainApp.use(vhost(`shop.${config.platform === 'development' ? config.dev_domain : config.prod_domain}`, shopApp));
 mainApp.use(vhost(`distributor.${config.platform === 'development' ? config.dev_domain : config.prod_domain}`, distributorApp));
 mainApp.use(vhost(`management.${config.platform === 'development' ? config.dev_domain : config.prod_domain}`, adminApp));

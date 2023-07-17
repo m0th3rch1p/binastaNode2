@@ -45,6 +45,7 @@ mainApp.use(express_1.default.static("productImages"));
 mainApp.use(express_1.default.static("productCategories"));
 mainApp.use(express_1.default.static("blogPosts"));
 // Subdomain Routing
+console.log("Platform", config_1.default.platform);
 mainApp.use((0, vhost_1.default)(`shop.${config_1.default.platform === 'development' ? config_1.default.dev_domain : config_1.default.prod_domain}`, shopApp_1.shopApp));
 mainApp.use((0, vhost_1.default)(`distributor.${config_1.default.platform === 'development' ? config_1.default.dev_domain : config_1.default.prod_domain}`, distributorApp_1.distributorApp));
 mainApp.use((0, vhost_1.default)(`management.${config_1.default.platform === 'development' ? config_1.default.dev_domain : config_1.default.prod_domain}`, adminApp_1.adminApp));
