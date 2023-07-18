@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const morgan_1 = __importDefault(require("morgan"));
+// import morgan from "morgan";
 const cors_1 = __importDefault(require("cors"));
 const helmet_1 = __importDefault(require("helmet"));
 const vhost_1 = __importDefault(require("vhost"));
@@ -14,6 +14,7 @@ const fs_1 = __importDefault(require("fs"));
 const config_1 = __importDefault(require("./config"));
 const database_1 = require("./database");
 const session_1 = require("./session");
+const logger_1 = __importDefault(require("./helpers/logger"));
 const shopApp_1 = require("./shopApp");
 const adminApp_1 = require("./adminApp");
 const distributorApp_1 = require("./distributorApp");
@@ -24,7 +25,7 @@ const distributorShopApp_1 = require("./distributorShopApp");
 ;
 const mainApp = (0, express_1.default)();
 // 3rd Party Middlewares
-mainApp.use((0, morgan_1.default)("combined"));
+// mainApp.use(morgan("combined"));
 mainApp.use(express_1.default.urlencoded({ extended: true }));
 mainApp.use(express_1.default.json());
 mainApp.use((0, helmet_1.default)());
@@ -63,5 +64,5 @@ const httpsServer = https_1.default.createServer({
     hostname: config_1.default.serverHost
 }, mainApp);
 httpsServer.listen(config_1.default.serverPort, () => {
-    console.log("Https server running successfully");
+    logger_1.default.info("Https server running successfully");
 });

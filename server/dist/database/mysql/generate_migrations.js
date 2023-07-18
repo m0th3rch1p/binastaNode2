@@ -5,16 +5,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
+const logger_1 = __importDefault(require("../../helpers/logger"));
 const table = process.env.npm_config_table;
 const fileName = `${Date.now()}_${table}_table.sql`;
 const filePath = path_1.default.join(__dirname, 'schemas', fileName);
 async function generate_migrate(filePath, fd, err) {
     if (err) {
         if (err.code === 'EEXIST') {
-            console.log('Migration file already exists.');
+            logger_1.default.info('Migration file already exists.');
         }
         else {
-            console.error(`Error opening migration file: ${err}`);
+            logger_1.default.error(`Error opening migration file: ${err}`);
         }
         return;
     }
@@ -28,18 +29,18 @@ async function generate_migrate(filePath, fd, err) {
   );`);
     stream.end();
     stream.on('finish', () => {
-        console.log('Migration file created successfully.');
+        logger_1.default.info('Migration file created successfully.');
         fs_1.default.close(fd, (closeErr) => {
             if (closeErr) {
-                console.error(`Error closing migration file: ${closeErr}`);
+                logger_1.default.error(`Error closing migration file: ${closeErr}`);
             }
         });
     });
     stream.on('error', (err) => {
-        console.error(`Error writing to migration file: ${err}`);
+        logger_1.default.error(`Error writing to migration file: ${err}`);
         fs_1.default.close(fd, (closeErr) => {
             if (closeErr) {
-                console.error(`Error closing migration file: ${closeErr}`);
+                logger_1.default.error(`Error closing migration file: ${closeErr}`);
             }
         });
     });

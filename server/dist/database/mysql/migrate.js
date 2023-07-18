@@ -22,11 +22,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const child_process_1 = require("child_process");
 const dotenv = __importStar(require("dotenv"));
+const logger_1 = __importDefault(require("../../helpers/logger"));
 dotenv.config();
 const schemaDir = path.join(__dirname, 'schemas');
 const command = 'mysql';
@@ -40,22 +44,22 @@ const child = (0, child_process_1.spawn)(command, args);
 // Increase the maximum number of listeners for the 'error' event
 child.setMaxListeners(15);
 child.stdout.on('data', (data) => {
-    console.log(`Spawn stdout data: ${data}`);
+    logger_1.default.info(`Spawn stdout data: ${data}`);
 });
 child.stdin.on('data', (data) => {
-    console.log(`Spawn stdin data: ${data}`);
+    logger_1.default.info(`Spawn stdin data: ${data}`);
 });
 child.stderr.on('data', (data) => {
-    console.log(`Spawn stderr data: ${data}`);
+    logger_1.default.info(`Spawn stderr data: ${data}`);
 });
 async function migrate(file) {
     // Make sure it's an SQL file
     if (file.split('.').pop() === 'sql') {
-        console.info(`Migrating: ${file}`);
+        logger_1.default.info(`Migrating: ${file}`);
         const filename = path.join(__dirname, 'schemas', file);
         const fileStream = fs.createReadStream(filename);
         fileStream.on('error', (err) => {
-            console.error(`Error reading ${filename}: ${err}`);
+            logger_1.default.error(`Error reading ${filename}: ${err}`);
         });
         fileStream.on('end', () => {
             fileStream.unpipe(child.stdin);
@@ -65,20 +69,20 @@ async function migrate(file) {
         child.on('close', (code, signal) => {
             fileStream.unpipe(child.stdin);
             if (code === 0) {
-                console.log(`${filename} migrated successfully`);
+                logger_1.default.info(`${filename} migrated successfully`);
             }
             else {
-                console.error(`Migration failed with code ${code} and signal ${signal}`);
+                logger_1.default.error(`Migration failed with code ${code} and signal ${signal}`);
             }
         });
     }
     else {
-        console.log(`${file} doesn't seem to be an SQL file`);
+        logger_1.default.info(`${file} doesn't seem to be an SQL file`);
     }
 }
 fs.readdir(schemaDir, async (err, files) => {
     if (err) {
-        console.error(`Error reading directory: ${schemaDir}`);
+        logger_1.default.error(`Error reading directory: ${schemaDir}`);
         return;
     }
     for (const file of files) {

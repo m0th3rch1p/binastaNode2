@@ -1,16 +1,20 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mysql_db_execute = exports.mysql_db_init = exports.configuration = exports.connection = void 0;
 const promise_1 = require("mysql2/promise");
+const logger_1 = __importDefault(require("../../helpers/logger"));
 exports.connection = null;
 exports.configuration = null;
 const mysql_db_init = (dbConfig) => {
     try {
-        console.log(`Intializing Connection to mysql server host: ${dbConfig.host}:${dbConfig.port} using user ${dbConfig.user}`);
+        logger_1.default.info(`Intializing Connection to mysql server host: ${dbConfig.host}:${dbConfig.port} using user ${dbConfig.user}`);
         db_connect(dbConfig);
     }
     catch (error) {
-        console.log("[database.mysql.index][error]: ", error);
+        logger_1.default.error("[database.mysql.index][error]: ", error);
         return null;
     }
     return null;
@@ -24,7 +28,7 @@ const mysql_db_execute = (query, params) => {
 exports.mysql_db_execute = mysql_db_execute;
 const db_connect = async (dbConfig) => {
     try {
-        console.log("Connection type: ", dbConfig.connectionType);
+        logger_1.default.info("Connection type: ", dbConfig.connectionType);
         if (dbConfig.connectionType === "connection") {
             exports.configuration = {
                 ...dbConfig
@@ -40,11 +44,11 @@ const db_connect = async (dbConfig) => {
         }
         else
             throw new Error("Can't find connection type. currently support pool and connection values");
-        console.log("[+] Connection to DB Successfull");
+        logger_1.default.info("[+] Connection to DB Successfull");
         return exports.connection;
     }
     catch (error) {
-        console.log("[database.mysql.execute][error]: ", error);
+        logger_1.default.error("[database.mysql.execute][error]: ", error);
         return null;
     }
 };
