@@ -2,6 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { spawn } from 'child_process';
 import * as dotenv from 'dotenv';
+import logger from "@/helpers/logger";
+
 
 dotenv.config();
 
@@ -21,26 +23,26 @@ const child = spawn(command, args);
 child.setMaxListeners(15);
 
 child.stdout.on('data', (data) => {
-  console.log(`Spawn stdout data: ${data}`);
+  logger.info(`Spawn stdout data: ${data}`);
 });
 
 child.stdin.on('data', (data) => {
-  console.log(`Spawn stdin data: ${data}`);
+  logger.info(`Spawn stdin data: ${data}`);
 });
 
 child.stderr.on('data', (data) => {
-  console.log(`Spawn stderr data: ${data}`);
+  logger.info(`Spawn stderr data: ${data}`);
 });
 
 async function migrate(file: string) {
   // Make sure it's an SQL file
   if (file.split('.').pop() === 'sql') {
-    console.info(`Migrating: ${file}`);
+    logger.info(`Migrating: ${file}`);
     const filename = path.join(__dirname, 'schemas', file);
 
     const fileStream = fs.createReadStream(filename);
     fileStream.on('error', (err) => {
-      console.error(`Error reading ${filename}: ${err}`);
+      logger.error(`Error reading ${filename}: ${err}`);
     });
 
     fileStream.on('end', () => {
@@ -53,19 +55,19 @@ async function migrate(file: string) {
     child.on('close', (code, signal) => {
       fileStream.unpipe(child.stdin);
       if (code === 0) {
-        console.log(`${filename} migrated successfully`);
+        logger.info(`${filename} migrated successfully`);
       } else {
-        console.error(`Migration failed with code ${code} and signal ${signal}`);
+        logger.error(`Migration failed with code ${code} and signal ${signal}`);
       }
     });
   } else {
-    console.log(`${file} doesn't seem to be an SQL file`);
+    logger.info(`${file} doesn't seem to be an SQL file`);
   }
 }
 
 fs.readdir(schemaDir, async (err, files) => {
   if (err) {
-    console.error(`Error reading directory: ${schemaDir}`);
+    logger.error(`Error reading directory: ${schemaDir}`);
     return;
   }
 

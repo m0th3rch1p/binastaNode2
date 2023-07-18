@@ -1,5 +1,6 @@
 import { redis_init } from './redis/redis.database';
 import { mysql_db_init } from "./mysql/mysql.database";
+import logger from "@/helpers/logger";
 
 import config from "../config"
 
@@ -10,7 +11,7 @@ export const db_init =  () => {
             mysql_db_init(config.database.dbDataSources.mysql.default);
             break;
         default:
-            console.log(`${config.database.primaryDb} is not yet supported`);
+            logger.error(`${config.database.primaryDb} is not yet supported`);
             break;
     }
     
@@ -21,7 +22,7 @@ export const db_init =  () => {
                 redis_init(config.database.dbDataSources.redis.singleConnection);
                 break;
             default:
-                console.log(`${config.database.secondaryDb} is not yet supported`);
+                logger.error(`${config.database.secondaryDb} is not yet supported`);
                 break;
         }
     }

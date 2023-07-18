@@ -1,5 +1,5 @@
 import express, { Application } from "express";
-import morgan from "morgan";
+// import morgan from "morgan";
 import cors from 'cors';
 import helmet from 'helmet';
 import vhost from "vhost";
@@ -10,11 +10,11 @@ import fs from 'fs';
 import config from "@/config";
 import { db_init } from "@/database";
 import { session_init } from "@/session";
+import logger from "@/helpers/logger";
 
 import { shopApp } from "./shopApp";
 import { adminApp } from "./adminApp";
 import { distributorApp } from "./distributorApp";
-
 
 import productRoutes from "@/routes/products.routes";
 import blogRoutes from "@/routes/blog.routes";
@@ -34,7 +34,7 @@ declare module "express-session" {
 const mainApp: Application = express();
 
 // 3rd Party Middlewares
-mainApp.use(morgan("combined"));
+// mainApp.use(morgan("combined"));
 mainApp.use(express.urlencoded({ extended: true }));
 mainApp.use(express.json());
 mainApp.use(helmet());
@@ -84,6 +84,6 @@ const httpsServer = https.createServer({
 } as https.ServerOptions, mainApp);
 
 httpsServer.listen(config.serverPort, () => {
-    console.log("Https server running successfully");
+    logger.info("Https server running successfully");
 });
 

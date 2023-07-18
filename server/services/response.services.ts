@@ -1,8 +1,10 @@
+import logger from "@/helpers/logger";
+
 type storeResponse = { affectedRows: number, insertId: number };
 
 export const execResponse = <T>(response: [unknown][] | storeResponse |  null, error: unknown) => {
     if (error) {
-        console.log("[-] response error", error);
+        logger.error("[-] response error", error);
         return null;
     }
 

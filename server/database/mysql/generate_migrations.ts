@@ -1,5 +1,7 @@
 import fs from 'fs';
 import path from 'path';
+import logger from "@/helpers/logger";
+
 
 const table = process.env.npm_config_table;
 const fileName = `${Date.now()}_${table}_table.sql`;
@@ -8,9 +10,9 @@ const filePath = path.join(__dirname, 'schemas', fileName);
 async function generate_migrate (filePath: string, fd: number, err: NodeJS.ErrnoException | null) {
   if (err) {
     if (err.code === 'EEXIST') {
-      console.log('Migration file already exists.');
+      logger.info('Migration file already exists.');
     } else {
-      console.error(`Error opening migration file: ${err}`);
+      logger.error(`Error opening migration file: ${err}`);
     }
     return;
   }
@@ -28,19 +30,19 @@ async function generate_migrate (filePath: string, fd: number, err: NodeJS.Errno
   stream.end();
 
   stream.on('finish', () => {
-    console.log('Migration file created successfully.');
+    logger.info('Migration file created successfully.');
     fs.close(fd, (closeErr) => {
       if (closeErr) {
-        console.error(`Error closing migration file: ${closeErr}`);
+        logger.error(`Error closing migration file: ${closeErr}`);
       }
     });
   });
 
   stream.on('error', (err) => {
-    console.error(`Error writing to migration file: ${err}`);
+    logger.error(`Error writing to migration file: ${err}`);
     fs.close(fd, (closeErr) => {
       if (closeErr) {
-        console.error(`Error closing migration file: ${closeErr}`);
+        logger.error(`Error closing migration file: ${closeErr}`);
       }
     });
   });
