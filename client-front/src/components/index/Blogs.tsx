@@ -1,4 +1,5 @@
 import { useFetchBlogsQuery } from "@/store/reducers/blogsSlice";
+import { Link } from "react-router-dom";
 
 function Blogs() {
   const { data: blogs } = useFetchBlogsQuery();
@@ -24,14 +25,14 @@ function Blogs() {
                   </div>
                   <div className="blog-text">
                     <h4>
-                      <a href={`blogs/${blog.slug}`}>{ blog.title }</a>
+                      <Link to={`blog/${blog.slug}`}>{ blog.title }</Link>
                     </h4>
                     <p>
                       { blog.description?.slice(0, 150) }...
                     </p>
-                    <a className="blog-link" href={`blogs/${blog.slug}`}>
-                      Purchase
-                    </a>
+                    <Link className="blog-link" to={`blog/${blog.slug}`}>
+                      View
+                    </Link>
                   </div>
                 </div>
               </div>

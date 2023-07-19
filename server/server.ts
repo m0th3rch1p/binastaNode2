@@ -67,12 +67,11 @@ mainApp.use(vhost(`distributor.${config.platform === 'development' ? config.dev_
 mainApp.use(vhost(`management.${config.platform === 'development' ? config.dev_domain : config.prod_domain}`, adminApp));
 mainApp.use(vhost(`*.${config.platform === 'development' ? config.dev_domain : config.prod_domain}`, distributorShopApp));
 
-mainApp.use(express.static(path.join(__dirname, 'front', 'main', 'build')));
-
 mainApp.use("/products", productRoutes);
 mainApp.use("/blogs", blogRoutes);
 mainApp.use("/messages", messageRoutes);
 
+mainApp.use(express.static(path.resolve(__dirname, 'front', 'main', 'build')));
 mainApp.get('*', function (req, res) {
     res.sendFile(path.join(__dirname, 'front', 'main', 'build', 'index.html'))
 })

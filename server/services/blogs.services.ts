@@ -13,14 +13,13 @@ INNER JOIN blog_categories bc ON b.blog_category_id = bc.id`;
 };
 
 export const storeBlog = async (blog: IBlog) => {
-    const query = `INSERT INTO ${TABLE_NAME} (blog_category_id, title, slug, description, post, image_path) VALUES (?, ?, ?, ?, ?, ?)`;
+    const query = `INSERT INTO ${TABLE_NAME} (blog_category_id, title, slug, description, image_path) VALUES (?, ?, ?, ?, ?, ?)`;
     const { response, error } = await execQuery<{affectedRows: number, insertId: number}>(TABLE_NAME, query, null, [ blog.blog_category_id, blog.title, blog.slug, blog.description, blog.post, blog.image_path ]);
     return execResponse<{affectedRows: number, insertId: number}>(response, error);
 };
 
 export const fetchBlogByRef = async (client: Client, ref: string) => {
-    const query = `SELECT b.title, b.slug, b.description, b.image_path, bc.name FROM ${TABLE_NAME} b WHERE slug=?
-INNER JOIN blog_categories bc ON b.blog_category_id = bc.id`;
+    const query = `SELECT b.title, b.slug, b.description, b.post, b.image_path, bc.name, b.created_at FROM ${TABLE_NAME} b JOIN blog_categories bc ON b.blog_category_id = bc.id WHERE b.slug=? `;
     const { response, error } = await execQuery<[IBlog[]][]>(TABLE_NAME, query, null, [ ref ]);
     return execResponse<IBlog[]>(response, error);
 };

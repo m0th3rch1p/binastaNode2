@@ -90,7 +90,9 @@ export const store: RequestHandler = async (
 };
 
 export const fetchBySlug: RequestHandler = async (req: Request, res: Response) => {
-  const blogArr = await blogServices.fetchBlogByRef("admin", req.params.ref as string);
+  console.log(req.params.slug);
+  const blogArr = await blogServices.fetchBlogByRef("admin", req.params.slug as string);
+  console.log(blogArr);
   if (!blogArr) {
     res.status(500).json({ message: "error fetching blog by slug" });
   } else if (blogArr) {

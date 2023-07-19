@@ -170,7 +170,6 @@ const fetchDistributorProducts = async (req, res) => {
     const productIds = (products).map((product) => product.id);
     const client = "distributor";
     const extras = await fetchSingleProductExtras(productIds, client);
-    console.log(extras);
     if (!extras) {
         res.status(500).json({ message: 'Error fetching products' });
         return;

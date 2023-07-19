@@ -108,7 +108,9 @@ const store = async (req, res) => {
 };
 exports.store = store;
 const fetchBySlug = async (req, res) => {
-    const blogArr = await blogServices.fetchBlogByRef("admin", req.params.ref);
+    console.log(req.params.slug);
+    const blogArr = await blogServices.fetchBlogByRef("admin", req.params.slug);
+    console.log(blogArr);
     if (!blogArr) {
         res.status(500).json({ message: "error fetching blog by slug" });
     }

@@ -113,7 +113,6 @@ export const fetchAllUserProducts: RequestHandler = async (req: Request, res: Re
         res.status(500).json({ message: 'Error fetching products' });
         return;
     }
-
     const productsEmbedded = products.map(product => ({
         ...product,
         variations: (extras.productVariations as _.Dictionary<IProductVariation[]>)?.[product.id as number],
@@ -162,7 +161,6 @@ export const fetchDistributorProducts: RequestHandler = async (req: Request, res
 
     const client: Client = "distributor";
     const extras = await fetchSingleProductExtras(productIds as number[], client);
-    console.log(extras);
     if (!extras) {
         res.status(500).json({ message: 'Error fetching products' });
         return;

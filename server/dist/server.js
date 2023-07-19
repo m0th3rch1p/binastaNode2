@@ -51,10 +51,10 @@ mainApp.use((0, vhost_1.default)(`shop.${config_1.default.platform === 'developm
 mainApp.use((0, vhost_1.default)(`distributor.${config_1.default.platform === 'development' ? config_1.default.dev_domain : config_1.default.prod_domain}`, distributorApp_1.distributorApp));
 mainApp.use((0, vhost_1.default)(`management.${config_1.default.platform === 'development' ? config_1.default.dev_domain : config_1.default.prod_domain}`, adminApp_1.adminApp));
 mainApp.use((0, vhost_1.default)(`*.${config_1.default.platform === 'development' ? config_1.default.dev_domain : config_1.default.prod_domain}`, distributorShopApp_1.distributorShopApp));
-mainApp.use(express_1.default.static(path_1.default.join(__dirname, 'front', 'main', 'build')));
 mainApp.use("/products", products_routes_1.default);
 mainApp.use("/blogs", blog_routes_1.default);
 mainApp.use("/messages", message_routes_1.default);
+mainApp.use(express_1.default.static(path_1.default.resolve(__dirname, 'front', 'main', 'build')));
 mainApp.get('*', function (req, res) {
     res.sendFile(path_1.default.join(__dirname, 'front', 'main', 'build', 'index.html'));
 });
